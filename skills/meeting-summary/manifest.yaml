@@ -5,10 +5,10 @@ owners:
   - Carey8175
 
 description_for_install: |
-  Organises all Lark meetings (VC + 妙记) within a time window into structured
+  Organises all Lark meetings (VC + Lark Minutes) within a time window into structured
   knowledge. Default range: yesterday 00:00 to now. Extracts decisions, customer
   feedback, feature asks, risk signals and more across 10 dimensions, then saves
-  to the knowledge base automatically. Prioritises 妙记 AI summaries; falls back
+  to the knowledge base automatically. Prioritises Lark Minutes AI summaries; falls back
   to transcripts or VC details.
 
 depends_on:

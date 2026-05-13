@@ -1,6 +1,6 @@
 ---
 name: sa-wiki
-version: 1.0.0
+version: 0.2.0
 description: "BytePlus SA Team knowledge base — read and write. Use when asking about SA knowledge, customer profiles, meeting notes, archiving information, checking customer progress, adding topic pages, or ingesting handbook chapters. READ path: Bitable knowledge_index search + full-text docs fetch. WRITE path: mandatory write_queue (agents never write wiki pages directly). Multi-agent concurrency-safe."
 metadata:
   requires:
