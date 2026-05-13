@@ -1,6 +1,6 @@
 ---
 name: sa-super-skill-help
-version: 0.1.0
+version: 0.2.0
 description: "Onboarding guide for SA Super Skill Pack — what it does, how to install it, common use cases, and how to contribute new skills. Trigger when a user seems lost, asks what this is, or asks how to get started."
 metadata:
   requires:
@@ -38,6 +38,7 @@ SA Super Skill Pack is a curated collection of AI skills for BytePlus SAs. Insta
 Daily signals                Processed by skill       Saved to
 ─────────────────────────────────────────────────────────────────
 Lark group chats      →  im-digest          →  knowledge base
+Live meetings         →  meeting-recorder   →  knowledge base
 Lark VC / Minutes     →  meeting-summary    →  knowledge base
 C360 usage data       →  dashboard-watch    →  knowledge base (on demand)
 Lark documents        →  lark-doc-ingest    →  knowledge base
@@ -55,6 +56,7 @@ Consumer skills
 | Scenario | Skill | Example phrase |
 |---|---|---|
 | Morning: catch up on yesterday's chats | `im-digest` | "Organize yesterday's messages" |
+| During a meeting: record and transcribe live | `meeting-recorder` | "Start meeting recording" |
 | Morning: see what meetings happened | `meeting-summary` | "Summarize yesterday's meetings" |
 | Pre-meeting: prep for a customer | `customer-brief` | "Give me a brief on Acme before my 2pm" |
 | Ad-hoc: how much is X using? | `dashboard-watch` | "How many tokens did Acme use last month?" |
@@ -121,7 +123,7 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
 super-skill install profile:sa-mvp
 ```
 
-This installs the 6 core skills: `sa-wiki`, `meeting-summary`, `im-digest`, `dashboard-watch`, `local-wiki-init`, `customer-brief`.
+This installs the core skills: `sa-wiki`, `meeting-recorder`, `meeting-summary`, `im-digest`, `dashboard-watch`, `local-wiki-init`, `customer-brief`, and `sa-super-skill-help`.
 
 ### Step 4: Authorize lark-cli
 
@@ -157,6 +159,18 @@ Verify:
 In Claude Code, say: "Check if Chrome extension is connected"
 ```
 
+### Step 5b: Syncore setup (for meeting-recorder)
+
+`meeting-recorder` uses Syncore to capture mic + system audio.
+
+```bash
+curl -fsSL https://syncorelabs.ai/install.sh | sh
+syncore login
+syncore doctor
+```
+
+Grant microphone and Screen Recording permissions when `syncore doctor` asks. Reopen Claude Code after setup.
+
 ### Step 6: Set up your local wiki (optional but recommended)
 
 ```bash
@@ -182,6 +196,8 @@ Once installed, invoke skills in Claude Code using natural language:
 
 ```
 "Organize yesterday's messages"          → im-digest
+"Start meeting recording"                → meeting-recorder
+"End meeting"                            → meeting-recorder
 "Summarize yesterday's meetings"         → meeting-summary
 "Brief me on Acme before my meeting"     → customer-brief
 "Acme used how many tokens last month?"  → dashboard-watch
@@ -193,8 +209,8 @@ Once installed, invoke skills in Claude Code using natural language:
 ### Tips
 
 - **First run**: skills ask for your local wiki path once, then remember it. You won't be asked again.
-- **Knowledge accumulates**: the more you run `im-digest` and `meeting-summary`, the richer your wiki becomes, and the better `customer-brief` gets.
-- **No "dual-write" to manage**: skills automatically write to both wikis silently. You only see the final report.
+- **Knowledge accumulates**: the more you run `im-digest`, `meeting-recorder`, and `meeting-summary`, the richer your wiki becomes, and the better `customer-brief` gets.
+- **No manual filing**: skills save useful outputs to the knowledge base by default. You only see the final report.
 - **customer-brief modes**: use `--quick` for a 5-second wiki-only brief, or `--full` for a 20-second brief that also pulls C360 data.
 
 ---

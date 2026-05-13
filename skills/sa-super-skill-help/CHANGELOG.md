@@ -1,5 +1,14 @@
 # sa-super-skill-help CHANGELOG
 
+## [0.2.0] — 2026-05-13
+
+### Added
+- Added `meeting-recorder` to the architecture diagram, daily scenarios, and invocation examples.
+- Added Syncore setup instructions for live meeting recording.
+
+### Changed
+- Replaced "dual-write" wording with user-facing "save to the knowledge base" phrasing.
+
 ## [0.1.0] — 2026-05-13
 
 ### Added

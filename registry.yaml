@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-13T06:52:04Z
+generated_at: 2026-05-13T07:41:38Z
 
 skills:
   - name: customer-brief
@@ -110,6 +110,29 @@ skills:
       - "本地知识库"
       - "llm wiki"
 
+  - name: meeting-recorder
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Live meeting recording for SA work. Uses Lark Calendar to identify the current
+      meeting, starts Syncore note-taker recording, supports mid-meeting summaries
+      and Q&A, then saves the final AI summary to the SA knowledge base and local
+      wiki when available. Replaces Syncore's default Google Calendar kickoff with
+      lark-cli calendar lookup.
+    owners: ['Carey8175']
+    path: skills/meeting-recorder
+    triggers:
+      - "开始录会"
+      - "开始会议录制"
+      - "录一下这个会"
+      - "record this meeting"
+      - "start meeting recording"
+      - "start meeting notes"
+      - "结束录会"
+      - "结束会议"
+      - "end meeting"
+      - "summarize so far"
+
   - name: meeting-summary
     version: 0.1.0
     stage: beta
@@ -130,12 +153,12 @@ skills:
       - "会议总结"
 
   - name: sa-super-skill-help
-    version: 0.1.0
+    version: 0.2.0
     stage: stable
     description_for_install: |
       Onboarding guide for SA Super Skill Pack. Covers what the pack does,
-      step-by-step installation (lark-cli auth, Chrome extension, local wiki
-      setup), common daily use cases for each skill, and a guide for
+      step-by-step installation (lark-cli auth, Syncore, Chrome extension, local
+      wiki setup), common daily use cases for each skill, and a guide for
       contributing new skills including versioning rules and CI workflow.
       Invoke when lost, new to the system, or needing a refresher.
     owners: ['Carey8175']
@@ -181,15 +204,16 @@ profiles:
   - name: sa-mvp
     audience: SA
     description: |
-      SA daily minimum set — three signal sources (meeting summary, IM digest,
-      dashboard watch) flowing into sa-wiki, plus the wiki read/write skills.
-      Validates the "data foundation as shared memory" thesis end-to-end.
+      SA daily minimum set — live recording, meeting history, IM digest, C360,
+      and document ingestion flowing into sa-wiki, plus local wiki bootstrap,
+      customer briefing, and onboarding help.
     includes:
       - sa-wiki: "^0.2"
       - meeting-summary: "^0.1"
+      - meeting-recorder: "^0.1"
       - im-digest: "^0.3"
       - dashboard-watch: "^0.1"
       - local-wiki-init: "^0.1"
       - customer-brief: "^0.1"
-      - sa-super-skill-help: "^0.1"
+      - sa-super-skill-help: "^0.2"
 

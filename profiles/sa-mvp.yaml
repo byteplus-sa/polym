@@ -1,8 +1,8 @@
 name: sa-mvp
 description: |
-  SA daily minimum set — three signal sources (meeting summary, IM digest,
-  dashboard watch) flowing into sa-wiki, plus the wiki read/write skills.
-  Validates the "data foundation as shared memory" thesis end-to-end.
+  SA daily minimum set — live recording, meeting history, IM digest, C360,
+  and document ingestion flowing into sa-wiki, plus local wiki bootstrap,
+  customer briefing, and onboarding help.
 audience: SA
 
 includes:
@@ -11,6 +11,7 @@ includes:
 
   # signal producers
   - meeting-summary: "^0.1"    # ✅ implemented
+  - meeting-recorder: "^0.1"   # ✅ implemented
   - im-digest: "^0.3"          # ✅ implemented
   - dashboard-watch: "^0.1"    # ✅ implemented
 
@@ -21,8 +22,8 @@ includes:
   - customer-brief: "^0.1"     # ✅ implemented
 
   # onboarding
-  - sa-super-skill-help: "^0.1" # ✅ implemented
+  - sa-super-skill-help: "^0.2" # ✅ implemented
 
 notes: |
-  All 6 core skills implemented. MVP complete.
+  All core skills implemented. MVP complete.
   All skills follow core/local-wiki-ux.md UX standard (no "双写" exposed to users).

@@ -1,13 +1,13 @@
 name: sa-super-skill-help
-version: 0.1.0
+version: 0.2.0
 stage: stable
 owners:
   - Carey8175
 
 description_for_install: |
   Onboarding guide for SA Super Skill Pack. Covers what the pack does,
-  step-by-step installation (lark-cli auth, Chrome extension, local wiki
-  setup), common daily use cases for each skill, and a guide for
+  step-by-step installation (lark-cli auth, Syncore, Chrome extension, local
+  wiki setup), common daily use cases for each skill, and a guide for
   contributing new skills including versioning rules and CI workflow.
   Invoke when lost, new to the system, or needing a refresher.
 
