@@ -1,6 +1,5 @@
-# Placeholder. Wire up when tools/lint.sh exists.
-# Intent: every PR must pass lint + per-skill smoke tests before merge.
-name: lint
+name: lint-and-registry
+
 on:
   pull_request:
     paths:
@@ -9,21 +8,53 @@ on:
       - "core/**"
       - "manifest.schema.yaml"
       - "profile.schema.yaml"
+  push:
+    branches: [main]
+    paths:
+      - "skills/**"
+      - "profiles/**"
 
 jobs:
   lint:
+    name: Lint skill manifests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run repo lint
-        run: |
-          echo "TODO: implement tools/lint.sh"
-          # bash tools/lint.sh
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install PyYAML
+        run: pip install pyyaml
+      - name: Run lint
+        run: bash tools/lint.sh
 
-  smoke:
+  build-registry:
+    name: Rebuild registry.yaml
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Run smoke tests for changed skills
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install PyYAML
+        run: pip install pyyaml
+      - name: Build registry
+        run: bash tools/build-registry.sh
+      - name: Commit registry if changed
         run: |
-          echo "TODO: detect changed skills and run their tests/smoke.sh"
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add registry.yaml
+          if git diff --cached --quiet; then
+            echo "registry.yaml unchanged — nothing to commit"
+          else
+            git commit -m "chore: rebuild registry.yaml [skip ci]"
+            git push
+          fi

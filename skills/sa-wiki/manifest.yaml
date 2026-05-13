@@ -19,15 +19,12 @@ depends_on:
 
 io_contract:
   reads:
-    - source: sa-wiki/knowledge_index
-      description: Bitable KI_TABLE — index of all wiki pages
-    - source: sa-wiki/write_queue
-      description: Bitable WQ_TABLE — reads pending/status of proposals
+    - sa-wiki/knowledge_index
+    - sa-wiki/write_queue
   writes:
     - target: sa-wiki/write_queue
       schema: core/signal-envelope.schema.json
       signal_type: wiki-proposal
-      description: Every write goes through write_queue; coordinator commits to wiki
 
 triggers:
   - "SA wiki"
