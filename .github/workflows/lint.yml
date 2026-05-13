@@ -51,6 +51,8 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --ff-only origin main || git pull --no-rebase origin main
+          bash tools/build-registry.sh
           git add registry.yaml
           if git diff --cached --quiet; then
             echo "registry.yaml unchanged — nothing to commit"
