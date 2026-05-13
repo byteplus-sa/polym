@@ -10,13 +10,17 @@ includes:
   - sa-wiki: "^0.2"
 
   # signal producers
-  - meeting-summary: "^0.1"
-  - im-digest: "^0.1"
-  - dashboard-watch: "^0.1"
+  - meeting-summary: "^0.1"    # ✅ implemented
+  - im-digest: "^0.3"          # ✅ implemented
+  - dashboard-watch: "^0.1"    # ✅ implemented
+
+  # local wiki bootstrap
+  - local-wiki-init: "^0.1"    # ✅ implemented
 
   # reader / consumer
-  - customer-lookup: "^0.1"
+  - customer-lookup: "^0.1"    # ⏳ pending
 
 notes: |
-  All listed skills must be at stage >= beta before this profile ships to users.
-  Track readiness in each skill's CHANGELOG.md.
+  4 of 5 core skills implemented (meeting-summary, im-digest, dashboard-watch,
+  local-wiki-init). Only customer-lookup remains for MVP completion.
+  All skills follow core/local-wiki-ux.md UX standard.

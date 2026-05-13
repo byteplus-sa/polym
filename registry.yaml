@@ -3,11 +3,32 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-13T04:13:36Z
+generated_at: 2026-05-13T04:28:40Z
 
 skills:
+  - name: dashboard-watch
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Query BytePlus C360 customer usage dashboards by customer name and specific
+      question. Presents usage trends (tokens, MoM, product breakdown, quota status)
+      and surfaces actionable insights (usage drops, quota alerts, usage spikes).
+      Requires the Claude for Chrome extension for browser automation. If significant
+      insights are found, offers to save them to the knowledge base.
+    owners: ['Carey8175']
+    path: skills/dashboard-watch
+    triggers:
+      - "查一下客户的数据"
+      - "dashboard watch"
+      - "用了多少 tokens"
+      - "看一下用量"
+      - "C360"
+      - "数据看板"
+      - "客户用量"
+      - "月度用量"
+
   - name: im-digest
-    version: 0.2.0
+    version: 0.3.0
     stage: beta
     description_for_install: |
       Pulls yesterday's Lark group-chat messages via lark-cli, organises them into
@@ -48,6 +69,25 @@ skills:
       - "本地知识库"
       - "llm wiki"
 
+  - name: meeting-summary
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Organises all Lark meetings (VC + 妙记) within a time window into structured
+      knowledge. Default range: yesterday 00:00 to now. Extracts decisions, customer
+      feedback, feature asks, risk signals and more across 10 dimensions, then saves
+      to the knowledge base automatically. Prioritises 妙记 AI summaries; falls back
+      to transcripts or VC details.
+    owners: ['Carey8175']
+    path: skills/meeting-summary
+    triggers:
+      - "整理最近的会议"
+      - "帮我总结一下昨天的会"
+      - "meeting summary"
+      - "会议纪要整理"
+      - "整理会议"
+      - "会议总结"
+
   - name: sa-wiki
     version: 0.2.0
     stage: beta
@@ -79,7 +119,8 @@ profiles:
     includes:
       - sa-wiki: "^0.2"
       - meeting-summary: "^0.1"
-      - im-digest: "^0.1"
+      - im-digest: "^0.3"
       - dashboard-watch: "^0.1"
+      - local-wiki-init: "^0.1"
       - customer-lookup: "^0.1"
 

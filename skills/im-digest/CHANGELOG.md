@@ -1,5 +1,14 @@
 # im-digest CHANGELOG
 
+## [0.3.0] — 2026-05-13
+
+### Changed
+- Remove all "双写" / confirmation prompts from user-facing UX
+- Local wiki is now resolved silently; only one question asked if not found
+- Lark wiki always written automatically (no [Y/n] gate)
+- Follow core/local-wiki-ux.md standard (shared with all skills)
+- Phase 6 report simplified; risk signals highlighted prominently
+
 ## [0.2.0] — 2026-05-13
 
 ### Changed
