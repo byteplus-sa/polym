@@ -6,14 +6,16 @@ Extract along all 12 dimensions. Omit a section only if there is genuinely nothi
 
 ---
 
-### 1. 重点内容（Key Points）
+### 1. Key Points
+
 General noteworthy information. **Always include** for chats with any meaningful content.
 - What was the most important thing that happened yesterday in this chat?
 - 1–3 bullets max; must-reads for any SA who missed the day.
 
 ---
 
-### 2. 客户反馈 — 正面（Positive Feedback）
+### 2. Customer Feedback — Positive
+
 Customer expressions of satisfaction, surprise, or appreciation.
 
 Extraction signals: "效果不错"、"挺好的"、"比我想的好"、"满意"、"好用"、"准确"、"推荐"
@@ -22,7 +24,8 @@ Capture: what specifically impressed them, which product/feature.
 
 ---
 
-### 3. 客户反馈 — 负面（Negative Feedback / Complaints）
+### 3. Customer Feedback — Negative (Complaints)
+
 Customer dissatisfaction, bugs, broken expectations.
 
 Extraction signals: "有问题"、"报错了"、"效果差"、"用不了"、"比 X 差"、"不稳定"、"太慢"
@@ -31,7 +34,8 @@ Capture: what broke / disappointed, severity hint (blocking/annoying/minor).
 
 ---
 
-### 4. Feature Asks（功能需求）
+### 4. Feature Asks
+
 Explicit requests for features, capabilities, or behavioral changes.
 
 Extraction signals: "能不能支持"、"希望有"、"什么时候有"、"能加一个"、"建议"
@@ -40,7 +44,8 @@ Capture: the ask verbatim or close paraphrase, who asked, why (if stated), which
 
 ---
 
-### 5. 技术问题 & 报错（Technical Issues & Errors）
+### 5. Technical Issues & Errors
+
 API errors, integration blockers, performance issues, configuration problems.
 
 Extraction signals: error codes, stack traces, "API 返回"、"403"、"timeout"、"SDK"、"鉴权"
@@ -49,7 +54,8 @@ Capture: error code or description, context (what they were doing), whether it b
 
 ---
 
-### 6. 商务进展（Business Progress）
+### 6. Business Progress
+
 Contract discussions, pricing negotiations, renewal signals, deal stage changes, payment nodes, POC milestones.
 
 Extraction signals: "合同"、"续费"、"报价"、"付款"、"采购"、"审批"、"上线"、"milestone"、"预算"
@@ -60,30 +66,33 @@ Capture: what stage, any amounts (redact specifics — use "price discussed"), t
 
 ---
 
-### 7. 竞品信号（Competitive Intelligence）
+### 7. Competitive Intelligence
+
 Mentions of competitors, comparisons, switching discussions.
 
-Watch for: Runway, Pika, Kling, Sora, MidJourney, Stable Diffusion, OpenAI, Google Veo, Hailuo, Wan, Jimeng (即梦), Dreamina, Luma, ElevenLabs, and any "competitor" / "别家" / "换一个"
+Watch for: Runway, Pika, Kling, Sora, MidJourney, Stable Diffusion, OpenAI, Google Veo, Hailuo, Wan, Jimeng, Dreamina, Luma, ElevenLabs, and any "competitor" / "别家" / "换一个"
 
 Capture: which competitor, in what context (comparison, switching threat, partnership), sentiment.
 
 ---
 
-### 8. 风险信号（Churn / Risk Signals）
+### 8. Risk Signals (Churn / Risk)
+
 Signs that the customer relationship is at risk.
 
 Extraction signals:
 - Switching intent: "考虑换"、"试试别家"、"别家可以做"
 - Strong dissatisfaction: repeated complaints, escalation language
 - Deadline pressure: "必须下周"、"领导催"、"已经 delay 很久了"
-- Ghosting reversal: "一直没消息，突然说..."
+- Ghosting reversal: sudden message after long silence
 - Budget cut signals: "预算削减"、"暂停"
 
 **Always flag for SA attention even if mild.** Better false positive than miss.
 
 ---
 
-### 9. 用量 & 配额（Usage & Quota）
+### 9. Usage & Quota
+
 Quota issues, usage spikes, billing questions, cost concerns.
 
 Extraction signals: "quota 不够"、"超额"、"用量"、"账单"、"充值"、"token"、"限制"
@@ -92,16 +101,18 @@ Capture: what limit was hit, impact on customer (blocked / slowed), what they ne
 
 ---
 
-### 10. 人员 & 组织变动（Personnel & Org Changes）
+### 10. Personnel & Org Changes
+
 New contacts joining, decision-maker changes, team restructuring, contact going silent.
 
-Extraction signals: 新人 @, "新同事"、"换了负责人"、"原来的 XX 离职了"、"加了个 CTO"
+Extraction signals: new person @, "新同事"、"换了负责人"、"原来的 XX 离职了"、"加了个 CTO"
 
-Capture: who joined/left, their role, update the person page in wiki.
+Capture: who joined/left, their role; update person page in wiki.
 
 ---
 
-### 11. 产品理解偏差（Misunderstandings / Clarifications Needed）
+### 11. Product Misunderstandings / Clarifications Needed
+
 Customer has an incorrect understanding of product capabilities, limitations, or roadmap.
 
 Extraction signals:
@@ -114,7 +125,8 @@ Capture: what they misunderstood, what the correct understanding is, whether SA 
 
 ---
 
-### 12. 决策 & 待跟进（Decisions & Pending Items）
+### 12. Decisions & Pending Items
+
 **Decisions**: things that were agreed upon. Past tense, declarative.
 - "就用方案 A"（decision: chose approach A）
 - "下周 demo 定了"（decision: demo scheduled for next week）
@@ -144,75 +156,75 @@ Capture: what they misunderstood, what the correct understanding is, whether SA 
 ```markdown
 # IM Digest — <YESTERDAY>
 
-> 扫描 <N> 个聊天 · <M> 条有效消息 · 有内容 <K> 个
+> Scanned <N> chats · <M> valid messages · <K> with content
 
 ---
 
-## <客户名 / 聊天名>
+## <Customer Name / Chat Name>
 
-**消息量**：<n> 条 · **活跃时段**：<HH:MM–HH:MM> · **chat_id**：<oc_xxx>
+**Message count**: <n> · **Active period**: <HH:MM–HH:MM> · **chat_id**: <oc_xxx>
 
-### 重点内容
+### Key Points
 - <1–3 bullets>
 
-### 客户反馈（正面）
-- <bullet>（<sender>，<HH:MM>）
+### Customer Feedback (Positive)
+- <bullet> (<sender>, <HH:MM>)
 
-### 客户反馈（负面）
-- <bullet>（<sender>，<HH:MM>，严重程度：blocking/annoying/minor）
+### Customer Feedback (Negative)
+- <bullet> (<sender>, <HH:MM>, severity: blocking/annoying/minor)
 
 ### Feature Asks
-- 「<原文或近似paraphrase>」— <who>，产品：<product>
-  - 原因：<if stated>
+- "<verbatim or close paraphrase>" — <who>, product: <product>
+  - Reason: <if stated>
 
-### 技术问题 & 报错
-- <error_code/description>（<sender>，<HH:MM>，是否阻塞：是/否）
+### Technical Issues & Errors
+- <error_code/description> (<sender>, <HH:MM>, blocking: yes/no)
 
-### 商务进展
+### Business Progress
 - <progress item>
 
-### 竞品信号
-- 提及 <competitor>：<context>（<sentiment: neutral/threat/comparison>）
+### Competitive Intelligence
+- Mentioned <competitor>: <context> (<sentiment: neutral/threat/comparison>)
 
-### ⚠️ 风险信号
-- <signal>（<sender>，<HH:MM>）— 建议跟进
+### ⚠️ Risk Signals
+- <signal> (<sender>, <HH:MM>) — follow-up recommended
 
-### 用量 & 配额
+### Usage & Quota
 - <quota_issue>
 
-### 人员 & 组织变动
+### Personnel & Org Changes
 - <change>
 
-### 产品理解偏差
-- 误解：<what they think> → 实际：<correct understanding> — 需要澄清
+### Product Misunderstandings
+- Misunderstanding: <what they think> → Correct: <correct understanding> — clarification needed
 
-### 决策 & 待跟进
-**已决策：**
-- <decision>（by <who>）
+### Decisions & Pending Items
+**Decided:**
+- <decision> (by <who>)
 
-**待跟进：**
+**Pending:**
 - <open item>
 
 ---
 
-## 跨聊天洞见
+## Cross-Chat Insights
 
-> 仅在 2+ 个聊天出现同一模式时生成。
+> Only generate when the same pattern appears in 2+ chats.
 
-| 模式 | 涉及客户 | 严重程度 |
+| Pattern | Customers Involved | Severity |
 |---|---|---|
-| <同一 Feature Ask> | <A>, <B> | P1 |
-| <同一竞品对比> | <C>, <D> | 竞品威胁 |
-| <同一技术报错> | <A>, <C> | 需产品介入 |
+| <same Feature Ask> | <A>, <B> | P1 |
+| <same competitor comparison> | <C>, <D> | Competitive Threat |
+| <same technical error> | <A>, <C> | Requires Product Team |
 
 ---
 
-## 无实质内容的聊天
+## Chats with No Substantive Content
 
-| 聊天 | 消息数 | 原因 |
+| Chat | Message Count | Reason |
 |---|---|---|
-| <name> | <n> | 全为打招呼/噪音 |
-| <name> | 0 | 昨日无消息 |
+| <name> | <n> | All greetings / noise |
+| <name> | 0 | No messages yesterday |
 ```
 
 ---
@@ -224,34 +236,34 @@ Message received
     │
     ├── Length < 15 chars AND no product/customer name? → SKIP
     │
-    ├── Error code / "报错" / stack trace / API failure? → [5] 技术问题
+    ├── Error code / "报错" / stack trace / API failure? → [5] Technical Issues
     │
     ├── "能不能" / "希望" / "支持" / "功能" / "什么时候有"? → [4] Feature Ask
     │
-    ├── Competitor name mentioned (Runway/Kling/Sora...)? → [7] 竞品信号
+    ├── Competitor name mentioned (Runway/Kling/Sora...)? → [7] Competitive Intelligence
     │
-    ├── "换" / "别家" / "不满意" / deadline pressure? → [8] 风险信号
+    ├── "换" / "别家" / "不满意" / deadline pressure? → [8] Risk Signals
     │
-    ├── Quota / usage / billing / "充值"? → [9] 用量配额
+    ├── Quota / usage / billing / "充值"? → [9] Usage & Quota
     │
-    ├── "合同" / "续费" / "报价" / "采购" / "上线"? → [6] 商务进展
+    ├── "合同" / "续费" / "报价" / "采购" / "上线"? → [6] Business Progress
     │
-    ├── New person / "新同事" / role change? → [10] 人员变动
+    ├── New person / "新同事" / role change? → [10] Personnel Changes
     │
-    ├── Customer has wrong understanding? → [11] 产品理解偏差
+    ├── Customer has wrong understanding? → [11] Product Misunderstandings
     │
-    ├── Positive sentiment about product? → [2] 客户反馈（正面）
+    ├── Positive sentiment about product? → [2] Customer Feedback (Positive)
     │
-    ├── Negative sentiment / complaint? → [3] 客户反馈（负面）
+    ├── Negative sentiment / complaint? → [3] Customer Feedback (Negative)
     │
-    ├── Agreement / "就这样" / "定了"? → [12] 决策
+    ├── Agreement / "就这样" / "定了"? → [12] Decisions
     │
-    ├── Question unanswered / issue unresolved? → [12] 待跟进
+    ├── Question unanswered / issue unresolved? → [12] Pending Items
     │
-    └── Other meaningful content? → [1] 重点内容
+    └── Other meaningful content? → [1] Key Points
 ```
 
-Note: A single message can belong to multiple dimensions (e.g., a complaint that's also a Feature Ask). Extract for all applicable dimensions.
+Note: A single message can belong to multiple dimensions. Extract for all applicable dimensions.
 
 ---
 
@@ -283,11 +295,11 @@ Dimension → Local wiki action → Lark wiki (sa-wiki) action
 
 [6] Business Progress
     → Inline on customer page (NO dollar amounts)
-    → Lark wiki: APPEND TIMELINE (sanitised — no contract amounts)
+    → Lark wiki: APPEND TIMELINE (sanitised)
 
 [7] Competitive Signal
     → Inline on customer page
-    → Lark wiki: if same competitor mentioned by 2+ customers → APPEND to relevant topic page
+    → Lark wiki: if same competitor in 2+ customers → APPEND to relevant topic page
 
 [8] Risk Signal
     → Flag on customer page in ## Open feedback / pain points
@@ -300,7 +312,6 @@ Dimension → Local wiki action → Lark wiki (sa-wiki) action
 [10] Personnel Change
     → CREATE / UPDATE person page in local wiki
     → Update customer page lark_chat / contacts if needed
-    → (no Lark write unless significant org change)
 
 [11] Misunderstanding
     → Inline note on customer page
@@ -308,7 +319,6 @@ Dimension → Local wiki action → Lark wiki (sa-wiki) action
 
 [12] Decisions & Pending
     → Inline on customer page (decisions past-tense, pending as open notes — no checkboxes)
-    → (no Lark write unless decision involves a commitment from BytePlus side)
 ```
 
 ---

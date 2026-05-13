@@ -1,39 +1,42 @@
 ---
 name: meeting-summary
 version: 0.1.0
-description: "整理一段时间内的所有会议（飞书 VC + 妙记），提取客户洞察和重要结论，自动保存到知识库。触发词：'整理最近的会议'、'meeting summary'、'帮我总结一下昨天的会'、'会议纪要整理'。"
+description: "Compile all meetings (Lark VC + Minutes) over a time period, extract customer insights and key conclusions, and automatically save to the knowledge base. Default range: yesterday 00:00 to now. Trigger phrases: '整理最近的会议', 'meeting summary', '帮我总结一下昨天的会', '会议纪要整理'."
 metadata:
   requires:
     bins: ["lark-cli"]
 ---
 
-# meeting-summary — 会议内容整理
+# meeting-summary — Meeting Content Compilation
 
-把一段时间内的所有飞书会议编译成结构化知识，自动保存到知识库。
+Compile all Lark meetings over a time period into structured knowledge and automatically save to the knowledge base.
 
-## 触发场景
+## Trigger Scenarios
 
+- "Organize recent meetings"
+- "Help me summarize yesterday's meetings"
+- "meeting summary"
+- "Meeting notes compilation"
+- "Compile meetings from [time range]"
 - "整理最近的会议"
 - "帮我总结一下昨天的会"
-- "meeting summary"
 - "会议纪要整理"
-- "整理一下 [时间范围] 的会议"
 
-## 依赖
+## Dependencies
 
-- `lark-cli`（vc 模块 + minutes 模块）
-- 本地 wiki（路径自动解析，见 Phase 0）
-- Lark wiki 写入委托给 **sa-wiki skill**
+- `lark-cli` (vc module + minutes module)
+- Local wiki (path auto-resolved, see Phase 0)
+- Lark wiki writes delegated to the **sa-wiki skill**
 
 ---
 
-## 完整执行流程
+## Complete Execution Flow
 
-### Phase 0 — 准备
+### Phase 0 — Preparation
 
-**0.1 确定时间范围**
+**0.1 Determine Time Range**
 
-默认：昨天 00:00 到现在。
+Default: yesterday 00:00 to now.
 
 ```bash
 # macOS
@@ -45,22 +48,22 @@ NOW=$(date -u +"%Y-%m-%dT%H:%M:%S+08:00")
 YESTERDAY=$(date -d yesterday +%Y-%m-%d)
 ```
 
-如果用户指定了时间范围（"上周的会议"、"5月10日到12日"），按用户指定解析。
+If the user specifies a time range ("last week's meetings", "May 10th to 12th"), parse accordingly.
 
-**0.2 本地 wiki 解析（按 `core/local-wiki-ux.md` 标准）**
+**0.2 Local Wiki Path Resolution (per `core/local-wiki-ux.md` standard)**
 
-1. 检查 `LOCAL_WIKI_ROOT` 环境变量
-2. 查 Claude 记忆系统中 `local-wiki-root` 记忆
-3. 自动探测：`~/sa-wiki`、`~/wiki`、`~/LLM-Wiki`
-4. 全部未找到 → 询问一次：「还没有本地 wiki，要创建一个吗？[Y/n]」
-   - Y：「保存在哪里？（回车默认 ~/sa-wiki）」→ 调用 `local-wiki-init` → 保存到记忆
-   - N：本次跳过本地写入
+1. Check `LOCAL_WIKI_ROOT` environment variable
+2. Look up `local-wiki-root` in Claude's memory system
+3. Auto-detect: `~/sa-wiki`, `~/wiki`, `~/LLM-Wiki`
+4. None found → ask once: "No local wiki found yet. Would you like to create one? [Y/n]"
+   - Y: "Where should it be saved? (press Enter for default ~/sa-wiki)" → call `local-wiki-init` → save to memory
+   - N: Skip local write for this session
 
 ---
 
-### Phase 1 — 发现会议
+### Phase 1 — Discover Meetings
 
-**1.1 查询飞书 VC 历史会议**
+**1.1 Query Lark VC Meeting History**
 
 ```bash
 lark-cli vc +meetings-list \
@@ -69,7 +72,7 @@ lark-cli vc +meetings-list \
   --format json --as user
 ```
 
-**1.2 查询飞书妙记**
+**1.2 Query Lark Minutes**
 
 ```bash
 lark-cli minutes +list \
@@ -78,166 +81,164 @@ lark-cli minutes +list \
   --format json --as user
 ```
 
-合并两个来源，去重（同一会议可能同时出现在 VC 和妙记里），按开始时间升序排列。
+Merge both sources, deduplicate (same meeting may appear in both VC and Minutes), sort ascending by start time.
 
-展示会议列表（标题、时间、时长），如果有未参加的会议，标注 `[未参与]`，仍处理（有妙记的情况下）。
+Display the meeting list (title, time, duration). Mark meetings not attended as `[not attended]` but still process them (if Minutes are available).
 
 ---
 
-### Phase 2 — 获取每场会议内容
+### Phase 2 — Fetch Content for Each Meeting
 
-**对每场会议**，按优先级获取内容：
+**For each meeting**, retrieve content by priority:
 
-**优先：飞书妙记 AI 产物（最结构化）**
+**Priority: Lark Minutes AI outputs (most structured)**
 
 ```bash
-# 获取会议总结
+# Get meeting summary
 lark-cli minutes +get-summary --token <minute_token> --as user
 
-# 获取章节（带时间戳的分段）
+# Get chapters (timestamped segments)
 lark-cli minutes +get-chapters --token <minute_token> --as user
 
-# 获取待办
+# Get action items
 lark-cli minutes +get-todos --token <minute_token> --as user
 ```
 
-**次选：飞书妙记逐字稿**
+**Fallback: Lark Minutes verbatim transcript**
 
 ```bash
 lark-cli minutes +get-transcript --token <minute_token> --as user
 ```
 
-**兜底：VC 会议详情**
+**Last resort: VC meeting details**
 
 ```bash
 lark-cli vc +meeting-detail --meeting-id <meeting_id> --as user
 ```
 
-对于只有 VC 记录、没有妙记的会议：仅记录基础信息（参会人、时长），标注 `[无录音/纪要]`。
+For meetings with only a VC record and no Minutes: record only basic info (attendees, duration), mark as `[no recording/notes]`.
 
 ---
 
-### Phase 3 — 分析提炼
+### Phase 3 — Analysis and Extraction
 
-对每场会议，沿以下维度提炼（无内容则跳过）：
+For each meeting, extract along the following dimensions (skip if no content):
 
-| # | 维度 | 说明 |
+| # | Dimension | Description |
 |---|---|---|
-| 1 | **会议目的** | 这场会开的是什么，一句话 |
-| 2 | **关键结论** | 达成的共识、做的决定，过去时声明式 |
-| 3 | **客户反馈** | 正面/负面，具体产品/功能 |
-| 4 | **Feature Asks** | 客户明确提出的需求 |
-| 5 | **技术问题** | 报错、集成难点、API 问题 |
-| 6 | **商务进展** | 合同、续费、POC 里程碑（金额不入 wiki） |
-| 7 | **竞品信号** | 提及竞品及对比评价 |
-| 8 | **⚠️ 风险信号** | 流失风险、强烈不满、deadline 压力 |
-| 9 | **待跟进** | 有人提到但没解决，或我方承诺但未交付 |
-| 10 | **参会人** | 客户侧关键人（姓名、角色）|
+| 1 | **Meeting Purpose** | What this meeting was about, in one sentence |
+| 2 | **Key Conclusions** | Consensus reached and decisions made, stated in past tense |
+| 3 | **Customer Feedback** | Positive/negative, specific product/feature |
+| 4 | **Feature Asks** | Explicitly requested requirements from the customer |
+| 5 | **Technical Issues** | Errors, integration pain points, API issues |
+| 6 | **Business Progress** | Contract, renewal, POC milestones (monetary amounts not stored in wiki) |
+| 7 | **Competitor Signals** | Mentioned competitors and comparative comments |
+| 8 | **⚠️ Risk Signals** | Churn risk, strong dissatisfaction, deadline pressure |
+| 9 | **Follow-ups** | Items mentioned but unresolved, or commitments made but not yet delivered |
+| 10 | **Attendees** | Key contacts on the customer side (name, role) |
 
-**跨会议聚合**（所有会议处理完后）：
-- 同一客户的多场会议 → 合并到一个客户摘要
-- 同一问题在多场会议出现 → 跨会议洞见
+**Cross-meeting aggregation** (after all meetings are processed):
+- Multiple meetings for the same customer → merge into one customer summary
+- Same issue appearing in multiple meetings → cross-meeting insight
 
 ---
 
-### Phase 4 — 输出摘要
-
-在终端输出结构化摘要：
+### Phase 4 — Output Summary
 
 ```markdown
-# 会议摘要 — <YESTERDAY> → <NOW 时间>
+# Meeting Summary — <YESTERDAY> → <NOW>
 
-共 <N> 场会议 · <M> 场有妙记
+Total <N> meetings · <M> with Minutes
 
 ---
 
-## <客户名> · <会议标题> · <HH:MM>（<时长>min）
+## <Customer Name> · <Meeting Title> · <HH:MM> (<duration>min)
 
-### 关键结论
+### Key Conclusions
 - <past-tense decision>
 
-### 客户反馈
+### Customer Feedback
 - <feedback>
 
 ### Feature Asks
-- 「<ask>」— <who>，产品：<product>
+- "<ask>" — <who>, product: <product>
 
-### ⚠️ 风险信号
+### ⚠️ Risk Signals
 - <signal>
 
-### 待跟进
+### Follow-ups
 - <item>
 
 ---
 
-## [无妙记] <会议标题> · <时间>
-参会人：<N> 人 · 时长：<M> min · 无纪要记录
+## [No Minutes] <Meeting Title> · <Time>
+Attendees: <N> · Duration: <M> min · No meeting notes
 
 ---
 
-## 跨会议洞见
-- <insight>（涉及 <N> 场会议）
+## Cross-Meeting Insights
+- <insight> (across <N> meetings)
 ```
 
-**输出完成后直接写入，不询问用户。**
+**After output is complete, write immediately without asking the user.**
 
 ---
 
-### Phase 5 — 写入本地 wiki（静默）
+### Phase 5 — Write to Local Wiki (Silent)
 
-**仅当 LOCAL_WIKI_ROOT 有效时，静默执行。**
+**Only execute silently when LOCAL_WIKI_ROOT is valid.**
 
-对每场有内容的会议：
+For each meeting with content:
 
-1. **创建 source 页面** `wiki/sources/meeting-<slug>-<DATE>.md`
-2. **更新客户页面** `wiki/entities/customers/<slug>.md`：
-   - `## Recent interactions` 追加一行 + 链接到 source 页
-   - 新 Feature ask → `## Open feedback` 添加链接
-   - 商务进展 → 更新 `status` frontmatter（如有变化）
-   - 风险信号 → `## Open feedback / pain points` 标注
-3. 如有新参会人 → 创建/更新 `wiki/entities/people/<slug>.md`
-4. 更新 `wiki/index.md` + 追加 `wiki/log.md`
-
----
-
-### Phase 6 — 写入 Lark wiki
-
-**自动执行，使用 sa-wiki skill §5 WRITE workflow。**
-
-- 每个有内容的客户 → APPEND TIMELINE
-- Feature Asks → CREATE/APPEND feedback 页面
-- 技术问题 → CREATE/APPEND error-code 页面
-- 风险信号 → APPEND TIMELINE（标注风险标签）
-- 写入前执行脱敏（`META_DESENSITIZATION`，由 sa-wiki 管理）
+1. **Create source page** `wiki/sources/meeting-<slug>-<DATE>.md`
+2. **Update customer page** `wiki/entities/customers/<slug>.md`:
+   - Append a line + link under `## Recent interactions`
+   - New Feature ask → add link under `## Open feedback`
+   - Business progress → update `status` frontmatter (if changed)
+   - Risk signal → annotate under `## Open feedback / pain points`
+3. If new attendees → create/update `wiki/entities/people/<slug>.md`
+4. Update `wiki/index.md` + append to `wiki/log.md`
 
 ---
 
-### Phase 7 — 收尾报告
+### Phase 6 — Write to Lark Wiki
+
+**Execute automatically using sa-wiki skill §5 WRITE workflow.**
+
+- Each customer with content → APPEND TIMELINE
+- Feature Asks → CREATE/APPEND feedback page
+- Technical issues → CREATE/APPEND error-code page
+- Risk signals → APPEND TIMELINE (with risk tag)
+- Execute desensitization before writing (`META_DESENSITIZATION`, managed by sa-wiki)
+
+---
+
+### Phase 7 — Closing Report
 
 ```
-✅  会议整理完成（<YESTERDAY> → 现在）
+✅  Meeting compilation complete (<YESTERDAY> → now)
 
-<N> 场会议 · <M> 场有妙记 · <K> 个客户有更新
+<N> meetings · <M> with Minutes · <K> customers updated
 
-摘要：
-  关键结论：<N> 条
-  Feature asks：<N> 条
-  竞品信号：<N> 条
-  ⚠️ 风险信号：<N> 条（建议跟进：<客户名>）
+Summary:
+  Key conclusions: <N>
+  Feature asks: <N>
+  Competitor signals: <N>
+  ⚠️ Risk signals: <N> (suggested follow-up: <customer name>)
 
-已保存 <K> 条到知识库（<proposal_ids>）
+Saved <K> entries to knowledge base (<proposal_ids>)
 ```
 
 ---
 
-## 安全规则
+## Safety Rules
 
-- 会议内容不写合同金额，用 "price discussed"
-- 脱敏由 sa-wiki 负责
-- 只写入自己参加或有妙记权限的会议
-- 不写 `docs +update` 直接操作 wiki 页面
+- Do not write contract amounts; use "price discussed"
+- Desensitization is handled by sa-wiki
+- Only write meetings that you attended or have Minutes access to
+- Do not use `docs +update` to directly modify wiki pages
 
-## 参考文档
+## Reference Documents
 
 - [`core/local-wiki-ux.md`](../../core/local-wiki-ux.md)
 - [`references/meeting-fetch.md`](references/meeting-fetch.md)

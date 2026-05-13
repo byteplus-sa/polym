@@ -1,48 +1,50 @@
 ---
 name: customer-brief
 version: 0.1.0
-description: "会前客户情报快照：输入客户名，30 秒内生成可以直接去开会的 2 分钟快报。触发词：'帮我备一下 X 的课'、'customer brief X'、'X 的客户情报'、'开会前看一下 X'。"
+description: "Pre-meeting customer intelligence snapshot: input a customer name and get a 2-minute briefing in ~30 seconds. Trigger phrases: '帮我备一下 X 的课', 'customer brief X', 'X customer intelligence', 'prep for meeting with X'."
 metadata:
   requires:
     bins: ["lark-cli"]
 ---
 
-# customer-brief — 会前客户情报
+# customer-brief — Pre-Meeting Customer Intelligence
 
-**只读技能**：聚合现有数据源生成情报快照，不触发任何 wiki 写入。
+**Read-only skill**: aggregates existing data sources to generate an intelligence snapshot; does not trigger any wiki writes.
 
-## 触发场景
+## Trigger Scenarios
 
-- "帮我备一下 Acme 的课"
+- "Help me prep for my Acme meeting"
 - "customer brief Acme"
+- "Give me a brief on X before the meeting"
+- "Prep for my meeting with X"
+- "What should I know about X today?"
+- "帮我备一下 Acme 的课"
 - "开会前看一下 Acme 的情况"
-- "Acme 的客户情报"
 - "给我一份 X 的 brief"
-- "我要去见 X 了，帮我准备一下"
 
-## 参数
+## Parameters
 
 ```
-customer-brief <客户名>                 # 默认：14 天动态 + 3 路查询
-customer-brief <客户名> --quick         # 只查 wiki，~5 秒
-customer-brief <客户名> --full          # 4 路含 C360，~20 秒
-customer-brief <客户名> --days 7        # 自定义动态时间窗口（默认 14）
-customer-brief <客户名> --date tomorrow # 指定会议日期（影响建议措辞）
+customer-brief <customer name>                 # Default: 14-day activity + 3-way query
+customer-brief <customer name> --quick         # Wiki only, ~5 seconds
+customer-brief <customer name> --full          # 4-way including C360, ~20 seconds
+customer-brief <customer name> --days 7        # Custom activity window (default 14)
+customer-brief <customer name> --date tomorrow # Specify meeting date (affects suggestion wording)
 ```
 
 ---
 
-## 执行流程
+## Execution Flow
 
-### Phase 0 — 解析输入
+### Phase 0 — Parse Input
 
-从用户输入提取：
-- `CUSTOMER`：客户名（必须）。如果不明确，问：「你想查哪个客户？」
-- `DAYS`：动态时间窗口（默认 14）
-- `MODE`：quick / default / full（默认 default）
-- `MEETING_DATE`：会议日期（默认 today）
+Extract from user input:
+- `CUSTOMER`: customer name (required). If unclear, ask: "Which customer?"
+- `DAYS`: activity time window (default 14)
+- `MODE`: quick / default / full (default: default)
+- `MEETING_DATE`: meeting date (default: today)
 
-计算时间窗口：
+Calculate time window:
 ```bash
 # macOS
 WINDOW_START=$(date -v-${DAYS}d +%Y-%m-%d)
@@ -51,15 +53,15 @@ START_TIME="${WINDOW_START}T00:00:00+08:00"
 END_TIME="${TODAY}T23:59:59+08:00"
 ```
 
-**本地 wiki 路径解析**（按 `core/local-wiki-ux.md`）：env → 记忆 → 探测。找不到则跳过本地查询，不询问（brief 是读操作，不强制创建 wiki）。
+**Local wiki path resolution** (per `core/local-wiki-ux.md`): env → memory → detect. If not found, skip local query without prompting (brief is read-only; wiki creation is not forced).
 
 ---
 
-### Phase 1 — 4 路并发查询
+### Phase 1 — 4-Way Concurrent Query
 
-**在同一个消息里发出所有 Agent 调用**（并发，不串行）。
+**Issue all Agent calls in the same message** (concurrent, not sequential).
 
-#### 查询 ① — SA Wiki（必须）
+#### Query ① — SA Wiki (required)
 
 ```
 Agent(
@@ -80,7 +82,7 @@ Agent(
          ]},"page_size":50}' --format json --as user
 
     2. From results, identify and fetch (in parallel if possible):
-       - PROFILE doc (lark-cli docs +fetch --api-version v2 --doc <token> --as user)
+       - PROFILE doc
        - TIMELINE doc (most recent 10 entries)
        - Any open feedback pages (status=open or in-progress)
 
@@ -88,16 +90,16 @@ Agent(
     {
       "found": true/false,
       "profile": { stage, region, industry, account_owner, lark_chat, products_in_play[], key_contacts[] },
-      "recent_timeline": [ { date, type, summary } ],  // last 10 entries
+      "recent_timeline": [ { date, type, summary } ],
       "open_feedback": [ { title, priority, status, product } ],
-      "commitments": []  // items we committed to (from TIMELINE/interactions)
+      "commitments": []
     }
     Return under 400 words. If not found, return {"found": false}.
   """
 )
 ```
 
-#### 查询 ② — 本地 Wiki（如有 LOCAL_WIKI_ROOT）
+#### Query ② — Local Wiki (if LOCAL_WIKI_ROOT exists)
 
 ```
 Agent(
@@ -108,15 +110,9 @@ Agent(
 
     Steps:
     1. Find customer file: <LOCAL_WIKI_ROOT>/wiki/entities/customers/<slug>.md
-       (try slug variations: lowercase-kebab of <CUSTOMER>)
-    2. Read the file. Extract:
-       - status, lark_chat
-       - ## Products in play
-       - ## Recent interactions (entries within last <DAYS> days)
-       - ## Open feedback / pain points
-    3. Also check wiki/sources/ for recent chat/meeting files for this customer
-       (files matching: *<customer-slug>* with date within last <DAYS> days)
-       Extract TL;DR bullets from each.
+    2. Extract: status, lark_chat, Products in play, Recent interactions (last <DAYS> days),
+       Open feedback / pain points
+    3. Check wiki/sources/ for recent chat/meeting files for this customer
 
     Return structured JSON:
     {
@@ -127,12 +123,12 @@ Agent(
       "open_pain_points": [ "..." ],
       "recent_source_tldr": [ "..." ]
     }
-    Return under 300 words. If customer not found locally, return {"found": false}.
+    Return under 300 words. If not found, return {"found": false}.
   """
 )
 ```
 
-#### 查询 ③ — 近期 IM（default + full 模式）
+#### Query ③ — Recent IM (default + full mode)
 
 ```
 Agent(
@@ -143,15 +139,14 @@ Agent(
     Time range: <START_TIME> to <END_TIME>
 
     Steps:
-    1. Find the chat_id for this customer (use lark_chat from wiki if available,
+    1. Find chat_id (use lark_chat from wiki if available,
        otherwise: lark-cli im +chat-search --keyword "<CUSTOMER>" --as user)
     2. Fetch recent messages:
        lark-cli im +chat-messages-list \
          --chat-id <oc_xxx> \
          --start "<START_TIME>" --end "<END_TIME>" \
          --sort asc --page-size 50 --format json --as user
-    3. Filter noise (short messages, emoji, "好的/收到")
-    4. Extract: customer feedback, feature asks, risk signals, competitor mentions,
+    3. Filter noise; extract: feedback, feature asks, risk signals, competitor mentions,
        unanswered questions
 
     Return structured JSON:
@@ -159,21 +154,19 @@ Agent(
       "found": true/false,
       "message_count": N,
       "last_active": "YYYY-MM-DD",
-      "highlights": [
-        { "date": "MM-DD", "type": "feedback|ask|risk|competitor|decision", "summary": "..." }
-      ],
+      "highlights": [ { "date": "MM-DD", "type": "...", "summary": "..." } ],
       "unanswered_questions": [ "..." ],
       "risk_signals": [ "..." ],
       "competitor_mentions": [ { "name": "...", "context": "..." } ]
     }
-    Return under 300 words. If chat not found, return {"found": false}.
+    Return under 300 words.
   """
 )
 ```
 
-#### 查询 ④ — C360 用量（full 模式，且 Chrome 扩展已就绪）
+#### Query ④ — C360 Usage (full mode, Chrome extension ready)
 
-仅在 `--full` 且 `mcp__Claude_in_Chrome__list_connected_browsers` 返回非空列表时触发。
+Only triggered in `--full` mode when `mcp__Claude_in_Chrome__list_connected_browsers` returns a non-empty list.
 
 ```
 Agent(
@@ -181,128 +174,113 @@ Agent(
   description="Query C360 usage for customer",
   prompt="""
     Query C360 for customer: <CUSTOMER>
-    Use the dashboard-watch skill and c360-customer-usage skill pattern.
-    Read ~/.claude/skills/c360-customer-usage/SKILL.md for browser automation steps.
+    Use dashboard-watch skill and c360-customer-usage skill pattern.
 
-    Extract:
-    - Last 30 days total usage + daily average
-    - MoM % change
-    - Quota remaining %
-    - Main product by usage %
+    Extract: last 30 days total + daily avg, MoM % change, quota remaining %, top product.
 
-    Return structured JSON:
-    {
-      "found": true/false,
-      "monthly_tokens": N,
-      "mom_pct": "+/-N%",
-      "quota_remaining_pct": N,
-      "top_product": "...",
-      "alert": null | "quota_low" | "usage_drop" | "usage_stop"
-    }
-    Return under 150 words.
+    Return: { "found": bool, "monthly_tokens": N, "mom_pct": "+/-N%",
+              "quota_remaining_pct": N, "top_product": "...",
+              "alert": null | "quota_low" | "usage_drop" | "usage_stop" }
   """
 )
 ```
 
 ---
 
-### Phase 2 — 等待并汇聚结果
+### Phase 2 — Wait and Merge Results
 
-等所有 agent 返回（或超时 30 秒）。**不等 ④ 阻塞 ①②③**。
+Wait for all agents (timeout 30 seconds). **④ does not block ①②③**.
 
-用汇聚逻辑（见 [`references/query-strategy.md`](references/query-strategy.md)）合并去重：
-- 同一事件在 wiki 和 IM 都出现 → 保留一条，优先用 wiki 描述（更精炼）
-- 冲突信息（wiki 和 IM 不一致）→ 以 IM 为准（更新），标注 `[wiki 可能过时]`
-
----
-
-### Phase 3 — 规则引擎：生成"建议今天聊"
-
-基于汇聚结果，按以下规则确定性生成建议（不是 AI 自由发挥）：
-
-```
-优先级规则（按序检测，取前 3 条有触发的）：
-
-P0 — 必说（总是排第一）：
-  - Quota remaining < 20%  → "确认 quota 续费方案"
-  - 有未响应的客户提问（距今 > 3 天）→ "回复 X 的问题"
-  - 有明确风险信号（"换一家"/"考虑别家"）→ "了解并回应竞品考虑"
-
-P1 — 重要（如有则提）：
-  - 有过期承诺（我方承诺 > 7 天未跟进）→ "同步 [承诺内容] 进展"
-  - 有 open feedback P0/P1 且 > 14 天无更新 → "更新 [feedback名] 状态"
-  - 用量下降 MoM < -20% → "了解用量下降原因"
-  - 出现竞品提及 → "准备针对 [竞品名] 的差异化"
-
-P2 — 有就提：
-  - 有未确认的 Feature ask → "确认 [ask] 的优先级/时间线"
-  - 产品更新或新功能 → "介绍最新 [产品] 进展"
-```
+Merging (see [`references/query-strategy.md`](references/query-strategy.md)):
+- Same event in both wiki and IM → keep one, prefer wiki description
+- Conflicting info → use IM (more recent), annotate `[wiki may be outdated]`
 
 ---
 
-### Phase 4 — 输出 Brief
+### Phase 3 — Rules Engine: "Suggested Topics for Today"
+
+Deterministic rules — not free-form AI generation:
+
+```
+Priority rules (check in order, take first 3 that trigger):
+
+P0 — Must discuss (always first):
+  - Quota remaining < 20%       → "Confirm quota renewal plan"
+  - Unanswered question > 3 days → "Reply to X's question"
+  - Clear risk signal             → "Understand and address competitor consideration"
+
+P1 — Important (raise if applicable):
+  - Our commitment > 7 days without follow-up → "Sync progress on [commitment]"
+  - Open feedback P0/P1 no update > 14 days  → "Update status of [feedback]"
+  - Usage decline MoM < -20%                 → "Understand reason for usage decline"
+  - Competitor mention appeared              → "Prepare differentiation vs [competitor]"
+
+P2 — Raise if present:
+  - Unconfirmed Feature ask → "Confirm priority/timeline for [ask]"
+  - Product update/new feature → "Introduce latest [product] progress"
+```
+
+---
+
+### Phase 4 — Output Brief
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  <CUSTOMER> — 会前情报  <TODAY>
+  <CUSTOMER> — Pre-Meeting Intelligence  <TODAY>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-【速览】
-  阶段: <stage> | 产品: <products> | 负责人: <account_owner>
-  上次接触: <N天前>（<type>）| 关键联系人: <name, role>
+[Quick View]
+  Stage: <stage> | Products: <products> | Owner: <account_owner>
+  Last contact: <N days ago> (<type>) | Key contact: <name, role>
 
-【近期动态】  最近 <DAYS> 天
+[Recent Activity]  Last <DAYS> days
   <MM-DD>  <type>  <summary>
-  <MM-DD>  <type>  <summary>
-  ...（最多 6 条，按时间倒序）
+  ...(max 6, reverse chronological)
 
-【未关闭事项】                     （空则隐藏）
+[Open Items]                           (hidden if empty)
   ⚠️  <quota/risk>
   ❓  <unanswered question>
-  📋  <open feedback title>（<priority>）
+  📋  <open feedback title> (<priority>)
 
-【我们的承诺】                      （空则隐藏）
-  → <commitment>（<date> 承诺，已过 <N> 天）
+[Our Commitments]                      (hidden if empty)
+  → <commitment> (committed <date>, <N> days ago)
 
-【竞品雷达】                        （空则隐藏）
-  <competitor>：<context>（<date>）
+[Competitor Radar]                     (hidden if empty)
+  <competitor>: <context> (<date>)
 
-【建议今天聊】
+[Suggested Topics for Today]
   1. <rule-driven suggestion>
   2. <rule-driven suggestion>
   3. <rule-driven suggestion>
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-数据来源: <标注哪几路有数据>  |  模式: <quick/default/full>
+Sources: <which sources had data>  |  Mode: <quick/default/full>
 ```
 
-如果某个 section 完全没有内容，整块隐藏（不显示空标题）。
+Empty sections are hidden entirely.
 
 ---
 
-### Phase 5 — 可选后续动作
-
-Brief 输出后，提示可用的快速操作：
+### Phase 5 — Optional Follow-up Actions
 
 ```
-需要更多信息？
-  • 输入 "deep dive" 获取完整 wiki 档案
-  • 输入 "recent meetings" 查看最近会议详情
-  • 输入 "C360" 拉取用量数据（如未显示）
+Need more information?
+  • Type "deep dive" for the full wiki profile
+  • Type "recent meetings" to view recent meeting details
+  • Type "C360" to pull usage data (if not shown)
 ```
 
 ---
 
-## 安全规则
+## Safety Rules
 
-- 纯读操作，不写任何 wiki 或 write_queue
-- 不展示合同金额，用量数字以趋势（+/-N%）为主
-- 客户 PII（手机/邮件）不在摘要中显示，但在详情中可查
+- Read-only operation; no wiki or write_queue writes
+- Do not display contract amounts; use trends (+/-N%) for usage figures
+- Customer PII (phone/email) not shown in summary but accessible in detail view
 
-## 参考文档
+## Reference Documents
 
 - [`references/query-strategy.md`](references/query-strategy.md)
 - [`core/local-wiki-ux.md`](../../core/local-wiki-ux.md)
-- sa-wiki SKILL.md §3（Bitable 常量）
-- sa-wiki SKILL.md §4（READ workflow）
+- sa-wiki SKILL.md §3 (Bitable constants)
+- sa-wiki SKILL.md §4 (READ workflow)

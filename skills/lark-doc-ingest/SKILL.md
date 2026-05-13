@@ -1,41 +1,44 @@
 ---
 name: lark-doc-ingest
 version: 0.1.0
-description: "扫描一段时间内新增/修改的飞书文档，自动提炼并入库到知识库。默认范围：昨天 00:00 到现在。支持单篇文档指定入库。触发词：'把最近的文档入库'、'lark doc ingest'、'帮我整理一下最近的文档'、'把这个文档存进知识库'。"
+description: "Scan newly added/modified Lark documents over a time period, automatically extract and ingest into the knowledge base. Default range: yesterday 00:00 to now. Supports ingesting a single specified document. Trigger phrases: '把最近的文档入库', 'lark doc ingest', 'ingest recent docs', 'save this document to knowledge base'."
 metadata:
   requires:
     bins: ["lark-cli"]
 ---
 
-# lark-doc-ingest — 飞书文档入库
+# lark-doc-ingest — Lark Document Ingestion
 
-扫描时间范围内的飞书文档，提炼关键内容，写入知识库。和 `im-digest` / `meeting-summary` 一样，自动保存，不打扰用户。
+Scan Lark documents within a time range, extract key content, and write to the knowledge base. Like `im-digest` / `meeting-summary`, saves automatically without interrupting the user.
 
-## 触发场景
+## Trigger Scenarios
 
+- "Ingest recent documents"
+- "Help me organize recent documents"
+- "Save this document to the knowledge base" (provide URL)
+- "lark doc ingest"
+- "Ingest yesterday's Lark documents"
 - "把最近的文档入库"
 - "帮我整理一下最近的文档"
-- "把这个文档存进知识库"（同时提供 URL）
-- "lark doc ingest"
-- "ingest 一下昨天的 Lark 文档"
+- "把这个文档存进知识库"
 
-## 参数
+## Parameters
 
 ```
-lark-doc-ingest                          # 默认：昨天 00:00 到现在
-lark-doc-ingest --url <lark-doc-url>     # 指定单篇文档
-lark-doc-ingest --days 3                 # 自定义时间范围（天）
-lark-doc-ingest --folder <folder-token>  # 限制到某个文件夹
-lark-doc-ingest --dry-run                # 只显示会处理哪些文档，不实际写入
+lark-doc-ingest                          # Default: yesterday 00:00 to now
+lark-doc-ingest --url <lark-doc-url>     # Specify a single document
+lark-doc-ingest --days 3                 # Custom time range (days)
+lark-doc-ingest --folder <folder-token>  # Restrict to a specific folder
+lark-doc-ingest --dry-run                # Preview without writing
 ```
 
 ---
 
-## 完整执行流程
+## Complete Execution Flow
 
-### Phase 0 — 准备
+### Phase 0 — Preparation
 
-**0.1 计算时间范围**
+**0.1 Calculate Time Range**
 
 ```bash
 # macOS
@@ -47,114 +50,102 @@ NOW=$(date +"%Y-%m-%dT%H:%M:%S+08:00")
 YESTERDAY=$(date -d yesterday +%Y-%m-%d)
 ```
 
-用户指定 `--days N` 时：
+When the user specifies `--days N`:
 ```bash
 START_TIME=$(date -v-${N}d +%Y-%m-%dT00:00:00+08:00)   # macOS
 START_TIME=$(date -d "${N} days ago" +%Y-%m-%dT00:00:00+08:00)  # Linux
 ```
 
-**0.2 本地 wiki 路径解析（按 `core/local-wiki-ux.md` 标准）**
+**0.2 Local Wiki Path Resolution (per `core/local-wiki-ux.md` standard)**
 
-env → 记忆 → 探测 → 询问一次（如果没有）。
+env → memory → detect → ask once (if not found).
 
-**0.3 加载已知客户列表（用于分类）**
+**0.3 Load Known Customer List (for classification)**
 
-从本地 wiki 读取已知客户名：
 ```bash
 grep -h "^# " $LOCAL_WIKI_ROOT/wiki/entities/customers/*.md 2>/dev/null \
   | sed 's/^# //'
 ```
-同时读取 `aliases` frontmatter。这个列表用于后面的文档分类。
+
+Also read `aliases` frontmatter. Used for document classification.
 
 ---
 
-### Phase 1 — 发现文档
+### Phase 1 — Discover Documents
 
-**指定单篇文档模式（`--url` 参数）**
+**Single document mode (`--url` parameter)**
 
-直接跳到 Phase 2 处理该 URL，跳过发现步骤。
+Jump directly to Phase 2; skip discovery.
 
-**默认模式：扫描时间范围内的文档**
+**Default mode: scan time range**
 
-并行执行两个搜索（合并去重）：
+Run two searches in parallel (merge and deduplicate):
 
 ```bash
-# 搜索 1：我最近编辑的文档
+# Search 1: documents I recently edited
 lark-cli drive +search --query "" \
   --edited-since "${YESTERDAY}" \
   --doc-types docx \
   --page-size 20 --format json --as user
 
-# 搜索 2：最近新建的文档
+# Search 2: recently created documents
 lark-cli drive +search --query "" \
   --created-since "${YESTERDAY}" \
   --doc-types docx \
   --page-size 20 --format json --as user
 ```
 
-如果用户指定了 `--folder`，两个命令都加 `--folder-tokens <folder-token>`。
+If `--folder` is specified, add `--folder-tokens <folder-token>` to both commands.
 
-**去重规则**：同一 `token` 只保留一条（两个搜索都返回的情况）。
+**Deduplication rule**: keep only one entry per `token`.
 
-**过滤——跳过以下文档：**
+**Filtering — skip:**
 
-1. **已入库**：检查本地 wiki `$LOCAL_WIKI_ROOT/wiki/sources/` 目录中是否有 frontmatter 包含 `doc_id: <token>` 的文件
-2. **标题黑名单**：标题匹配以下模式的跳过（可配置）：
-   - 纯个人记录：`日记`、`today`、`日常`、`备忘`（仅标题完全是这些词）
-   - 看起来是临时草稿：标题以 `草稿-`、`draft-`、`tmp-` 开头
-3. **文档太短**：Phase 2 读取后内容 < 200 字（提炼无意义）
+1. **Already ingested**: check `$LOCAL_WIKI_ROOT/wiki/sources/` for frontmatter containing `doc_id: <token>`
+2. **Title blacklist**: purely personal records, temp drafts (`draft-`, `tmp-`)
+3. **Content too short**: < 200 characters after Phase 2 read
 
-**展示将处理的文档列表**（如果多于 5 篇先列出，让用户确认或修改）：
+**Display list** (if > 5 docs, ask for confirmation; 1–3 docs proceed directly):
 
 ```
-发现 <N> 篇文档（<START_DATE> → 现在）
+Found <N> documents (<START_DATE> → now)
 
-将处理：
-  □ 《Acme POC 评估报告》       docx · 修改于 2026-05-12 15:30
-  □ 《Seedance 竞品分析》        docx · 修改于 2026-05-12 10:00
-  □ 《BytePlus 合规指南更新》    docx · 新建于 2026-05-12 09:00
+Will process:
+  □ "Acme POC Evaluation Report"   docx · modified 2026-05-12 15:30
+  □ "Seedance Competitor Analysis"  docx · modified 2026-05-12 10:00
 
-将跳过（已入库）：
-  ✓ 《Acme 需求文档 v2》        已于 2026-05-10 入库
+Will skip (already ingested):
+  ✓ "Acme Requirements Doc v2"     ingested on 2026-05-10
 
-继续？[Y/n]（默认 Y，5 秒无响应自动继续）
+Continue? [Y/n] (auto-continues after 5 seconds)
 ```
-
-如果只有 1-3 篇文档，直接处理不询问。
 
 ---
 
-### Phase 2 — 读取 & 分类（并行处理，每批最多 5 篇）
+### Phase 2 — Read & Classify (parallel, max 5 per batch)
 
-**对每篇文档：**
+**For each document:**
 
-**Step A — 读取大纲**（低成本，先判断是否值得处理）
+**Step A — Read outline** (low cost; decide before full fetch)
 
 ```bash
 lark-cli docs +fetch --api-version v2 \
   --doc <token> --scope outline --as user
 ```
 
-返回标题层级结构，不读全文。
-
-**Step B — 分类**（基于标题 + 大纲）
+**Step B — Classify** (based on title + outline)
 
 ```
-分类逻辑：
-1. 标题或 H1 包含已知客户名 / 客户 aliases → "客户文档"
-2. 标题包含 BytePlus 产品名（Seedance / Seedream / ArkClaw / ARK / ...）→ "产品文档"
-3. 标题包含竞品名（Runway / Pika / Kling / Sora / ...）→ "竞品文档"
-4. 标题或 H1 包含"竞品"、"对比"、"vs"、"分析"→ "竞品/分析文档"
-5. 有 "FAQ"、"指南"、"SOP"、"手册"→ "知识文档"
-6. 其余 → "通用文档"
+1. Title/H1 contains known customer name/alias → "Customer Document"
+2. Title contains BytePlus product name         → "Product Document"
+3. Title contains competitor name               → "Competitor Document"
+4. Title contains "competitor"/"comparison"/"vs"/"analysis" → "Competitor/Analysis Document"
+5. Contains "FAQ"/"guide"/"SOP"/"manual"        → "Knowledge Document"
+6. Everything else                              → "General Document"
 ```
 
-**Step C — 读取全文**（基于分类结果决定是否读）
+**Step C — Read full text** (skip if outline ≤ 3 lines AND no known customer/product)
 
-跳过全文的情况：
-- 内容大纲只有 3 行以下 AND 不含已知客户/产品 → 内容太少，跳过
-
-其余情况读全文：
 ```bash
 lark-cli docs +fetch --api-version v2 \
   --doc <token> --format pretty --as user
@@ -162,121 +153,111 @@ lark-cli docs +fetch --api-version v2 \
 
 ---
 
-### Phase 3 — 提炼内容
+### Phase 3 — Extract Content
 
-对每篇已读取全文的文档，提炼以下信息：
-
-| 提炼项 | 方法 |
+| Extraction Item | Method |
 |---|---|
-| **TL;DR**（3-5 条） | 文档最重要的结论/内容 |
-| **涉及客户** | 从内容中识别客户名（对照已知列表） |
-| **涉及产品** | BytePlus 产品名称 |
-| **涉及人员** | 姓名 + 角色（如有） |
-| **Feature asks** | 客户明确提出的功能需求 |
-| **决策/结论** | 文档中记录的决定 |
-| **竞品信息** | 竞品提及和对比 |
-| **商务信息** | 合同、定价相关内容（概述，不写具体金额） |
+| **TL;DR** (3–5 bullets) | Most important conclusions/content |
+| **Customers mentioned** | Identify from content vs known list |
+| **Products mentioned** | BytePlus product names |
+| **People mentioned** | Name + role (if available) |
+| **Feature asks** | Explicitly requested functionality |
+| **Decisions/conclusions** | Recorded decisions |
+| **Competitor information** | Mentions and comparisons |
+| **Business information** | Contract/pricing overview (no specific amounts) |
 
-提炼后执行**脱敏检查**（参考 sa-wiki `META_DESENSITIZATION` 规则）：
-- 移除 AK/SK、token、密码
-- 替换客户 PII 为 [redacted]
-- 合同金额替换为 "price discussed"
+After extraction, run **desensitization check** (sa-wiki `META_DESENSITIZATION` rules):
+- Remove AK/SK, tokens, passwords
+- Replace customer PII with [redacted]
+- Replace contract amounts with "price discussed"
 
 ---
 
-### Phase 4 — 写入本地 wiki（静默）
+### Phase 4 — Write to Local Wiki (Silent)
 
-**仅当 LOCAL_WIKI_ROOT 有效时，静默执行。**
+**Only execute silently when LOCAL_WIKI_ROOT is valid.**
 
-遵守 `SCHEMA.md`：raw 不可修改、双向关系、绝对日期。
+**For each document:**
 
-**对每篇文档：**
+1. **Save raw content**: `$LOCAL_WIKI_ROOT/raw/doc-<slug>-<YYYY-MM-DD>.md`
 
-1. **保存原始内容**（raw）：
-   ```
-   $LOCAL_WIKI_ROOT/raw/doc-<slug>-<YYYY-MM-DD>.md
-   ```
-   写入文档全文（已脱敏版本）。
-
-2. **创建 source 页面** `wiki/sources/doc-<slug>-<DATE>.md`：
+2. **Create source page** `wiki/sources/doc-<slug>-<DATE>.md`:
    ```markdown
    ---
    type: source
    kind: doc
    raw_path: raw/doc-<slug>-<DATE>.md
-   customer: "[[<customer-slug>]]"   # 如有
+   customer: "[[<customer-slug>]]"
    date: <DATE>
-   url: <原始 Lark URL（去掉 disposable_login_token）>
+   url: <original Lark URL (strip disposable_login_token)>
    doc_id: <token>
    ---
-   
-   # <文档标题>
-   
+
+   # <Document Title>
+
    ## TL;DR
    - <bullet>
-   
+
    ## Extracted pages
    - [[<entity-slug>]]
-   
+
    ## Verbatim quotes worth keeping
    > "<quote>"
    ```
 
-3. **创建/更新实体页面**（如有涉及）：
-   - 涉及客户 → 更新 `wiki/entities/customers/<slug>.md` 的 Sources 和 Recent interactions
-   - 涉及产品 → 更新 `wiki/entities/products/<slug>.md`
-   - Feature ask → 创建/更新 `wiki/concepts/feedback-<slug>.md`
-   - 竞品信息 → 更新产品页面的 Related / Competition 部分
+3. **Create/update entity pages** (if applicable):
+   - Customer → update Sources and Recent interactions
+   - Product → update product page
+   - Feature ask → create/update `wiki/concepts/feedback-<slug>.md`
+   - Competitor info → update product page Competition section
 
-4. 更新 `wiki/index.md` + 追加 `wiki/log.md`
-
----
-
-### Phase 5 — 写入 Lark wiki
-
-**自动执行，使用 sa-wiki skill §5 WRITE workflow。**
-
-对每篇有价值的文档（TL;DR 非空，有涉及客户/产品）：
-
-- 若涉及客户 → APPEND 到 `customers/<slug>/TIMELINE`
-- 若有 Feature ask → CREATE/APPEND feedback 页面
-- 若有新知识（概念、SOP、产品功能解析）→ CREATE topic 页面
-- 若是竞品文档 → APPEND 到对应产品页面的竞品部分
-
-写入前自动执行 sa-wiki 的脱敏流程。
+4. Update `wiki/index.md` + append to `wiki/log.md`
 
 ---
 
-### Phase 6 — 收尾报告
+### Phase 5 — Write to Lark Wiki
+
+**Execute automatically using sa-wiki skill §5 WRITE workflow.**
+
+- Customer-related → APPEND to `customers/<slug>/TIMELINE`
+- Feature ask → CREATE/APPEND feedback page
+- New knowledge (concept, SOP, product breakdown) → CREATE topic page
+- Competitor document → APPEND to product page competitor section
+
+Run sa-wiki desensitization workflow before writing.
+
+---
+
+### Phase 6 — Closing Report
 
 ```
-📄  文档入库完成（<YESTERDAY> → 现在）
+📄  Document ingestion complete (<YESTERDAY> → now)
 
-发现 <N> 篇 · 入库 <K> 篇 · 跳过 <M> 篇
+Found <N> · Ingested <K> · Skipped <M>
 
-入库详情：
-  ✅ 《Acme POC 评估报告》    → 客户文档 · 更新 Acme 页面 + 新建 1 个 feedback
-  ✅ 《Seedance 竞品分析》    → 竞品文档 · 更新 Seedance 产品页面
-  ✅ 《BytePlus 合规指南》    → 知识文档 · 新建 topic 页面
+Ingestion details:
+  ✅ "Acme POC Evaluation Report"   → Customer doc · Updated Acme + created 1 feedback
+  ✅ "Seedance Competitor Analysis" → Competitor doc · Updated Seedance product page
+  ✅ "BytePlus Compliance Guide"    → Knowledge doc · Created new topic page
 
-跳过：
-  ⏭️ 《今日备忘》            → 内容太短
-  ⏭️ 《Acme 需求文档 v1》   → 已入库
+Skipped:
+  ⏭️ "Today's Notes"              → Content too short
+  ⏭️ "Acme Requirements Doc v1"  → Already ingested
 
-已保存 <K> 条到知识库（<proposal_ids>）
+Saved <K> entries to knowledge base (<proposal_ids>)
 ```
 
 ---
 
-## 安全规则
+## Safety Rules
 
-- 读取文档前不存储任何内容，fetch 失败不影响其他文档处理
-- 脱敏在写入 wiki 前执行，原始内容仅保存在本地 `raw/`
-- 不处理无 lark-doc 读取权限的文档（403 静默跳过，在报告中标注 `[无权限]`）
-- 不直接 `docs +update` wiki 页面
+- No content stored before a document is read; fetch failures don't affect other documents
+- Desensitization runs before wiki writes; raw content only saved locally in `raw/`
+- Documents without read permission are silently skipped (403 → marked `[no permission]` in report)
+- Do not use `docs +update` to directly modify wiki pages
 
-## 参考文档
+## Reference Documents
 
 - [`references/doc-fetch-workflow.md`](references/doc-fetch-workflow.md)
 - [`core/local-wiki-ux.md`](../../core/local-wiki-ux.md)
-- sa-wiki SKILL.md §5（WRITE workflow）
+- sa-wiki SKILL.md §5 (WRITE workflow)

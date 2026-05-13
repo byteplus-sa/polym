@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-13T05:02:15Z
+generated_at: 2026-05-13T05:59:25Z
 
 skills:
   - name: customer-brief
@@ -142,13 +142,16 @@ skills:
     path: skills/sa-wiki
     triggers:
       - "SA wiki"
+      - "knowledge base"
+      - "customer profile"
+      - "archive to wiki"
+      - "file into wiki"
+      - "write_queue"
       - "我们的知识库"
       - "客户档案"
       - "查一下客户"
       - "帮我把这条信息归档到 wiki"
       - "整理进 wiki"
-      - "write_queue"
-      - "knowledge base"
 
 profiles:
   - name: sa-mvp

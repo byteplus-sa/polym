@@ -1,197 +1,196 @@
 ---
 name: dashboard-watch
 version: 0.1.0
-description: "通过客户名 + 具体需求查询 C360 数据看板，呈现用量趋势和洞察。触发词：'查一下客户X的数据'、'dashboard watch'、'X用了多少tokens'、'看一下X的用量'。"
+description: "Query the C360 data dashboard by customer name and specific request, presenting usage trends and insights. Trigger phrases: '查一下客户X的数据', 'dashboard watch', 'X used how many tokens', '看一下X的用量'."
 metadata:
   requires:
     bins: ["lark-cli"]
     chrome_extension: true
 ---
 
-# dashboard-watch — 客户数据看板查询
+# dashboard-watch — Customer Data Dashboard Query
 
-通过客户名称 + 具体问题，查询 C360 用量数据，并将有价值的洞察保存到知识库。
+Query C360 usage data by customer name + specific question, and save valuable insights to the knowledge base.
 
-## 触发场景
+## Trigger Scenarios
 
+- "Check Acme's data"
+- "How many tokens did X use last month"
+- "Show me X's usage trend"
+- "dashboard watch"
+- "Pull X's C360 data"
+- "X's monthly usage report"
 - "查一下 Acme 的数据"
 - "X 上个月用了多少 tokens"
-- "看一下 X 的用量趋势"
-- "dashboard watch"
 - "帮我拉一下 X 的 C360 数据"
-- "X 的月度用量报告"
 
 ---
 
-## 完整执行流程
+## Complete Execution Flow
 
-### Phase 0 — 准备
+### Phase 0 — Preparation
 
-**0.1 解析输入**
+**0.1 Parse Input**
 
-从用户请求中提取：
-- `customer_name`：客户名称（必须）
-- `query`：具体问题（可选，默认：近 30 天用量概览）
-- `date_range`：时间范围（可选，默认：近 30 天）
+Extract from the user's request:
+- `customer_name`: customer name (required)
+- `query`: specific question (optional, default: last 30 days usage overview)
+- `date_range`: time range (optional, default: last 30 days)
 
-如果 `customer_name` 不明确，直接问：「你想查哪个客户的数据？」
+If `customer_name` is unclear, ask: "Which customer's data would you like to query?"
 
-**0.2 本地 wiki 解析（按 `core/local-wiki-ux.md` 标准）**
+**0.2 Local Wiki Path Resolution (per `core/local-wiki-ux.md` standard)**
 
-同 im-digest Phase 0.2 流程：env → 记忆 → 探测 → 询问（只问一次）。
+env → memory → detect → ask once.
 
-**0.3 检查 Chrome 扩展**
+**0.3 Check Chrome Extension**
 
-C360 查询通过 Claude in Chrome 扩展进行浏览器自动化。
+C360 queries are performed via browser automation using the Claude in Chrome extension.
 
-检查方式：
 ```
-尝试调用 mcp__Claude_in_Chrome__list_connected_browsers
+Try calling mcp__Claude_in_Chrome__list_connected_browsers
 ```
 
-- **扩展已连接**：显示已连接浏览器列表，继续
-- **扩展未安装 / 未连接**：进入 § Chrome 扩展安装引导
+- **Extension connected**: display connected browser list, continue
+- **Extension not installed / not connected**: proceed to § Chrome Extension Installation Guide
 
 ---
 
-## Chrome 扩展安装引导
+## Chrome Extension Installation Guide
 
-当扩展不可用时，向用户展示：
+When the extension is unavailable, show the user:
 
 ```
-需要安装 Claude for Chrome 扩展才能查询 C360 数据。
+The Claude for Chrome extension is required to query C360 data.
 
-安装步骤（约 2 分钟）：
+Installation steps (~2 minutes):
 
-1. 打开 Chrome，访问：
-   https://chromewebstore.google.com/detail/claude/...
-   （或在 Chrome 扩展商店搜索 "Claude"）
+1. Open Chrome and visit the Chrome Web Store, search for "Claude"
+   (or ask your team for the internal install link)
 
-2. 点击「添加到 Chrome」→「添加扩展程序」
+2. Click "Add to Chrome" → "Add extension"
 
-3. 点击 Chrome 右上角扩展图标，固定 Claude 扩展
+3. Pin the Claude extension in Chrome's toolbar
 
-4. 在扩展中点击「Connect to Claude Code」
-   （确保 Claude Code 正在运行）
+4. In the extension, click "Connect to Claude Code"
+   (make sure Claude Code is running)
 
-5. 安装完成后告诉我，我来继续查询。
+5. Tell me when done and I'll continue the query.
 ```
 
-等待用户回复「好了」或「安装完了」，然后重新检查并继续。
+Wait for the user to confirm, then re-check and continue.
 
 ---
 
-### Phase 1 — 查询 C360
+### Phase 1 — Query C360
 
-使用 c360-customer-usage skill 的浏览器自动化流程（读取 `~/.claude/skills/c360-customer-usage/SKILL.md`）。
+Use the browser automation flow from the c360-customer-usage skill (read `~/.claude/skills/c360-customer-usage/SKILL.md`).
 
-**标准查询内容：**
+**Standard query content:**
 
 ```
-1. 日活跃用量（Daily tokens / API calls）— 近 30 天
-2. 月度 MoM 对比
-3. 主要使用产品分布
-4. 用量峰值日期和原因（如有）
-5. 当前余额 / quota 状态
+1. Daily active usage (tokens / API calls) — last 30 days
+2. Month-over-month comparison
+3. Main product usage distribution
+4. Peak usage date and reason (if available)
+5. Current balance / quota status
 ```
 
-**针对用户具体问题补充查询**（如有）：
-- "用了多少 tokens" → 精确数字 + 趋势图截图
-- "环比增长了吗" → MoM % 变化
-- "主要在用什么功能" → 产品维度拆分
-- "还有多少余额" → 当前 quota / 余额
+**Supplementary queries based on user's specific question:**
+- "how many tokens" → exact number + trend
+- "MoM growth" → % change
+- "what features mainly used" → product breakdown
+- "how much balance left" → quota / balance status
 
 ---
 
-### Phase 2 — 生成洞察
+### Phase 2 — Generate Insights
 
-数据拿到后，沿以下维度识别洞察（只报告显著的）：
+After obtaining data, identify significant insights:
 
-| 洞察类型 | 触发条件 | 建议行动 |
+| Insight Type | Trigger Condition | Recommended Action |
 |---|---|---|
-| **用量增长** | MoM > +30% | 了解增长原因，判断是否需要扩容 |
-| **用量下降** | MoM < -20% | ⚠️ 风险信号，主动联系确认 |
-| **用量骤停** | 最近 7 天接近 0 | 🚨 紧急，可能出问题了 |
-| **quota 告急** | 余额 < 20% | 提醒客户续费或申请扩容 |
-| **用量集中** | 单日用量 > 月均 3× | 了解是什么场景（大批量任务？压测？） |
-| **新产品启用** | 某产品首次出现用量 | 了解使用场景，支持上手 |
+| **Usage growth** | MoM > +30% | Understand growth reason, assess expansion need |
+| **Usage decline** | MoM < -20% | ⚠️ Risk signal, proactively reach out |
+| **Usage stoppage** | ~0 in last 7 days | 🚨 Urgent — something may be wrong |
+| **Quota critical** | Balance < 20% | Remind customer to renew or request expansion |
+| **Usage spike** | Single day > 3× monthly average | Understand the scenario (batch job? load test?) |
+| **New product activated** | First-time usage | Understand use case and support onboarding |
 
 ---
 
-### Phase 3 — 输出报告
-
-在终端输出：
+### Phase 3 — Output Report
 
 ```
-📊  <客户名> · 数据报告（<日期范围>）
+📊  <Customer Name> · Data Report (<date range>)
 
-用量概览
-  近 30 天总用量：<N> tokens
-  日均：<n> tokens
-  MoM：<+/-N%>（<上月> → <本月>）
+Usage Overview
+  Last 30 days total: <N> tokens
+  Daily average: <n> tokens
+  MoM: <+/-N%> (<last month> → <this month>)
 
-产品分布
-  <Product A>：<N%>
-  <Product B>：<N%>
+Product Distribution
+  <Product A>: <N%>
+  <Product B>: <N%>
 
-Quota 状态
-  当前余额：<N>（<X%> remaining）
-  预计耗尽：<日期 or "充足">
+Quota Status
+  Current balance: <N> (<X%> remaining)
+  Estimated depletion: <date or "sufficient">
 
-<如有洞察>
-⚠️  洞察：<洞察描述>
-    建议：<行动建议>
+<If insights found>
+⚠️  Insight: <insight description>
+    Recommendation: <action>
 ```
 
-**如果识别到有价值的洞察（用量下降、骤停、quota 告急等），询问用户：**
+**If noteworthy insights are found (decline, stoppage, quota critical), ask:**
 
-「发现了一些值得关注的数据，要保存到知识库吗？[Y/n]」
+"Found some data worth noting. Save to knowledge base? [Y/n]"
 
-- Y / 直接回车：进入写入流程
-- N：结束，不写入
+- Y / Enter: proceed to write flow
+- N: finish, do not write
 
-> 注意：纯数字查询（"X 用了多少 tokens"）不触发询问，直接报告数字即可。
+> Pure number queries ("how many tokens did X use") do not trigger this prompt.
 
 ---
 
-### Phase 4 — 写入知识库
+### Phase 4 — Write to Knowledge Base
 
-**仅当用户确认有价值的洞察需要保存时执行。**
+**Only executed when the user confirms.**
 
-**本地 wiki（静默）：**
+**Local wiki (silent):**
 
-更新 `wiki/entities/customers/<slug>.md`：
-- `## Recent interactions` 追加一行：「<TODAY> · 数据看板 · <一句话洞察>」
-- 如有用量下降/骤停 → `## Open feedback / pain points` 标注风险
+Update `wiki/entities/customers/<slug>.md`:
+- Append line under `## Recent interactions`: "<TODAY> · dashboard · <one-line insight>"
+- Usage decline/stoppage → annotate risk under `## Open feedback / pain points`
 
-**Lark wiki（via sa-wiki WRITE workflow）：**
+**Lark wiki (via sa-wiki WRITE workflow):**
 
-- APPEND TIMELINE：「<TODAY> | dashboard | <洞察摘要> | quota: <状态>」
-- 如有 quota 告急 → CREATE/APPEND 相关提醒
+- APPEND TIMELINE: "<TODAY> | dashboard | <insight summary> | quota: <status>"
+- Quota critical → CREATE/APPEND related reminder
 
-写入时不向用户暴露写入细节，完成后在报告末尾显示 `已保存到知识库`。
+After writing, show `Saved to knowledge base` in the report (no write details exposed).
 
 ---
 
-### Phase 5 — 收尾
+### Phase 5 — Closing
 
 ```
-✅  <客户名> 数据查询完成
+✅  <Customer Name> data query complete
 
-<洞察摘要（如有）>
+<Insight summary (if any)>
 
-<如有写入>已保存到知识库（<proposal_id>）
+<If written> Saved to knowledge base (<proposal_id>)
 ```
 
 ---
 
-## 安全规则
+## Safety Rules
 
-- C360 数据不包含具体合同金额，但如有单价/ARR 数字，不写入 wiki（只做口头报告）
-- 浏览器会话完成后不留存截图文件
-- 不直接 `docs +update` wiki 页面
+- Do not write specific contract amounts / ARR figures to wiki
+- Do not retain screenshot files after the browser session
+- Do not use `docs +update` to directly modify wiki pages
 
-## 参考文档
+## Reference Documents
 
 - [`references/c360-query.md`](references/c360-query.md)
 - [`core/local-wiki-ux.md`](../../core/local-wiki-ux.md)

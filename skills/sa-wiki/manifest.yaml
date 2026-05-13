@@ -28,12 +28,15 @@ io_contract:
 
 triggers:
   - "SA wiki"
+  - "knowledge base"
+  - "customer profile"
+  - "archive to wiki"
+  - "file into wiki"
+  - "write_queue"
   - "我们的知识库"
   - "客户档案"
   - "查一下客户"
   - "帮我把这条信息归档到 wiki"
   - "整理进 wiki"
-  - "write_queue"
-  - "knowledge base"
 
 deprecates: []

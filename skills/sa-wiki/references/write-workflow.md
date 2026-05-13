@@ -27,17 +27,12 @@ Use when target_path does not yet exist.
 ```bash
 # Step 1: Verify target_path doesn't exist
 lark-cli base +record-search --base-token $BASE_TOKEN --table-id $KI_TABLE \
-  --json '{
-    "filter": {
-      "conjunction": "and",
-      "conditions": [
-        {"field_name": "Title", "operator": "is", "value": ["topics/access/ak-sk-lifecycle"]}
-      ]
-    }
-  }' --as user
+  --json '{"filter":{"conjunction":"and","conditions":[
+    {"field_name":"Title","operator":"is","value":["topics/access/ak-sk-lifecycle"]}
+  ]}}' --as user
 # Should return zero rows. If not zero, switch to APPEND or REPLACE.
 
-# Step 2: Run desensitization — fetch the latest checklist from wiki (single source of truth)
+# Step 2: Desensitization — fetch the latest checklist from wiki
 #   lark-cli docs +fetch --api-version v2 --doc $META_DESENSITIZATION --as user
 
 # Step 3: Submit CREATE proposal
@@ -54,30 +49,25 @@ lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
     }
   }' --as user
 
-# Step 4: Capture the returned record_id and proposal_id (P-XXXXX) — share with user
+# Step 4: Capture returned record_id and proposal_id (P-XXXXX) — share with user
 ```
 
-**Required fields**: agent_id, action, target_path, content_md, status  
-**Empty fields**: target_doc_token (will be set by coordinator after creation)  
-**Recommended**: source_refs (where this knowledge came from)
+**Required fields**: agent_id, action, target_path, content_md, status
+**Empty fields**: target_doc_token (set by coordinator after creation)
+**Recommended**: source_refs
 
 ---
 
 ## Action: APPEND (add to existing page)
 
-Use when adding new info to an existing page (e.g., new entry in a TIMELINE, new sub-section in a topic).
+Use when adding new info to an existing page (e.g., new TIMELINE entry, new topic sub-section).
 
 ```bash
 # Step 1: Look up target_doc_token by target_path
 lark-cli base +record-search --base-token $BASE_TOKEN --table-id $KI_TABLE \
-  --json '{
-    "filter": {
-      "conjunction": "and",
-      "conditions": [
-        {"field_name": "Title", "operator": "is", "value": ["customers/acme-corp/TIMELINE"]}
-      ]
-    }
-  }' --as user
+  --json '{"filter":{"conjunction":"and","conditions":[
+    {"field_name":"Title","operator":"is","value":["customers/acme-corp/TIMELINE"]}
+  ]}}' --as user
 # → returns the doc_token field value
 
 # Step 2: Submit APPEND proposal
@@ -88,7 +78,7 @@ lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
       "action": "APPEND",
       "target_path": "customers/acme-corp/TIMELINE",
       "target_doc_token": "<doc_token from step 1>",
-      "content_md": "| 2026-05-06 | meeting | Pricing alignment with finance | [link to meeting note] |",
+      "content_md": "| 2026-05-06 | meeting | Pricing alignment with finance | [link] |",
       "source_refs": "<meeting note doc_token or URL>",
       "status": "pending"
     }
@@ -98,13 +88,13 @@ lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
 **Notes:**
 - `content_md` is the snippet to append, NOT the full new page
 - Coordinator appends after the last block, preserving existing content
-- For TIMELINE table rows: just provide the table row markdown
+- For TIMELINE table rows: provide the table row markdown only
 
 ---
 
 ## Action: REPLACE (overwrite existing page)
 
-Use rarely. Only when the entire page needs to change (e.g., outdated info correction, schema migration).
+Use rarely. Only when the entire page needs to change.
 
 ```bash
 lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
@@ -122,14 +112,14 @@ lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
 ```
 
 **Coordinator validation:**
-- REPLACE requires that target's `last_committed_at` is older than the proposal's `created_at`
-- Conflict (someone else committed in between) → auto-reject with reason "concurrent commit; re-fetch and retry"
+- REPLACE requires target's `last_committed_at` to be older than the proposal's `created_at`
+- Conflict → auto-reject: "concurrent commit; re-fetch and retry"
 
 ---
 
 ## Action: LINT (request cleanup)
 
-Use to flag a problem for the coordinator to handle (no need to compose content yourself).
+Flag a problem for the coordinator to handle.
 
 ```bash
 lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
@@ -138,22 +128,15 @@ lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
       "agent_id": "sa-wenjie",
       "action": "LINT",
       "target_path": "topics/products/seedance-whitelist",
-      "content_md": "Last-updated > 90 days ago; the whitelist status section claims pre-GA but Seedance 2.0 is now GA. Please update or schedule for review.",
+      "content_md": "Last-updated > 90 days ago; whitelist section claims pre-GA but Seedance 2.0 is now GA. Please update.",
       "status": "pending"
     }
   }' --as user
 ```
 
-Coordinator processes LINT proposals by either:
-1. Auto-fixing if the proposal includes specific replacement content
-2. Creating a follow-up CREATE/REPLACE proposal for human SA to review
-3. Logging in a lint-report page
-
 ---
 
 ## Customer subtree on first encounter
-
-When a customer is first added, build the standard sub-tree in this order:
 
 ```
 1. CREATE customers/<name>/PROFILE     ← BANT, contacts, stage
@@ -163,42 +146,29 @@ When a customer is first added, build the standard sub-tree in this order:
 5. (as needed) CREATE customers/<name>/issues/...  decisions/...
 ```
 
-For first PROFILE / TIMELINE creation, the parent customer node may not exist. The coordinator handles auto-creating intermediate parent nodes, OR you can submit a separate CREATE for the parent first:
+For first PROFILE/TIMELINE: coordinator auto-creates intermediate parent nodes. Or CREATE the parent container first:
 
 ```bash
-# CREATE the customer container first
 lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
-  --json '{
-    "fields": {
-      "agent_id": "sa-wenjie",
-      "action": "CREATE",
-      "target_path": "customers/acme-corp",
-      "content_md": "<h1>acme-corp</h1>\n<p>Container for acme-corp customer subtree.</p>",
-      "status": "pending"
-    }
-  }' --as user
+  --json '{"fields":{"agent_id":"sa-wenjie","action":"CREATE",
+    "target_path":"customers/acme-corp",
+    "content_md":"<h1>acme-corp</h1><p>Customer subtree container.</p>",
+    "status":"pending"}}' --as user
 ```
-
-Then PROFILE / TIMELINE.
 
 ---
 
 ## After committing — what changes
 
-When coordinator commits a proposal:
-
-1. New / updated wiki page (if CREATE / APPEND / REPLACE)
+1. New / updated wiki page (CREATE / APPEND / REPLACE)
 2. New row in `knowledge_index` Bitable (or updated Updated field)
-3. New row in `log` table with: ts, action, target_path, target_doc_token, agent_id, SA, proposal_id, note
-4. write_queue row updated: status=committed, committed_at=now
-
-For agents that need confirmation:
+3. New row in `log` table: ts, action, target_path, doc_token, agent_id, SA, proposal_id
+4. write_queue row: status=committed, committed_at=now
 
 ```bash
 # Poll the proposal's status
 lark-cli base +record-get --base-token $BASE_TOKEN --table-id $WQ_TABLE \
   --record-id <returned_record_id> --as user
-# Look at fields.status — wait for "committed" or handle "rejected"
 ```
 
 ---
@@ -207,32 +177,32 @@ lark-cli base +record-get --base-token $BASE_TOKEN --table-id $WQ_TABLE \
 
 | reject_reason | Meaning | Fix |
 |---|---|---|
-| "duplicate target_path; use APPEND or REPLACE" | CREATE submitted but target exists | Re-submit with action=APPEND or REPLACE |
-| "desensitization failed: contains apparent AK/SK pattern" | Coordinator detected a credential | Redact the content; re-submit |
-| "desensitization failed: customer real name in topics/" | Real customer name leaked into topics page | Replace with [Customer A] anonymization; re-submit |
-| "concurrent commit; re-fetch and retry" | REPLACE conflict | Re-fetch target, re-merge changes, re-submit |
-| "naming violation: target_path does not match conventions" | target_path bad format | See SKILL.md §6 naming rules; re-submit |
+| "duplicate target_path; use APPEND or REPLACE" | CREATE but target exists | Re-submit with APPEND or REPLACE |
+| "desensitization failed: contains apparent AK/SK pattern" | Credential detected | Redact; re-submit |
+| "desensitization failed: customer real name in topics/" | Real name in topics/ page | Replace with [Customer A]; re-submit |
+| "concurrent commit; re-fetch and retry" | REPLACE conflict | Re-fetch target, re-merge, re-submit |
+| "naming violation: target_path does not match conventions" | Bad target_path format | See SKILL.md §6; re-submit |
 | "unknown domain" | Domain not in known list | Use one of: access / security / product / poc / ops / onboarding / customer |
-| "Sensitivity=Restricted requires manual review" | High-sensitivity content | Wait for human SA to review and approve |
+| "Sensitivity=Restricted requires manual review" | High-sensitivity content | Wait for human SA review |
 
 ---
 
 ## Best practices for content_md
 
 1. **Always start with the metadata callout block** — Type / Layer / Domain / Keywords / Sensitivity / Updated / Source_refs
-2. **Use page templates from wiki page-templates (`docs +fetch --doc $META_PAGE_TEMPLATES`)** — don't invent your own structure
-3. **Quote-quote external sources** — paraphrase don't copy-paste large chunks
-4. **Cross-link** — when relevant, link to other wiki pages (paste the wiki URL into the markdown)
-5. **No raw chat dumps** — distill chat content into points, don't paste literal chat logs
-6. **Idempotent** — write content_md so that re-running CREATE/REPLACE produces the same result (no timestamps in body, etc.)
+2. **Use page templates** — fetch `$META_PAGE_TEMPLATES` before writing
+3. **Paraphrase external sources** — don't copy-paste large chunks verbatim
+4. **Cross-link** — link to other wiki pages with wiki URLs
+5. **No raw chat dumps** — distill into points
+6. **Idempotent** — re-running CREATE/REPLACE produces the same result
 
 ---
 
 ## What NOT to do
 
-- ❌ Don't `lark-cli docs +update` directly on wiki pages (bypasses queue, breaks log audit)
+- ❌ Don't `lark-cli docs +update` directly on wiki pages (bypasses queue, breaks audit)
 - ❌ Don't write `target_doc_token` for CREATE actions
-- ❌ Don't submit multiple pending CREATEs for the same target_path (only first wins, rest auto-rejected)
+- ❌ Don't submit multiple pending CREATEs for the same target_path
 - ❌ Don't put real customer names in topics/ pages (use [Customer A])
-- ❌ Don't include actual AK/SK / passwords / tokens / contracts ($amounts) anywhere
-- ❌ Don't ingest L4-classified content as full text (only summary or process portion)
+- ❌ Don't include AK/SK / passwords / tokens / contract amounts
+- ❌ Don't ingest L4-classified content as full text
