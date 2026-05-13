@@ -18,9 +18,8 @@ includes:
   - local-wiki-init: "^0.1"    # ✅ implemented
 
   # reader / consumer
-  - customer-lookup: "^0.1"    # ⏳ pending
+  - customer-brief: "^0.1"     # ✅ implemented
 
 notes: |
-  4 of 5 core skills implemented (meeting-summary, im-digest, dashboard-watch,
-  local-wiki-init). Only customer-lookup remains for MVP completion.
-  All skills follow core/local-wiki-ux.md UX standard.
+  All 5 core skills implemented. MVP complete.
+  All skills follow core/local-wiki-ux.md UX standard (no "双写" exposed to users).

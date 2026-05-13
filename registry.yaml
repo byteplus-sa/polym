@@ -3,9 +3,30 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-13T04:28:51Z
+generated_at: 2026-05-13T04:51:37Z
 
 skills:
+  - name: customer-brief
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Pre-meeting customer intelligence brief. Input a customer name and get a
+      scannable 2-minute snapshot in ~10 seconds: recent activity, open issues,
+      our commitments, competitive signals, and AI-generated talking-point
+      suggestions driven by rules (quota alerts, overdue commitments, risk signals).
+      Queries sa-wiki + local wiki + live Lark IM in parallel; optional C360 data
+      with --full flag. Read-only — no wiki writes.
+    owners: ['Carey8175']
+    path: skills/customer-brief
+    triggers:
+      - "帮我备一下课"
+      - "customer brief"
+      - "客户情报"
+      - "开会前看一下"
+      - "给我一份 brief"
+      - "我要去见"
+      - "会前准备"
+
   - name: dashboard-watch
     version: 0.1.0
     stage: beta
@@ -122,5 +143,5 @@ profiles:
       - im-digest: "^0.3"
       - dashboard-watch: "^0.1"
       - local-wiki-init: "^0.1"
-      - customer-lookup: "^0.1"
+      - customer-brief: "^0.1"
 
