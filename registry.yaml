@@ -3,9 +3,31 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-13T03:49:51Z
+generated_at: 2026-05-13T04:00:03Z
 
 skills:
+  - name: local-wiki-init
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Initialize a local LLM-maintained wiki for an SA, inspired by Karpathy's
+      LLM Wiki pattern. Creates the full directory structure (raw/, wiki/entities/,
+      wiki/concepts/, wiki/interactions/, wiki/sources/), and writes SCHEMA.md,
+      PROMPTS.md, README.md, and starter index/log files. The wiki is tuned for the
+      BytePlus SA workflow: customers, products, and the relationships between them
+      as first-class entities.
+    owners: ['Carey8175']
+    path: skills/local-wiki-init
+    triggers:
+      - "初始化本地 wiki"
+      - "set up my local wiki"
+      - "create my SA wiki"
+      - "init local wiki"
+      - "我想建一个本地知识库"
+      - "local wiki"
+      - "本地知识库"
+      - "llm wiki"
+
   - name: sa-wiki
     version: 0.2.0
     stage: beta
