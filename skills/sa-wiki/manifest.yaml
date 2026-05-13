@@ -1,0 +1,42 @@
+name: sa-wiki
+version: 0.2.0
+stage: beta
+owners:
+  - Carey8175
+
+description_for_install: |
+  BytePlus SA Team shared knowledge base — read and write the SA Wiki
+  (Lark Bitable + Wiki pages). Supports 3-source parallel search (Wiki +
+  Lark messages + BytePlus docs), compound knowledge accumulation, and a
+  write_queue flow that is safe for concurrent multi-agent use.
+  Requires lark-cli authenticated as the team user.
+
+depends_on:
+  skills: []
+  binaries:
+    - lark-cli: ">=1.0.20"
+  env: []
+
+io_contract:
+  reads:
+    - source: sa-wiki/knowledge_index
+      description: Bitable KI_TABLE — index of all wiki pages
+    - source: sa-wiki/write_queue
+      description: Bitable WQ_TABLE — reads pending/status of proposals
+  writes:
+    - target: sa-wiki/write_queue
+      schema: core/signal-envelope.schema.json
+      signal_type: wiki-proposal
+      description: Every write goes through write_queue; coordinator commits to wiki
+
+triggers:
+  - "SA wiki"
+  - "我们的知识库"
+  - "客户档案"
+  - "查一下客户"
+  - "帮我把这条信息归档到 wiki"
+  - "整理进 wiki"
+  - "write_queue"
+  - "knowledge base"
+
+deprecates: []
