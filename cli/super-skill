@@ -432,8 +432,12 @@ cmd_publish() {
 
   log_head "Publishing local skill changes"
 
-  log_info "Rebasing local branch before validation"
-  git -C "$REPO_DIR" pull --rebase --autostash
+  if git -C "$REPO_DIR" diff --quiet && git -C "$REPO_DIR" diff --cached --quiet; then
+    log_info "No local file changes yet; rebasing before validation"
+    git -C "$REPO_DIR" pull --rebase
+  else
+    log_info "Local changes detected; validating before commit, then rebasing after commit"
+  fi
 
   log_info "Running lint"
   (cd "$REPO_DIR" && bash tools/lint.sh)
@@ -449,10 +453,27 @@ cmd_publish() {
 
   git -C "$REPO_DIR" commit -m "$message"
 
+  log_info "Rebasing committed changes onto latest origin"
+  if ! git -C "$REPO_DIR" pull --rebase; then
+    local conflicts
+    conflicts="$(git -C "$REPO_DIR" diff --name-only --diff-filter=U || true)"
+    if [[ "$conflicts" == "registry.yaml" ]]; then
+      log_warn "Resolving registry.yaml conflict by rebuilding registry."
+      (cd "$REPO_DIR" && bash tools/build-registry.sh)
+      git -C "$REPO_DIR" add registry.yaml
+      GIT_EDITOR=true git -C "$REPO_DIR" rebase --continue
+    else
+      log_error "Rebase failed with conflicts:"
+      echo "$conflicts" >&2
+      log_error "Resolve manually, then run git rebase --continue."
+      exit 1
+    fi
+  fi
+
   log_info "Pushing to origin"
   if ! git -C "$REPO_DIR" push; then
     log_warn "Push rejected; rebasing and retrying."
-    if ! git -C "$REPO_DIR" pull --rebase --autostash; then
+    if ! git -C "$REPO_DIR" pull --rebase; then
       local conflicts
       conflicts="$(git -C "$REPO_DIR" diff --name-only --diff-filter=U || true)"
       if [[ "$conflicts" == "registry.yaml" ]]; then
