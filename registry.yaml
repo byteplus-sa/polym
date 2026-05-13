@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-13T06:02:19Z
+generated_at: 2026-05-13T06:19:52Z
 
 skills:
   - name: customer-brief
@@ -129,6 +129,30 @@ skills:
       - "整理会议"
       - "会议总结"
 
+  - name: sa-super-skill-help
+    version: 0.1.0
+    stage: stable
+    description_for_install: |
+      Onboarding guide for SA Super Skill Pack. Covers what the pack does,
+      step-by-step installation (lark-cli auth, Chrome extension, local wiki
+      setup), common daily use cases for each skill, and a guide for
+      contributing new skills including versioning rules and CI workflow.
+      Invoke when lost, new to the system, or needing a refresher.
+    owners: ['Carey8175']
+    path: skills/sa-super-skill-help
+    triggers:
+      - "help"
+      - "what is sa super skill"
+      - "how do I use this"
+      - "how do I get started"
+      - "how do I install"
+      - "what can you do"
+      - "sa super skill help"
+      - "how do I add a skill"
+      - "how to contribute"
+      - "getting started"
+      - "onboarding"
+
   - name: sa-wiki
     version: 0.2.0
     stage: beta
@@ -167,4 +191,5 @@ profiles:
       - dashboard-watch: "^0.1"
       - local-wiki-init: "^0.1"
       - customer-brief: "^0.1"
+      - sa-super-skill-help: "^0.1"
 

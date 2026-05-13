@@ -20,6 +20,9 @@ includes:
   # reader / consumer
   - customer-brief: "^0.1"     # ✅ implemented
 
+  # onboarding
+  - sa-super-skill-help: "^0.1" # ✅ implemented
+
 notes: |
-  All 5 core skills implemented. MVP complete.
+  All 6 core skills implemented. MVP complete.
   All skills follow core/local-wiki-ux.md UX standard (no "双写" exposed to users).
