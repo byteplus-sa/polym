@@ -1,6 +1,6 @@
 ---
 name: sa-super-skill-help
-version: 0.2.0
+version: 0.2.1
 description: "Onboarding guide for SA Super Skill Pack — what it does, how to install it, common use cases, and how to contribute new skills. Trigger when a user seems lost, asks what this is, or asks how to get started."
 metadata:
   requires:
@@ -329,11 +329,15 @@ super-skill list                        # see all available skills
 super-skill list --installed            # see what you have
 super-skill install profile:sa-mvp     # install the MVP bundle
 super-skill install <skill-name>        # install one skill
-super-skill update                      # pull latest + reinstall
+super-skill self-update                 # update CLI/catalog only
+super-skill update                      # update CLI + refresh installed skills
+super-skill update profile:sa-mvp       # update CLI + refresh MVP profile
 super-skill doctor                      # check deps & auth
 
 # Develop
 super-skill new <name>                  # scaffold a new skill
-bash tools/lint.sh <name>              # validate before PR
-bash tools/build-registry.sh          # preview registry changes
+super-skill bump <name> <version>       # update SKILL.md + manifest versions
+super-skill publish -m "feat(...)"      # lint, registry, commit, rebase, push
+bash tools/lint.sh <name>               # validate before PR
+bash tools/build-registry.sh            # preview registry changes
 ```

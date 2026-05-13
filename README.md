@@ -62,7 +62,17 @@ Once installed, open Claude Code and say **"help"** for an interactive guide.
 ## Update
 
 ```bash
-super-skill update    # pulls latest skills from GitHub
+super-skill self-update     # update the CLI/catalog repo only
+super-skill update          # update CLI + refresh currently installed skills
+super-skill update profile:sa-mvp
+```
+
+For contributors pushing local skill changes back to GitHub:
+
+```bash
+super-skill bump <skill-name> <new-version>
+# edit SKILL.md + CHANGELOG.md
+super-skill publish -m "feat(<skill-name>): describe the change"
 ```
 
 Contributor flow (probably you, if you are reading this):

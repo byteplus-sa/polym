@@ -1,5 +1,10 @@
 # sa-super-skill-help CHANGELOG
 
+## [0.2.1] — 2026-05-13
+
+### Changed
+- Updated CLI quick reference with `self-update`, `update`, `bump`, and `publish`.
+
 ## [0.2.0] — 2026-05-13
 
 ### Added

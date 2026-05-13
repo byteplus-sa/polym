@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-13T07:41:57Z
+generated_at: 2026-05-13T07:49:36Z
 
 skills:
   - name: customer-brief
@@ -153,7 +153,7 @@ skills:
       - "会议总结"
 
   - name: sa-super-skill-help
-    version: 0.2.0
+    version: 0.2.1
     stage: stable
     description_for_install: |
       Onboarding guide for SA Super Skill Pack. Covers what the pack does,

@@ -1,75 +1,110 @@
-# `super-skill` CLI — design doc
+# `super-skill` CLI
 
-Status: **not implemented**. This file specifies what the CLI must do so
-several contributors (and agents) can build it without diverging.
+Status: **implemented as a bash CLI** in [`cli/super-skill`](super-skill).
+
+The CLI has two jobs:
+
+1. Install/update skills on a user's machine.
+2. Help contributors maintain versions and publish skill changes back to GitHub.
 
 ---
 
-## Command surface
+## Command Surface
 
+```bash
+super-skill install [all]              # install all skills
+super-skill install profile:<name>     # install a named profile bundle
+super-skill install <skill-name>       # install one skill
+
+super-skill self-update                # update this repo + relink CLI only
+super-skill update [target]            # self-update + reinstall installed skills
+super-skill sync [target]              # alias for update
+
+super-skill list                       # show available skills
+super-skill list --installed           # show local installed versions
+super-skill doctor                     # check deps/env vars for installed skills
+
+super-skill new <name>                 # scaffold a skill from skills/_template
+super-skill bump <name> <version>      # update SKILL.md + manifest version fields
+super-skill publish -m "<message>"     # lint, build registry, commit, rebase, push
 ```
-super-skill install <name>[@<version>]      # install a single skill
-super-skill install profile:<name>          # install all skills in a profile (recommended UX)
-super-skill update [<name>]                 # update one or all installed skills
-super-skill uninstall <name>
-super-skill list                            # show available skills + versions
-super-skill list --installed
-super-skill search <query>
-super-skill doctor                          # check deps, env vars, binaries, version skew
-super-skill new <name>                      # scaffold a new skill from skills/_template
-super-skill publish                         # CI-only; cuts a release and updates registry.yaml
+
+`target` for `update/sync` can be:
+
+```bash
+installed          # default: refresh what is already installed
+all                # install every skill in the repo
+profile:sa-mvp     # install a profile
+meeting-summary    # install one skill
 ```
 
-## Where things go
+---
 
-| Concept             | Path                                     |
-|---------------------|------------------------------------------|
-| Source of truth     | this repo's `skills/<name>/`             |
-| Registry index      | `registry.yaml` at repo root             |
-| Local install dir   | `~/.claude/skills/<name>/`               |
-| Local lockfile      | `~/.claude/skills/.super-skill.lock`     |
-| Local cache         | `~/.cache/super-skill/`                  |
+## Update Semantics
 
-The lockfile records `{ name, version, installed_at, source_commit }` per
-skill so `update` is deterministic and `doctor` can detect drift.
+### CLI/catalog update
 
-## Install semantics
+```bash
+super-skill self-update
+```
 
-1. Resolve `<name>` (or all `name`s in a profile) against `registry.yaml`.
-2. Resolve `depends_on.skills` transitively. Refuse on conflict (two
-   requirements with non-overlapping ranges) with a clear error pointing
-   at the offending edges.
-3. For each resolved skill: copy `skills/<name>/` → `~/.claude/skills/<name>/`.
-   Files outside the skill folder are NEVER copied.
-4. Write/update the lockfile.
-5. Run `doctor` and report missing binaries / env vars as warnings, not errors.
+This runs:
 
-## Profile install — the default path
+```bash
+git pull --ff-only
+ln -sf <repo>/cli/super-skill ~/.local/bin/super-skill
+```
 
-`super-skill install profile:sa-mvp` is the canonical onboarding command.
-Single-skill `install <name>` is supported but discouraged in docs:
-loading too many skills into one Claude session inflates the system prompt
-and hurts routing accuracy. Keep profiles small (≤ ~10 skills).
+Because the installer symlinks the CLI into `~/.local/bin`, pulling this repo updates the CLI for the next invocation.
 
-## `doctor` checks
+### Skill update
 
-- Every installed skill's `depends_on.binaries` are on `$PATH` at required version
-- Every `depends_on.env` is set (value not logged)
-- No two installed skills have colliding `triggers`
-- No installed skill is at `stage: deprecated` past its `remove_after` date
-- Lockfile matches what's actually on disk
+```bash
+super-skill update
+```
 
-## Versioning of the CLI itself
+This does:
 
-The CLI is versioned separately from any skill. Pin it in
-`~/.claude/skills/.super-skill.lock` so `doctor` can warn when a user's
-CLI is too old for a skill's manifest schema.
+1. `self-update`
+2. Read `~/.claude/skills/.super-skill.lock`
+3. Reinstall the already-installed skills from the updated catalog
 
-## Implementation notes (non-binding)
+This preserves the user's install selection. A profile install does not accidentally become "install every skill".
 
-- Language: Go or Python single-file script. Bias toward Python for
-  contribution accessibility; bias toward Go for static binary distribution.
-  Decision deferred until first contributor signs up.
-- No network deps beyond pulling this repo (clone or zipball).
-- The one-liner installer (`curl … | bash`) only installs the CLI itself;
-  the CLI then handles skill installs.
+---
+
+## Contributor Publishing
+
+Normal flow:
+
+```bash
+super-skill bump my-skill 0.2.0
+# edit SKILL.md + CHANGELOG.md
+super-skill publish -m "feat(my-skill): add new workflow"
+```
+
+`publish` runs:
+
+1. `git pull --rebase --autostash`
+2. `bash tools/lint.sh`
+3. `bash tools/build-registry.sh`
+4. `git add -A`
+5. `git commit -m ...`
+6. `git push`
+
+If GitHub's registry auto-build races with the local push and only `registry.yaml` conflicts, `publish` rebuilds the registry and continues the rebase automatically.
+
+---
+
+## Where Things Go
+
+| Concept | Path |
+|---|---|
+| Source of truth | this repo's `skills/<name>/` |
+| Registry index | `registry.yaml` at repo root |
+| Local install dir | `~/.claude/skills/<name>/` |
+| Local lockfile | `~/.claude/skills/.super-skill.lock` |
+| CLI symlink | `~/.local/bin/super-skill` |
+
+The lockfile records `{ name, version, installed_at, source }` per skill.
+

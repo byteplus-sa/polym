@@ -185,7 +185,7 @@ main() {
   echo ""
   echo "  super-skill list              # see what's installed"
   echo "  super-skill doctor            # verify dependencies"
-  echo "  super-skill update            # pull latest skills"
+  echo "  super-skill update            # update CLI + installed skills"
   echo ""
 }
 
