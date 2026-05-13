@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-13T04:06:24Z
+generated_at: 2026-05-13T04:06:38Z
 
 skills:
   - name: im-digest
