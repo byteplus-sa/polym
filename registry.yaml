@@ -3,11 +3,11 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-13T04:08:03Z
+generated_at: 2026-05-13T04:13:17Z
 
 skills:
   - name: im-digest
-    version: 0.1.0
+    version: 0.2.0
     stage: beta
     description_for_install: |
       Pulls yesterday's Lark group-chat messages via lark-cli, organises them into

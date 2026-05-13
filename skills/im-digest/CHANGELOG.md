@@ -1,5 +1,18 @@
 # im-digest CHANGELOG
 
+## [0.2.0] — 2026-05-13
+
+### Changed
+- **Dimensions expanded from 6 → 12**: added 商务进展, 竞品信号, 风险信号, 用量 & 配额,
+  人员 & 组织变动, 产品理解偏差; split 客户反馈 into positive/negative
+- **Local wiki path memory**: on first use without LOCAL_WIKI_ROOT, skill probes
+  common paths (~/ sa-wiki, ~/wiki, ~/LLM-Wiki) before asking; user-provided path
+  is saved to Claude memory system to avoid re-asking in future sessions
+- **Lark wiki write delegated to sa-wiki**: Phase 5 now reads sa-wiki SKILL.md §5
+  WRITE workflow instead of reimplementing write_queue logic (single source of truth
+  for Bitable constants, desensitisation rules, and page templates)
+- Updated output format template and wiki write decision tree in digest-schema.md
+
 ## [0.1.0] — 2026-05-13
 
 ### Added
