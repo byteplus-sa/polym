@@ -3,9 +3,29 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-13T04:00:22Z
+generated_at: 2026-05-13T04:06:24Z
 
 skills:
+  - name: im-digest
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Pulls yesterday's Lark group-chat messages via lark-cli, organises them into
+      topics and key content (customer feedback, feature asks, technical issues,
+      decisions, pending items), then writes the digest to both the local wiki
+      (raw snapshot + wiki entity pages) and the Lark SA Wiki (via write_queue).
+      Runs daily to compound customer knowledge over time.
+    owners: ['Carey8175']
+    path: skills/im-digest
+    triggers:
+      - "整理昨天的消息"
+      - "拉一下昨天的群消息"
+      - "daily IM digest"
+      - "im digest"
+      - "帮我总结一下昨天的 IM"
+      - "把昨天的聊天记录整理进 wiki"
+      - "IM 消息整理"
+
   - name: local-wiki-init
     version: 0.1.0
     stage: beta
