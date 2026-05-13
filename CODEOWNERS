@@ -1,0 +1,26 @@
+# Path → owner mapping. GitHub enforces these on PR review.
+# Format: <path-glob>  @handle1  @handle2
+#
+# Rules:
+# - Every skill folder under skills/ MUST have at least one owner.
+# - core/ requires two owners (schema changes affect every downstream skill).
+# - profiles/ requires an SA-team owner since profiles ship to users.
+
+# Repo-wide fallback (admins). Replace with real handles.
+*                          @wenjie  @bojie
+
+# Shared contracts — double review
+/core/                     @wenjie  @bojie
+/manifest.schema.yaml      @wenjie  @bojie
+/profile.schema.yaml       @wenjie  @bojie
+
+# Profiles — SA-team owned
+/profiles/                 @wenjie
+
+# CLI
+/cli/                      @wenjie
+
+# Per-skill ownership (add as skills are created)
+# /skills/meeting-summary/  @bojie
+# /skills/im-digest/        @wenjie
+# /skills/sa-wiki/          @wenjie

@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://super-skill/core/signal-envelope.schema.json",
+  "title": "SignalEnvelope",
+  "description": "Shared shape any skill must produce when writing customer-related output into the data foundation (currently sa-wiki).",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "customer_key",
+    "signal_type",
+    "source_url",
+    "captured_at",
+    "sensitivity",
+    "content_md",
+    "producer"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "customer_key": {
+      "type": "string",
+      "description": "stable id joining all signals for a customer; resolved via the customer source-of-truth table"
+    },
+    "signal_type": {
+      "type": "string",
+      "enum": [
+        "meeting",
+        "im",
+        "dashboard",
+        "email",
+        "insight",
+        "badcase",
+        "correction"
+      ],
+      "description": "'correction' is reserved for proposed edits to existing wiki content"
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "deep link back to the original material (lark://, https://, etc.)"
+    },
+    "captured_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sensitivity": {
+      "type": "string",
+      "enum": ["public", "internal", "restricted"]
+    },
+    "content_md": {
+      "type": "string",
+      "minLength": 1,
+      "description": "the substantive content, Markdown; wiki-manage applies desensitisation rules to this field"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "producer": {
+      "type": "object",
+      "required": ["skill", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "skill": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    },
+    "supersedes": {
+      "type": "string",
+      "description": "if this signal replaces a prior one, the prior signal's id"
+    }
+  }
+}

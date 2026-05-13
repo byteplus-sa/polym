@@ -1,0 +1,31 @@
+# JSON-Schema (written in YAML) for profiles/<name>.yaml
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://super-skill/profile.schema.yaml"
+title: Profile
+type: object
+required: [name, description, includes]
+additionalProperties: false
+properties:
+  name:
+    type: string
+    pattern: "^[a-z][a-z0-9-]*[a-z0-9]$"
+  description:
+    type: string
+    minLength: 10
+    maxLength: 300
+    description: shown by `super-skill install profile:<name>` and `list`
+  audience:
+    type: string
+    description: "who this profile is for, e.g. 'SA', 'Sales', 'Content'"
+  includes:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      minProperties: 1
+      maxProperties: 1
+      additionalProperties:
+        type: string
+        description: semver range; experimental skills are NOT allowed
+  notes:
+    type: string

@@ -1,0 +1,111 @@
+# JSON-Schema (written in YAML) for skills/<name>/manifest.yaml
+# Validated by tools/lint.sh on every PR.
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://super-skill/manifest.schema.yaml"
+title: SkillManifest
+type: object
+required: [name, version, stage, owners, description_for_install]
+additionalProperties: false
+properties:
+  name:
+    type: string
+    pattern: "^[a-z][a-z0-9-]*[a-z0-9]$"
+    description: kebab-case, globally unique within this repo, matches folder name
+  version:
+    type: string
+    pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+(-[a-z0-9.-]+)?$"
+    description: semver, independent of other skills
+  stage:
+    type: string
+    enum: [experimental, beta, stable, deprecated]
+  owners:
+    type: array
+    minItems: 1
+    items:
+      type: string
+    description: emails or @handles; also enforced in CODEOWNERS
+  description_for_install:
+    type: string
+    minLength: 10
+    maxLength: 500
+    description: shown by `super-skill list` and on install
+  depends_on:
+    type: object
+    additionalProperties: false
+    properties:
+      skills:
+        type: array
+        items:
+          type: object
+          minProperties: 1
+          maxProperties: 1
+          additionalProperties:
+            type: string
+            description: semver range, e.g. ">=0.2.0 <1.0.0" or "*"
+      binaries:
+        type: array
+        items:
+          type: object
+          minProperties: 1
+          maxProperties: 1
+          additionalProperties:
+            type: string
+      env:
+        type: array
+        items:
+          type: string
+          pattern: "^[A-Z][A-Z0-9_]*$"
+  io_contract:
+    type: object
+    additionalProperties: false
+    properties:
+      reads:
+        type: array
+        items:
+          type: string
+      writes:
+        type: array
+        items:
+          type: object
+          required: [target, schema]
+          additionalProperties: false
+          properties:
+            target:
+              type: string
+              description: "logical sink, e.g. 'sa-wiki/write_queue'"
+            schema:
+              type: string
+              description: "relative path to JSON schema in core/"
+            signal_type:
+              type: string
+  triggers:
+    type: array
+    items:
+      type: string
+    description: phrases lint uses to detect routing collisions across skills
+  deprecates:
+    type: array
+    items:
+      type: string
+  deprecation:
+    type: object
+    required: [since, remove_after]
+    additionalProperties: false
+    properties:
+      since:
+        type: string
+        format: date
+      remove_after:
+        type: string
+        format: date
+      replaced_by:
+        type: string
+      migration:
+        type: string
+allOf:
+  - if:
+      properties:
+        stage:
+          const: deprecated
+    then:
+      required: [deprecation]

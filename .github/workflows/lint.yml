@@ -1,0 +1,29 @@
+# Placeholder. Wire up when tools/lint.sh exists.
+# Intent: every PR must pass lint + per-skill smoke tests before merge.
+name: lint
+on:
+  pull_request:
+    paths:
+      - "skills/**"
+      - "profiles/**"
+      - "core/**"
+      - "manifest.schema.yaml"
+      - "profile.schema.yaml"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run repo lint
+        run: |
+          echo "TODO: implement tools/lint.sh"
+          # bash tools/lint.sh
+
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run smoke tests for changed skills
+        run: |
+          echo "TODO: detect changed skills and run their tests/smoke.sh"

@@ -1,0 +1,22 @@
+name: sa-mvp
+description: |
+  SA daily minimum set — three signal sources (meeting summary, IM digest,
+  dashboard watch) flowing into sa-wiki, plus the wiki read/write skills.
+  Validates the "data foundation as shared memory" thesis end-to-end.
+audience: SA
+
+includes:
+  # data foundation (read + write paths)
+  - sa-wiki: "^0.2"
+
+  # signal producers
+  - meeting-summary: "^0.1"
+  - im-digest: "^0.1"
+  - dashboard-watch: "^0.1"
+
+  # reader / consumer
+  - customer-lookup: "^0.1"
+
+notes: |
+  All listed skills must be at stage >= beta before this profile ships to users.
+  Track readiness in each skill's CHANGELOG.md.
