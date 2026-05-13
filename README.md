@@ -92,7 +92,7 @@ read this file → read CONTRIBUTING.md → super-skill new <name> → edit → 
    - `D` — change the SHARED CONTRACT in `core/` (rare; needs 2 owners)
    - `E` — work on the CLI in `cli/`
 2. **Read the matching doc**:
-   - `A` or `B` → `CONTRIBUTING.md` (mandatory; covers manifest, IO contract, lint rules)
+   - `A` or `B` → `CONTRIBUTING.md` (mandatory; covers manifest, `supper-` naming, IO contract, lint rules)
    - `C` → `profile.schema.yaml` + `profiles/sa-mvp.yaml`
    - `D` → `core/signal-envelope.schema.json` + ping CODEOWNERS for `core/`
    - `E` → `cli/README.md`
@@ -156,7 +156,7 @@ loading 50+ skill descriptions at once. See `profiles/sa-mvp.yaml`.
 
 ### Signal envelope
 The shared message shape that any skill writing into the data foundation
-(currently `sa-wiki`) must produce. Defined in `core/signal-envelope.schema.json`.
+(currently `supper-sa-wiki`) must produce. Defined in `core/signal-envelope.schema.json`.
 **If your skill writes customer-related output, it produces signal envelopes.**
 
 ### Stages
@@ -178,7 +178,7 @@ The shared message shape that any skill writing into the data foundation
 4. **Trigger-word collisions across skills are warned on PR.** If two skills declare
    `triggers: ["会议摘要"]`, one must be renamed or scoped.
 5. **Breaking changes bump major.** Changing input/output of a skill (its CLI flags,
-   what it writes to `sa-wiki`, what it expects from upstream) is a major bump and
+   what it writes to `supper-sa-wiki`, what it expects from upstream) is a major bump and
    requires a CHANGELOG entry with a migration note.
 6. **No `experimental` skills inside profiles.** Profiles are user-facing; they need beta+.
 
@@ -219,4 +219,4 @@ Full step-by-step (with manifest field walkthrough) lives in `CONTRIBUTING.md`.
 ## Status
 
 Bootstrapped. Not yet wired to CI. CLI is design-only (see `cli/README.md`).
-First profile target: `sa-mvp` covering meeting summary, IM digest, dashboard watch, sa-wiki.
+First profile target: `sa-mvp` covering meeting summary, IM digest, dashboard watch, supper-sa-wiki.

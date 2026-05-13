@@ -21,6 +21,6 @@
 /cli/                      @wenjie
 
 # Per-skill ownership (add as skills are created)
-# /skills/meeting-summary/  @bojie
-# /skills/im-digest/        @wenjie
-# /skills/sa-wiki/          @wenjie
+# /skills/supper-meeting-summary/  @bojie
+# /skills/supper-im-digest/        @wenjie
+# /skills/supper-sa-wiki/          @wenjie

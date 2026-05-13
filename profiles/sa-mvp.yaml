@@ -1,28 +1,28 @@
 name: sa-mvp
 description: |
   SA daily minimum set — live recording, meeting history, IM digest, C360,
-  and document ingestion flowing into sa-wiki, plus local wiki bootstrap,
+  and document ingestion flowing into supper-sa-wiki, plus local wiki bootstrap,
   customer briefing, and onboarding help.
 audience: SA
 
 includes:
   # data foundation (read + write paths)
-  - sa-wiki: "^0.2"
+  - supper-sa-wiki: "^0.2"
 
   # signal producers
-  - meeting-summary: "^0.1"    # ✅ implemented
-  - meeting-recorder: "^0.1"   # ✅ implemented
-  - im-digest: "^0.3"          # ✅ implemented
-  - dashboard-watch: "^0.1"    # ✅ implemented
+  - supper-meeting-summary: "^0.1"    # ✅ implemented
+  - supper-meeting-recorder: "^0.1"   # ✅ implemented
+  - supper-im-digest: "^0.3"          # ✅ implemented
+  - supper-dashboard-watch: "^0.1"    # ✅ implemented
 
   # local wiki bootstrap
-  - local-wiki-init: "^0.1"    # ✅ implemented
+  - supper-local-wiki-init: "^0.1"    # ✅ implemented
 
   # reader / consumer
-  - customer-brief: "^0.1"     # ✅ implemented
+  - supper-customer-brief: "^0.1"     # ✅ implemented
 
   # onboarding
-  - sa-super-skill-help: "^0.2" # ✅ implemented
+  - supper-sa-super-skill-help: "^0.2" # ✅ implemented
 
 notes: |
   All core skills implemented. MVP complete.

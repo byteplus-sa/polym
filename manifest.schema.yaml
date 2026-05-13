@@ -72,7 +72,7 @@ properties:
           properties:
             target:
               type: string
-              description: "logical sink, e.g. 'sa-wiki/write_queue'"
+              description: "logical sink, e.g. 'supper-sa-wiki/write_queue'"
             schema:
               type: string
               description: "relative path to JSON schema in core/"

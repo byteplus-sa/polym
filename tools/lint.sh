@@ -70,6 +70,13 @@ for field in ["name", "version", "stage", "owners", "description_for_install"]:
 if m.get("name") and m["name"] != folder:
     fail(f"manifest name '{m['name']}' != folder name '{folder}'")
 
+# repo naming convention
+if m.get("name") and not str(m["name"]).startswith("supper-"):
+    fail(f"manifest name '{m['name']}' must start with 'supper-'")
+
+if folder and not folder.startswith("supper-"):
+    fail(f"skill folder '{folder}' must start with 'supper-'")
+
 # version is semver
 ver = m.get("version", "")
 if not re.match(r"^\d+\.\d+\.\d+(-[a-z0-9.-]+)?$", str(ver)):

@@ -4,13 +4,24 @@
 
 set -euo pipefail
 
-VERSION="0.2.0"
+VERSION="0.2.1"
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SKILLS_SRC="$REPO_DIR/skills"
 SKILLS_DST="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
 LOCK_FILE="$SKILLS_DST/.super-skill.lock"
 TEMPLATE_NAME="_template"
 BIN_DIR="${SUPER_SKILL_BIN_DIR:-$HOME/.local/bin}"
+LEGACY_SKILLS=(
+  "customer-brief"
+  "dashboard-watch"
+  "im-digest"
+  "lark-doc-ingest"
+  "local-wiki-init"
+  "meeting-recorder"
+  "meeting-summary"
+  "sa-super-skill-help"
+  "sa-wiki"
+)
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; BOLD='\033[1m'; NC='\033[0m'
 
@@ -42,10 +53,10 @@ ${BOLD}USAGE${NC}
 ${BOLD}EXAMPLES${NC}
   super-skill install                  # install everything
   super-skill install profile:sa-mvp   # install the SA MVP bundle
-  super-skill install meeting-summary  # install one skill
+  super-skill install supper-meeting-summary  # install one skill
   super-skill update                   # pull latest CLI/catalog + reinstall installed skills
   super-skill update profile:sa-mvp    # pull latest + reinstall profile
-  super-skill bump im-digest 0.4.0     # maintain per-skill version consistently
+  super-skill bump supper-im-digest 0.4.0     # maintain per-skill version consistently
   super-skill publish -m "feat(x): ..."# push local skill changes to GitHub
   super-skill doctor                   # verify setup
 
@@ -103,6 +114,53 @@ for s in sorted(lock.get("skills", []), key=lambda x: x.get("name", "")):
     if name:
         print(name)
 PYEOF
+}
+
+cleanup_legacy_skill_names() {
+  [[ -f "$LOCK_FILE" ]] || return 0
+
+  local legacy_csv
+  legacy_csv="$(IFS=,; echo "${LEGACY_SKILLS[*]}")"
+
+  local removed
+  removed="$(LOCK_FILE="$LOCK_FILE" REPO_DIR="$REPO_DIR" LEGACY_CSV="$legacy_csv" python3 - <<'PYEOF'
+import json
+import os
+from pathlib import Path
+
+lock_path = Path(os.environ["LOCK_FILE"])
+repo_dir = os.environ["REPO_DIR"]
+legacy = set(filter(None, os.environ.get("LEGACY_CSV", "").split(",")))
+
+try:
+    lock = json.loads(lock_path.read_text())
+except Exception:
+    raise SystemExit(0)
+
+removed = []
+kept = []
+for item in lock.get("skills", []):
+    name = item.get("name")
+    source = item.get("source")
+    if name in legacy and source == repo_dir:
+        removed.append(name)
+    else:
+        kept.append(item)
+
+if removed:
+    lock["skills"] = kept
+    lock_path.write_text(json.dumps(lock, indent=2))
+    print("\n".join(removed))
+PYEOF
+)"
+
+  [[ -z "$removed" ]] && return 0
+
+  while IFS= read -r old; do
+    [[ -z "$old" ]] && continue
+    rm -rf "$SKILLS_DST/$old"
+    log_warn "Removed legacy installed skill '$old' (renamed to 'supper-$old')"
+  done <<< "$removed"
 }
 
 # ── Lockfile ──────────────────────────────────────────────────────────────────
@@ -176,6 +234,7 @@ cmd_install() {
   esac
 
   mkdir -p "$SKILLS_DST"
+  cleanup_legacy_skill_names
   local count=0
   for skill in "${queue[@]}"; do
     if install_one "$skill"; then count=$((count + 1)); fi
@@ -330,6 +389,11 @@ cmd_doctor() {
 cmd_new() {
   local name="${1:-}"
   [[ -z "$name" ]] && { log_error "Usage: super-skill new <name>"; exit 1; }
+
+  if [[ "$name" != supper-* ]]; then
+    log_warn "Skill names in this repo must use the 'supper-' prefix; using 'supper-$name'."
+    name="supper-$name"
+  fi
 
   local dst="$SKILLS_SRC/$name"
   [[ -d "$dst" ]] && { log_error "Skill '$name' already exists at $dst"; exit 1; }

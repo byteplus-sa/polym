@@ -24,7 +24,7 @@ super-skill list                       # show available skills
 super-skill list --installed           # show local installed versions
 super-skill doctor                     # check deps/env vars for installed skills
 
-super-skill new <name>                 # scaffold a skill from skills/_template
+super-skill new <name>                 # scaffold; auto-prefixes to supper-<name>
 super-skill bump <name> <version>      # update SKILL.md + manifest version fields
 super-skill publish -m "<message>"     # lint, build registry, commit, rebase, push
 ```
@@ -35,7 +35,7 @@ super-skill publish -m "<message>"     # lint, build registry, commit, rebase, p
 installed          # default: refresh what is already installed
 all                # install every skill in the repo
 profile:sa-mvp     # install a profile
-meeting-summary    # install one skill
+supper-meeting-summary    # install one skill
 ```
 
 ---
@@ -107,4 +107,3 @@ If GitHub's registry auto-build races with the local push and only `registry.yam
 | CLI symlink | `~/.local/bin/super-skill` |
 
 The lockfile records `{ name, version, installed_at, source }` per skill.
-

@@ -19,7 +19,7 @@ io_contract:
   writes: []
   # Example for a producer skill:
   # writes:
-  #   - target: sa-wiki/write_queue
+  #   - target: supper-sa-wiki/write_queue
   #     schema: core/signal-envelope.schema.json
   #     signal_type: meeting
 

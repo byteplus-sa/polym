@@ -1,0 +1,46 @@
+name: supper-im-digest
+version: 0.3.1
+stage: beta
+owners:
+  - Carey8175
+
+description_for_install: |
+  Pulls yesterday's Lark group-chat messages via lark-cli, organises them into
+  topics and key content (customer feedback, feature asks, technical issues,
+  decisions, pending items), then writes the digest to both the local wiki
+  (raw snapshot + wiki entity pages) and the Lark SA Wiki (via write_queue).
+  Runs daily to compound customer knowledge over time.
+
+depends_on:
+  skills:
+    - supper-sa-wiki: "^0.2"
+    - supper-local-wiki-init: "^0.1"
+  binaries:
+    - lark-cli: ">=1.0.20"
+  env: []
+
+io_contract:
+  reads:
+    - local-filesystem/wiki-root/wiki/entities/customers
+    - lark-im/chat-messages
+  writes:
+    - target: local-filesystem/wiki-root/raw
+      schema: core/signal-envelope.schema.json
+      signal_type: im-raw-snapshot
+    - target: local-filesystem/wiki-root/wiki
+      schema: core/signal-envelope.schema.json
+      signal_type: im-digest-wiki
+    - target: supper-sa-wiki/write_queue
+      schema: core/signal-envelope.schema.json
+      signal_type: im-digest
+
+triggers:
+  - "整理昨天的消息"
+  - "拉一下昨天的群消息"
+  - "daily IM digest"
+  - "im digest"
+  - "帮我总结一下昨天的 IM"
+  - "把昨天的聊天记录整理进 wiki"
+  - "IM 消息整理"
+
+deprecates: []

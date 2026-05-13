@@ -8,7 +8,7 @@ file as the procedure to follow when the user asks "add a skill that …".
 
 ## TL;DR for an agent
 
-1. `cp -r skills/_template skills/<name>` — never start from a blank folder.
+1. `cp -r skills/_template skills/supper-<name>` — never start from a blank folder.
 2. Fill `manifest.yaml` BEFORE `SKILL.md`. The manifest forces you to decide
    ownership, version, dependencies, and what data your skill produces.
 3. Write `SKILL.md` to match the manifest. Keep it terse — long-form content
@@ -27,17 +27,17 @@ file as the procedure to follow when the user asks "add a skill that …".
 make judgement calls.
 
 ```yaml
-name: meeting-summary               # kebab-case, globally unique in this repo
+name: supper-meeting-summary        # kebab-case, globally unique, must start with supper-
 version: 0.1.0                      # semver, independent of other skills
 stage: experimental                 # experimental | beta | stable | deprecated
 owners:                             # at least one; emails or @handles
   - bojie@
 description_for_install: |
-  Summarises a Lark meeting and writes a structured signal into sa-wiki.
+  Summarises a Lark meeting and writes a structured signal into supper-sa-wiki.
 
 depends_on:
   skills:                           # other skills in THIS repo
-    - sa-wiki: ">=0.2.0 <1.0.0"
+    - supper-sa-wiki: ">=0.2.0 <1.0.0"
     - lark-minutes: "*"
   binaries:                         # external CLIs the skill shells out to
     - lark-cli: ">=1.0.20"
@@ -48,7 +48,7 @@ io_contract:                        # what data this skill reads / writes
   reads:
     - lark-minutes                  # logical sources, not physical paths
   writes:
-    - target: sa-wiki/write_queue
+    - target: supper-sa-wiki/write_queue
       schema: core/signal-envelope.schema.json
       signal_type: meeting
 
@@ -111,8 +111,8 @@ You must NOT `Read` files inside another skill's folder. Two legal patterns:
    `core/<topic>.schema.json` and reference it in both manifests'
    `io_contract`. Skill B reads from a known queue/table; you write to it.
 
-Why: each skill has to install standalone. A user might install `meeting-summary`
-without `sa-wiki`, and the CLI should detect missing deps and warn, not crash
+Why: each skill has to install standalone. A user might install `supper-meeting-summary`
+without `supper-sa-wiki`, and the CLI should detect missing deps and warn, not crash
 on a dangling relative path.
 
 ---

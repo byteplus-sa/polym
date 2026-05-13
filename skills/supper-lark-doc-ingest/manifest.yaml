@@ -1,0 +1,46 @@
+name: supper-lark-doc-ingest
+version: 0.1.1
+stage: beta
+owners:
+  - Carey8175
+
+description_for_install: |
+  Scans recently created or modified Lark documents (default: yesterday 00:00
+  to now) and ingests them into the knowledge base. Supports single-doc ingest
+  via URL, folder filtering, and --dry-run preview. Fetches outline first to
+  classify and skip irrelevant docs, then full content for qualifying ones.
+  Writes raw snapshots, source pages, and entity updates to local wiki (silent),
+  and TIMELINE/topic pages to Lark wiki via supper-sa-wiki.
+
+depends_on:
+  skills:
+    - supper-sa-wiki: "^0.2"
+    - supper-local-wiki-init: "^0.1"
+  binaries:
+    - lark-cli: ">=1.0.20"
+  env: []
+
+io_contract:
+  reads:
+    - lark-drive/search
+    - lark-docs/content
+  writes:
+    - target: local-filesystem/wiki-root/raw
+      schema: core/signal-envelope.schema.json
+      signal_type: doc-raw
+    - target: local-filesystem/wiki-root/wiki
+      schema: core/signal-envelope.schema.json
+      signal_type: doc-ingest
+    - target: supper-sa-wiki/write_queue
+      schema: core/signal-envelope.schema.json
+      signal_type: doc-ingest
+
+triggers:
+  - "把最近的文档入库"
+  - "帮我整理一下最近的文档"
+  - "把这个文档存进知识库"
+  - "lark doc ingest"
+  - "文档入库"
+  - "ingest 文档"
+
+deprecates: []

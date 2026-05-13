@@ -3,21 +3,21 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-13T07:51:06Z
+generated_at: 2026-05-13T08:01:44Z
 
 skills:
-  - name: customer-brief
-    version: 0.1.0
+  - name: supper-customer-brief
+    version: 0.1.1
     stage: beta
     description_for_install: |
       Pre-meeting customer intelligence brief. Input a customer name and get a
       scannable 2-minute snapshot in ~10 seconds: recent activity, open issues,
       our commitments, competitive signals, and AI-generated talking-point
       suggestions driven by rules (quota alerts, overdue commitments, risk signals).
-      Queries sa-wiki + local wiki + live Lark IM in parallel; optional C360 data
+      Queries supper-sa-wiki + local wiki + live Lark IM in parallel; optional C360 data
       with --full flag. Read-only — no wiki writes.
     owners: ['Carey8175']
-    path: skills/customer-brief
+    path: skills/supper-customer-brief
     triggers:
       - "帮我备一下课"
       - "customer brief"
@@ -27,8 +27,8 @@ skills:
       - "我要去见"
       - "会前准备"
 
-  - name: dashboard-watch
-    version: 0.1.0
+  - name: supper-dashboard-watch
+    version: 0.1.1
     stage: beta
     description_for_install: |
       Query BytePlus C360 customer usage dashboards by customer name and specific
@@ -37,7 +37,7 @@ skills:
       Requires the Claude for Chrome extension for browser automation. If significant
       insights are found, offers to save them to the knowledge base.
     owners: ['Carey8175']
-    path: skills/dashboard-watch
+    path: skills/supper-dashboard-watch
     triggers:
       - "查一下客户的数据"
       - "dashboard watch"
@@ -48,8 +48,8 @@ skills:
       - "客户用量"
       - "月度用量"
 
-  - name: im-digest
-    version: 0.3.0
+  - name: supper-im-digest
+    version: 0.3.1
     stage: beta
     description_for_install: |
       Pulls yesterday's Lark group-chat messages via lark-cli, organises them into
@@ -58,7 +58,7 @@ skills:
       (raw snapshot + wiki entity pages) and the Lark SA Wiki (via write_queue).
       Runs daily to compound customer knowledge over time.
     owners: ['Carey8175']
-    path: skills/im-digest
+    path: skills/supper-im-digest
     triggers:
       - "整理昨天的消息"
       - "拉一下昨天的群消息"
@@ -68,8 +68,8 @@ skills:
       - "把昨天的聊天记录整理进 wiki"
       - "IM 消息整理"
 
-  - name: lark-doc-ingest
-    version: 0.1.0
+  - name: supper-lark-doc-ingest
+    version: 0.1.1
     stage: beta
     description_for_install: |
       Scans recently created or modified Lark documents (default: yesterday 00:00
@@ -77,9 +77,9 @@ skills:
       via URL, folder filtering, and --dry-run preview. Fetches outline first to
       classify and skip irrelevant docs, then full content for qualifying ones.
       Writes raw snapshots, source pages, and entity updates to local wiki (silent),
-      and TIMELINE/topic pages to Lark wiki via sa-wiki.
+      and TIMELINE/topic pages to Lark wiki via supper-sa-wiki.
     owners: ['Carey8175']
-    path: skills/lark-doc-ingest
+    path: skills/supper-lark-doc-ingest
     triggers:
       - "把最近的文档入库"
       - "帮我整理一下最近的文档"
@@ -88,8 +88,8 @@ skills:
       - "文档入库"
       - "ingest 文档"
 
-  - name: local-wiki-init
-    version: 0.1.0
+  - name: supper-local-wiki-init
+    version: 0.1.1
     stage: beta
     description_for_install: |
       Initialize a local LLM-maintained wiki for an SA, inspired by Karpathy's
@@ -99,7 +99,7 @@ skills:
       BytePlus SA workflow: customers, products, and the relationships between them
       as first-class entities.
     owners: ['Carey8175']
-    path: skills/local-wiki-init
+    path: skills/supper-local-wiki-init
     triggers:
       - "初始化本地 wiki"
       - "set up my local wiki"
@@ -110,8 +110,8 @@ skills:
       - "本地知识库"
       - "llm wiki"
 
-  - name: meeting-recorder
-    version: 0.1.0
+  - name: supper-meeting-recorder
+    version: 0.1.1
     stage: beta
     description_for_install: |
       Live meeting recording for SA work. Uses Lark Calendar to identify the current
@@ -120,7 +120,7 @@ skills:
       wiki when available. Replaces Syncore's default Google Calendar kickoff with
       lark-cli calendar lookup.
     owners: ['Carey8175']
-    path: skills/meeting-recorder
+    path: skills/supper-meeting-recorder
     triggers:
       - "开始录会"
       - "开始会议录制"
@@ -133,8 +133,8 @@ skills:
       - "end meeting"
       - "summarize so far"
 
-  - name: meeting-summary
-    version: 0.1.0
+  - name: supper-meeting-summary
+    version: 0.1.1
     stage: beta
     description_for_install: |
       Organises all Lark meetings (VC + Lark Minutes) within a time window into structured
@@ -143,7 +143,7 @@ skills:
       to the knowledge base automatically. Prioritises Lark Minutes AI summaries; falls back
       to transcripts or VC details.
     owners: ['Carey8175']
-    path: skills/meeting-summary
+    path: skills/supper-meeting-summary
     triggers:
       - "整理最近的会议"
       - "帮我总结一下昨天的会"
@@ -152,8 +152,8 @@ skills:
       - "整理会议"
       - "会议总结"
 
-  - name: sa-super-skill-help
-    version: 0.2.1
+  - name: supper-sa-super-skill-help
+    version: 0.2.2
     stage: stable
     description_for_install: |
       Onboarding guide for SA Super Skill Pack. Covers what the pack does,
@@ -162,7 +162,7 @@ skills:
       contributing new skills including versioning rules and CI workflow.
       Invoke when lost, new to the system, or needing a refresher.
     owners: ['Carey8175']
-    path: skills/sa-super-skill-help
+    path: skills/supper-sa-super-skill-help
     triggers:
       - "help"
       - "what is sa super skill"
@@ -176,8 +176,8 @@ skills:
       - "getting started"
       - "onboarding"
 
-  - name: sa-wiki
-    version: 0.2.0
+  - name: supper-sa-wiki
+    version: 0.2.1
     stage: beta
     description_for_install: |
       BytePlus SA Team shared knowledge base — read and write the SA Wiki
@@ -186,7 +186,7 @@ skills:
       write_queue flow that is safe for concurrent multi-agent use.
       Requires lark-cli authenticated as the team user.
     owners: ['Carey8175']
-    path: skills/sa-wiki
+    path: skills/supper-sa-wiki
     triggers:
       - "SA wiki"
       - "knowledge base"
@@ -205,15 +205,15 @@ profiles:
     audience: SA
     description: |
       SA daily minimum set — live recording, meeting history, IM digest, C360,
-      and document ingestion flowing into sa-wiki, plus local wiki bootstrap,
+      and document ingestion flowing into supper-sa-wiki, plus local wiki bootstrap,
       customer briefing, and onboarding help.
     includes:
-      - sa-wiki: "^0.2"
-      - meeting-summary: "^0.1"
-      - meeting-recorder: "^0.1"
-      - im-digest: "^0.3"
-      - dashboard-watch: "^0.1"
-      - local-wiki-init: "^0.1"
-      - customer-brief: "^0.1"
-      - sa-super-skill-help: "^0.2"
+      - supper-sa-wiki: "^0.2"
+      - supper-meeting-summary: "^0.1"
+      - supper-meeting-recorder: "^0.1"
+      - supper-im-digest: "^0.3"
+      - supper-dashboard-watch: "^0.1"
+      - supper-local-wiki-init: "^0.1"
+      - supper-customer-brief: "^0.1"
+      - supper-sa-super-skill-help: "^0.2"
 
