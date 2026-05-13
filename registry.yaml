@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-13T04:51:50Z
+generated_at: 2026-05-13T05:02:00Z
 
 skills:
   - name: customer-brief
@@ -67,6 +67,26 @@ skills:
       - "帮我总结一下昨天的 IM"
       - "把昨天的聊天记录整理进 wiki"
       - "IM 消息整理"
+
+  - name: lark-doc-ingest
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Scans recently created or modified Lark documents (default: yesterday 00:00
+      to now) and ingests them into the knowledge base. Supports single-doc ingest
+      via URL, folder filtering, and --dry-run preview. Fetches outline first to
+      classify and skip irrelevant docs, then full content for qualifying ones.
+      Writes raw snapshots, source pages, and entity updates to local wiki (silent),
+      and TIMELINE/topic pages to Lark wiki via sa-wiki.
+    owners: ['Carey8175']
+    path: skills/lark-doc-ingest
+    triggers:
+      - "把最近的文档入库"
+      - "帮我整理一下最近的文档"
+      - "把这个文档存进知识库"
+      - "lark doc ingest"
+      - "文档入库"
+      - "ingest 文档"
 
   - name: local-wiki-init
     version: 0.1.0
