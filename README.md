@@ -1,18 +1,35 @@
 # super-skill
 
-> **You are most likely an AI agent reading this.** This README is written for you.
-> A human contributor should read this top-to-bottom once; an agent should treat it as a routing manual.
+> **For contributors / agents:** This README is the routing manual. Read it top-to-bottom once.
+> **For new SA members:** See the quickstart below — two commands and you're set.
 
 `super-skill` is a curated, versioned collection of Claude Code skills for the SA Native AI program.
 It is **not** a single skill — it is the package manager + registry + contribution workflow
 that lets many people (and many agents) ship skills into a shared, governed catalog.
 
-End-user flow:
+## Quickstart (new SA member)
+
+**Prerequisites:** `gh` CLI installed and authenticated (`gh auth login`), `lark-cli` available.
 
 ```bash
-# one-liner install (planned)
-curl -fsSL https://<host>/install.sh | bash
-super-skill install profile:sa-mvp
+# Install everything
+gh repo clone Carey8175/sa-super-skill /tmp/sa-super-skill \
+  && /tmp/sa-super-skill/install.sh
+
+# Add to PATH if prompted (add to ~/.zshrc for persistence)
+export PATH="$HOME/.local/bin:$PATH"
+
+# Verify
+super-skill list
+super-skill doctor
+```
+
+Once installed, open Claude Code and say **"help"** or **"how do I use this?"** for an interactive guide.
+
+## Update
+
+```bash
+super-skill update    # pulls latest skills from GitHub
 ```
 
 Contributor flow (probably you, if you are reading this):
