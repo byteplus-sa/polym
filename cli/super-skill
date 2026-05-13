@@ -4,8 +4,21 @@
 
 set -euo pipefail
 
-VERSION="0.2.1"
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+VERSION="0.2.2"
+
+resolve_script_path() {
+  local source="${BASH_SOURCE[0]}"
+  local dir
+  while [[ -L "$source" ]]; do
+    dir="$(cd -P "$(dirname "$source")" && pwd)"
+    source="$(readlink "$source")"
+    [[ "$source" != /* ]] && source="$dir/$source"
+  done
+  cd -P "$(dirname "$source")" && pwd
+}
+
+SCRIPT_DIR="$(resolve_script_path)"
+REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 SKILLS_SRC="$REPO_DIR/skills"
 SKILLS_DST="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
 LOCK_FILE="$SKILLS_DST/.super-skill.lock"
@@ -81,6 +94,7 @@ yaml_get() {
 
 all_skills() {
   for dir in "$SKILLS_SRC"/*/; do
+    [[ -d "$dir" ]] || continue
     local name; name=$(basename "$dir")
     [[ "$name" == "$TEMPLATE_NAME" ]] && continue
     echo "$name"
@@ -131,6 +145,7 @@ from pathlib import Path
 lock_path = Path(os.environ["LOCK_FILE"])
 repo_dir = os.environ["REPO_DIR"]
 legacy = set(filter(None, os.environ.get("LEGACY_CSV", "").split(",")))
+pack_repo_names = {"sa-super-skill", "sa_supper_skill"}
 
 try:
     lock = json.loads(lock_path.read_text())
@@ -142,7 +157,9 @@ kept = []
 for item in lock.get("skills", []):
     name = item.get("name")
     source = item.get("source")
-    if name in legacy and source == repo_dir:
+    source_name = Path(source).name if source else ""
+    is_this_pack = source == repo_dir or source_name in pack_repo_names
+    if name in legacy and is_this_pack:
         removed.append(name)
     else:
         kept.append(item)

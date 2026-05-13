@@ -147,9 +147,13 @@ install_cli() {
 maybe_warn_path() {
   if ! echo ":${PATH}:" | grep -q ":${BIN_DIR}:"; then
     warn "$BIN_DIR is not in your PATH."
-    echo "   Add this to your ~/.zshrc or ~/.bashrc:"
+    echo "   Add it to your shell startup file:"
     echo ""
-    echo "     export PATH=\"\$HOME/.local/bin:\$PATH\""
+    echo "     # zsh:"
+    echo "     echo 'export PATH=\"\$HOME/.local/bin:\$PATH\"' >> ~/.zshrc && source ~/.zshrc"
+    echo ""
+    echo "     # bash on macOS:"
+    echo "     echo 'export PATH=\"\$HOME/.local/bin:\$PATH\"' >> ~/.bash_profile && source ~/.bash_profile"
     echo ""
   fi
 }

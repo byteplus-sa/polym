@@ -49,8 +49,11 @@ GITHUB_TOKEN=ghp_xxxx bash <(curl -fsSL \
 After any install option, if `~/.local/bin` is not in your PATH:
 
 ```bash
-# Add to ~/.zshrc (run once)
+# zsh
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
+
+# bash on macOS
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bash_profile && source ~/.bash_profile
 
 # Verify
 super-skill list
