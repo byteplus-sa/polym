@@ -79,20 +79,40 @@ Make sure you have these installed:
 
 ### Step 2: Install the skill pack
 
+Pick the option that matches your setup. All three do the same thing.
+
+**Option A — gh CLI (recommended)**
 ```bash
-# Clone and install everything in one shot
+brew install gh && gh auth login   # one-time setup if you don't have gh
 gh repo clone Carey8175/sa-super-skill /tmp/sa-super-skill \
   && /tmp/sa-super-skill/install.sh
 ```
 
-This will:
+**Option B — SSH** (if you have an SSH key on GitHub)
+```bash
+git clone git@github.com:Carey8175/sa-super-skill.git /tmp/sa-super-skill \
+  && /tmp/sa-super-skill/install.sh
+```
+
+**Option C — GitHub Personal Access Token** (no special CLI needed)
+1. Go to github.com/settings/tokens → Generate new token (classic) → scope: **repo**
+2. Copy the token (starts with `ghp_`)
+```bash
+GITHUB_TOKEN=ghp_xxxx bash <(curl -fsSL \
+  -H "Authorization: token ghp_xxxx" \
+  https://raw.githubusercontent.com/Carey8175/sa-super-skill/main/install.sh)
+```
+
+> **Note:** Ask the repo owner to add you as a GitHub collaborator before installing.
+
+The installer will:
 1. Clone the repo to `~/.local/share/sa-super-skill`
 2. Link `super-skill` CLI to `~/.local/bin/`
 3. Install all skills to `~/.claude/skills/`
 
-If `~/.local/bin` is not in your PATH, add this to your `~/.zshrc`:
+If `~/.local/bin` is not in your PATH:
 ```bash
-export PATH="$HOME/.local/bin:$PATH"
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
 ```
 
 ### Step 3: Install only the SA MVP bundle (recommended for new users)

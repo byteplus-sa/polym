@@ -9,22 +9,55 @@ that lets many people (and many agents) ship skills into a shared, governed cata
 
 ## Quickstart (new SA member)
 
-**Prerequisites:** `gh` CLI installed and authenticated (`gh auth login`), `lark-cli` available.
+> **Access first:** Ask the repo owner to add you as a GitHub collaborator before running any install command.
+
+Pick whichever option matches your setup:
+
+### Option A — gh CLI (recommended)
 
 ```bash
-# Install everything
+# One-time setup (if you don't have gh yet)
+brew install gh && gh auth login
+
+# Install
 gh repo clone Carey8175/sa-super-skill /tmp/sa-super-skill \
   && /tmp/sa-super-skill/install.sh
+```
 
-# Add to PATH if prompted (add to ~/.zshrc for persistence)
-export PATH="$HOME/.local/bin:$PATH"
+### Option B — SSH (if you have an SSH key on GitHub)
+
+```bash
+git clone git@github.com:Carey8175/sa-super-skill.git /tmp/sa-super-skill \
+  && /tmp/sa-super-skill/install.sh
+```
+
+### Option C — GitHub Personal Access Token (no special CLI needed)
+
+1. Go to [github.com/settings/tokens](https://github.com/settings/tokens) → **Generate new token (classic)**
+2. Select scope: **repo** (read-only is enough)
+3. Copy the token (starts with `ghp_`)
+
+```bash
+# Replace ghp_xxxx with your actual token
+GITHUB_TOKEN=ghp_xxxx bash <(curl -fsSL \
+  -H "Authorization: token ghp_xxxx" \
+  https://raw.githubusercontent.com/Carey8175/sa-super-skill/main/install.sh)
+```
+
+---
+
+After any install option, if `~/.local/bin` is not in your PATH:
+
+```bash
+# Add to ~/.zshrc (run once)
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
 
 # Verify
 super-skill list
 super-skill doctor
 ```
 
-Once installed, open Claude Code and say **"help"** or **"how do I use this?"** for an interactive guide.
+Once installed, open Claude Code and say **"help"** for an interactive guide.
 
 ## Update
 
