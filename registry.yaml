@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-16T03:35:46Z
+generated_at: 2026-05-16T03:39:21Z
 
 skills:
   - name: polymath-customer-brief
@@ -73,7 +73,7 @@ skills:
       - "onboarding"
 
   - name: polymath-im-digest
-    version: 0.3.1
+    version: 0.4.0
     stage: beta
     description_for_install: |
       Pulls yesterday's Lark group-chat messages via lark-cli, organises them into
