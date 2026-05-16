@@ -1,5 +1,17 @@
 # polymath-sa-wiki CHANGELOG
 
+## 0.3.0 — 2026-05-16
+
+### Added
+- Optional Chrome MCP browser demo for operational tutorials. When fetched
+  wiki content looks like a step-by-step procedure (URL + action verbs +
+  numbered steps), the read path now appends a demo offer to the reply so
+  the SA can choose between browser walkthrough / read-only / re-search.
+  Demo execution rules (heuristic scoring, rhythm rules, visual highlights,
+  GIF recording, sensitive-action guards, post-demo wiki feedback loop) are
+  documented in `references/browser-demo.md`. No wiki schema change; no new
+  trigger; purely a read-side render enhancement.
+
 ## 0.2.2 — 2026-05-16
 
 ### Fixed

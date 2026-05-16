@@ -1,7 +1,7 @@
 ---
 name: polymath-sa-wiki
-version: 0.2.2
-description: "BytePlus SA Team knowledge base — read and write. Use when asking about SA knowledge, customer profiles, meeting notes, archiving information, checking customer progress, adding topic pages, or ingesting handbook chapters. READ path: Bitable knowledge_index search + full-text docs fetch. WRITE path: mandatory write_queue (agents never write wiki pages directly). Multi-agent concurrency-safe."
+version: 0.3.0
+description: "BytePlus SA Team knowledge base — read and write. Use when asking about SA knowledge, customer profiles, meeting notes, archiving information, checking customer progress, adding topic pages, or ingesting handbook chapters. READ path: Bitable knowledge_index search + full-text docs fetch. WRITE path: mandatory write_queue (agents never write wiki pages directly). Multi-agent concurrency-safe. Operational tutorials (containing URL + step-by-step instructions) trigger an optional Chrome MCP browser demo offer — see references/browser-demo.md."
 metadata:
   requires:
     bins: ["lark-cli"]
@@ -183,6 +183,17 @@ lark-cli docs +fetch --api-version v2 --doc <doc_token> --as user
 2. "look up a domain"? → `record-list` with the corresponding `VIEW_DOM_*`
 3. "what was updated recently"? → `record-list` with `VIEW_ALL` (sorted by Updated desc)
 4. vague question? → `record-search` keyword search, then fetch full text of hits
+
+### Demo Offer (optional read-path tail)
+
+After answering the user's question, evaluate whether the fetched content looks like an **operational tutorial** (URL + step-by-step + action verbs). If yes, append a single offer line to the reply:
+
+> 📺 This page contains operational steps. Want me to walk you through it in the browser? (1) browser demo  (2) read-only (already given above)  (3) re-search
+
+If user picks **(1)** → follow [`references/browser-demo.md`](references/browser-demo.md) for Chrome MCP execution (rhythm rules, visual highlights, GIF recording, sensitive-action guards).
+If user picks **(2)** or content is **not demonstrable** → skip silently.
+
+Heuristic scoring + complete demo runbook lives in [`references/browser-demo.md`](references/browser-demo.md). This is purely a read-side render enhancement — wiki schema is unchanged.
 
 ## 5. WRITE Workflow (mandatory write_queue)
 
