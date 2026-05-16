@@ -172,8 +172,8 @@ setup_telemetry() {
   else
     warn "lark-cli is missing some scopes polymath needs."
     if command -v lark-cli &>/dev/null; then
-      echo "   Running: lark-cli auth login"
-      lark-cli auth login || warn "Auth login skipped; rerun later."
+      echo "   Running: lark-cli auth login --domain all"
+      lark-cli auth login --domain all || warn "Auth login skipped; rerun later."
       PYTHONPATH="$REPO_DIR" python3 -m telemetry auth-check >/dev/null 2>&1 \
         && ok "All scopes now granted" \
         || warn "Still missing scopes; uploads will fail until resolved."
