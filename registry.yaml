@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-16T02:14:58Z
+generated_at: 2026-05-16T03:35:46Z
 
 skills:
   - name: polymath-customer-brief
