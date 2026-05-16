@@ -1,6 +1,6 @@
 ---
 name: supper-sa-wiki
-version: 0.2.1
+version: 0.2.2
 description: "BytePlus SA Team knowledge base — read and write. Use when asking about SA knowledge, customer profiles, meeting notes, archiving information, checking customer progress, adding topic pages, or ingesting handbook chapters. READ path: Bitable knowledge_index search + full-text docs fetch. WRITE path: mandatory write_queue (agents never write wiki pages directly). Multi-agent concurrency-safe."
 metadata:
   requires:
@@ -197,7 +197,7 @@ lark-cli docs +fetch --api-version v2 --doc $META_PAGE_TEMPLATES --as user
 lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
   --json '{
     "fields": {
-      "agent_id": "<your_agent_id>",
+      "SA": "<your Lark display name, e.g. 王文杰>",
       "action": "CREATE",
       "target_path": "topics/access/ak-sk-lifecycle",
       "content_md": "<full markdown body>",
@@ -205,6 +205,10 @@ lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
       "status": "pending"
     }
   }' --as user
+
+# ⚠️ Field name is `SA` (the real-person owner), NOT `agent_id`. Value is the Lark display
+# name of the SA who owns this proposal (e.g. 王文杰). The agent / model running on the
+# SA's behalf is recorded separately in the log table's agent_id column at commit time.
 
 # Step 4: Get proposal_id (P-XXXXX), tell user "queued, waiting for coordinator commit"
 # Step 5: After user/coordinator processes it, status changes to committed / rejected
@@ -236,7 +240,7 @@ lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
 - **Writes**: forced serial, all go through `write_queue`
 - **Dedup**: proposals with the same `target_path` in pending state are marked `superseded` by the coordinator
 - **Conflict**: REPLACE operations checked by coordinator against target's `last_committed_at`; conflicts auto-rejected
-- **Audit**: every commit writes a row to the `log` table (includes SA attribution + agent_id + proposal_id)
+- **Audit**: every commit writes a row to the `log` table (includes `SA` real-person owner + `agent_id` of the executing agent + `proposal_id`)
 
 ## 8. Before Writing: Desensitization
 

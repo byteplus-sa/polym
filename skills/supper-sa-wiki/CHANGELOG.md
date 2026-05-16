@@ -1,5 +1,15 @@
 # supper-sa-wiki CHANGELOG
 
+## 0.2.2 — 2026-05-16
+
+### Fixed
+- Schema gap in write_queue example payloads: docs referenced a non-existent
+  `agent_id` field; actual write_queue schema uses `SA` (Lark display name of
+  the real Solution Architect, e.g. `王文杰`). Updated SKILL.md §5 and all
+  examples in references/{write-workflow,examples,query-workflow}.md.
+  Clarified that `agent_id` exists only on the `log` table and is filled in
+  by the coordinator at commit time. (Reported by Bojie Sun, 2026-05-15.)
+
 ## 0.2.1 — 2026-05-13
 
 - Renamed package to `supper-sa-wiki` to adopt the SA Super Skill `supper-` prefix convention.

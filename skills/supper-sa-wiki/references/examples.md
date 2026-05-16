@@ -71,7 +71,7 @@ WQ_TABLE="tblTR65mRdvE74Lu"
 lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
   --json '{
     "fields": {
-      "agent_id": "sa-wenjie",
+      "SA": "王文杰",
       "action": "CREATE",
       "target_path": "customers/acme-corp/meetings/2026-05-06-kickoff",
       "content_md": "📌 Type: MEETING | Layer: customers | Customer: acme-corp | Date: 2026-05-06\n...",
@@ -85,7 +85,7 @@ lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
 lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
   --json '{
     "fields": {
-      "agent_id": "sa-wenjie",
+      "SA": "王文杰",
       "action": "APPEND",
       "target_path": "customers/acme-corp/TIMELINE",
       "target_doc_token": "<TIMELINE_doc_token>",
@@ -118,7 +118,7 @@ lark-cli base +record-search --base-token $BASE_TOKEN --table-id $KI_TABLE \
 lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
   --json '{
     "fields": {
-      "agent_id": "sa-wenjie",
+      "SA": "王文杰",
       "action": "CREATE",
       "target_path": "topics/access/babi-sso-known-issues",
       "content_md": "📌 Type: FIX | Layer: topics | Domain: access\n   Keywords: Babi, SSO, AK/SK, workaround\n   ...",
@@ -138,21 +138,21 @@ New customer "betacorp" entered active POC. User: "Create a customer profile for
 ```bash
 # Step 1 — CREATE customer container
 lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
-  --json '{"fields":{"agent_id":"sa-wenjie","action":"CREATE",
+  --json '{"fields":{"SA":"王文杰","action":"CREATE",
     "target_path":"customers/betacorp",
     "content_md":"<h1>betacorp</h1><p>Customer subtree container.</p>",
     "status":"pending"}}' --as user  # → P-00050
 
 # Step 2 — CREATE PROFILE
 lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
-  --json '{"fields":{"agent_id":"sa-wenjie","action":"CREATE",
+  --json '{"fields":{"SA":"王文杰","action":"CREATE",
     "target_path":"customers/betacorp/PROFILE",
     "content_md":"<full PROFILE template content>",
     "status":"pending"}}' --as user  # → P-00051
 
 # Step 3 — CREATE TIMELINE
 lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
-  --json '{"fields":{"agent_id":"sa-wenjie","action":"CREATE",
+  --json '{"fields":{"SA":"王文杰","action":"CREATE",
     "target_path":"customers/betacorp/TIMELINE",
     "content_md":"<TIMELINE template with first row>",
     "status":"pending"}}' --as user  # → P-00052
@@ -199,10 +199,10 @@ This is the **compound** mechanism — customer knowledge feeds into general top
 lark-cli base +record-get --base-token $BASE_TOKEN --table-id $WQ_TABLE \
   --record-id <record_id> --as user
 
-# All pending for this agent
+# All pending for this SA
 lark-cli base +record-search --base-token $BASE_TOKEN --table-id $WQ_TABLE \
   --json '{"filter":{"conjunction":"and","conditions":[
-    {"field_name":"agent_id","operator":"is","value":["sa-wenjie"]},
+    {"field_name":"SA","operator":"is","value":["王文杰"]},
     {"field_name":"status","operator":"is","value":["pending"]}
   ]}}' --as user
 ```

@@ -177,7 +177,7 @@ skills:
       - "onboarding"
 
   - name: supper-sa-wiki
-    version: 0.2.1
+    version: 0.2.2
     stage: beta
     description_for_install: |
       BytePlus SA Team shared knowledge base — read and write the SA Wiki

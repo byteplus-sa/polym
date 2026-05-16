@@ -39,7 +39,7 @@ lark-cli base +record-search --base-token $BASE_TOKEN --table-id $KI_TABLE \
 lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
   --json '{
     "fields": {
-      "agent_id": "sa-wenjie",
+      "SA": "王文杰",
       "action": "CREATE",
       "target_path": "topics/access/ak-sk-lifecycle",
       "target_doc_token": "",
@@ -52,7 +52,11 @@ lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
 # Step 4: Capture returned record_id and proposal_id (P-XXXXX) — share with user
 ```
 
-**Required fields**: agent_id, action, target_path, content_md, status
+> ⚠️ The owner field is `SA` (Lark display name of the real Solution Architect, e.g. `王文杰`),
+> NOT `agent_id`. The `agent_id` column lives only on the `log` table and is filled in by the
+> coordinator at commit time to record which agent/model executed the action.
+
+**Required fields**: SA, action, target_path, content_md, status
 **Empty fields**: target_doc_token (set by coordinator after creation)
 **Recommended**: source_refs
 
@@ -74,7 +78,7 @@ lark-cli base +record-search --base-token $BASE_TOKEN --table-id $KI_TABLE \
 lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
   --json '{
     "fields": {
-      "agent_id": "sa-wenjie",
+      "SA": "王文杰",
       "action": "APPEND",
       "target_path": "customers/acme-corp/TIMELINE",
       "target_doc_token": "<doc_token from step 1>",
@@ -100,7 +104,7 @@ Use rarely. Only when the entire page needs to change.
 lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
   --json '{
     "fields": {
-      "agent_id": "sa-wenjie",
+      "SA": "王文杰",
       "action": "REPLACE",
       "target_path": "topics/access/ak-sk-lifecycle",
       "target_doc_token": "<existing doc_token>",
@@ -125,7 +129,7 @@ Flag a problem for the coordinator to handle.
 lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
   --json '{
     "fields": {
-      "agent_id": "sa-wenjie",
+      "SA": "王文杰",
       "action": "LINT",
       "target_path": "topics/products/seedance-whitelist",
       "content_md": "Last-updated > 90 days ago; whitelist section claims pre-GA but Seedance 2.0 is now GA. Please update.",
@@ -150,7 +154,7 @@ For first PROFILE/TIMELINE: coordinator auto-creates intermediate parent nodes. 
 
 ```bash
 lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
-  --json '{"fields":{"agent_id":"sa-wenjie","action":"CREATE",
+  --json '{"fields":{"SA":"王文杰","action":"CREATE",
     "target_path":"customers/acme-corp",
     "content_md":"<h1>acme-corp</h1><p>Customer subtree container.</p>",
     "status":"pending"}}' --as user
@@ -162,7 +166,7 @@ lark-cli base +record-upsert --base-token $BASE_TOKEN --table-id $WQ_TABLE \
 
 1. New / updated wiki page (CREATE / APPEND / REPLACE)
 2. New row in `knowledge_index` Bitable (or updated Updated field)
-3. New row in `log` table: ts, action, target_path, doc_token, agent_id, SA, proposal_id
+3. New row in `log` table: ts, action, target_path, target_doc_token, SA (real-person owner), agent_id (executing agent, filled in by coordinator), proposal_id
 4. write_queue row: status=committed, committed_at=now
 
 ```bash

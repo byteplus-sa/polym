@@ -220,7 +220,7 @@ lark-cli base +record-list --base-token $BASE_TOKEN --table-id $KI_TABLE \
 ```bash
 lark-cli base +record-search --base-token $BASE_TOKEN --table-id $WQ_TABLE \
   --json '{"filter":{"conjunction":"and","conditions":[
-    {"field_name":"agent_id","operator":"is","value":["sa-wenjie"]},
+    {"field_name":"SA","operator":"is","value":["王文杰"]},
     {"field_name":"status","operator":"is","value":["pending"]}
   ]}}' --format json --as user
 ```
