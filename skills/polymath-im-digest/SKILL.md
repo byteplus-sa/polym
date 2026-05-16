@@ -1,6 +1,6 @@
 ---
 name: polymath-im-digest
-version: 0.3.1
+version: 0.4.0
 description: "Fetches yesterday's Lark IM messages, organises topics and key content, and saves automatically to the knowledge base. Trigger phrases: 'organize yesterday's messages', 'daily IM digest', 'pull yesterday's group messages', 'im digest'."
 metadata:
   requires:
@@ -56,13 +56,73 @@ YESTERDAY=$(date -d yesterday +%Y-%m-%d)
    - Y: "Where should it be saved? (press Enter for default ~/sa-wiki)" → call `polymath-local-wiki-init` → save path to memory
    - N: Skip local write for this run, remember preference
 
-**0.3 Determine Chats to Scan**
+**0.3 Discover Active Conversations from Lark (message-first)**
 
-1. Read `lark_chat` field from `$LOCAL_WIKI_ROOT/wiki/entities/customers/*.md`
-2. Supplement using `lark-cli im +chat-search --keyword <name>` for unrecorded chats
-3. User may append chat names / chat_ids
+> **Principle: messages are the ground truth. The local wiki is used only for context enrichment afterward — never as the primary source for discovering which conversations to scan.**
 
-Display the list of chats to be scanned and wait for confirmation.
+**Step 1 — Collect all P2P messages from yesterday (one query)**
+
+```bash
+lark-cli im +messages-search \
+  --chat-type p2p \
+  --start "$START_TIME" --end "$END_TIME" \
+  --exclude-sender-type bot \
+  --page-all \
+  --format json \
+  --as user
+```
+
+This returns every P2P message (sent or received) in a single paginated query — no need to enumerate contacts first. Group results by `chat_id` to reconstruct per-conversation threads.
+
+**Step 2 — Enumerate all joined group chats and probe for activity**
+
+```bash
+# Enumerate all joined groups, newest-activity first
+lark-cli im +chat-search \
+  --sort-by update_time_desc \
+  --page-size 100 \
+  --format json \
+  --as user
+# Repeat with --page-token until has_more=false (cap at 500 groups)
+```
+
+For every group, batch-probe for yesterday's messages in parallel (batches of 20):
+
+```bash
+lark-cli im +chat-messages-list \
+  --chat-id <oc_xxx> \
+  --start "$START_TIME" --end "$END_TIME" \
+  --sort asc --page-size 1 \
+  --format json --as user
+# Keep only groups where messages list is non-empty
+```
+
+Skip silently: 0 messages, access error (`99991400` / `403`).
+
+**Step 3 — Categorise and show the active-conversation list to the user**
+
+Merge P2P threads (Step 1) and active groups (Step 2), then display:
+
+```
+Active conversations on <YESTERDAY> — <N> total
+
+📨 P2P / direct messages (<n>):
+  [chat_id] Person Name — <k> messages
+
+👥 External / customer group chats (<n>):
+  [oc_xxx] Chat Name — <k> messages
+
+🏢 Internal / team / notification group chats (<n>):
+  [oc_xxx] Chat Name — <k> messages
+
+🔒 No-access (<n>): <names>
+```
+
+Wait for user confirmation or exclusion requests before proceeding to Phase 1.
+
+**Step 4 — Wiki cross-reference (enrichment only)**
+
+After the user confirms the scan list, look up each active conversation against `$LOCAL_WIKI_ROOT/wiki/entities/customers/*.md` (matching on `lark_chat` field, person name, or chat name). Attach existing customer/person context for richer Phase 2 analysis. Conversations with no wiki match are flagged as **potential new customer or contact** in the digest.
 
 ---
 
@@ -158,7 +218,7 @@ Risk-signal customers are highlighted for SA prioritization.
 - Do not `docs +update` wiki pages directly — all writes go through polymath-sa-wiki write_queue
 - Desensitization is handled by polymath-sa-wiki (`META_DESENSITIZATION`)
 - Raw snapshots are read-only
-- Only process group chats, not P2P messages
+- Process both group chats and P2P messages; treat P2P content with higher sensitivity (colleague discussions may be more candid)
 
 ## Reference Documents
 

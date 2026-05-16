@@ -18,35 +18,64 @@ Override with `--date YYYY-MM-DD` if user specifies a different date.
 
 ---
 
-## Chat Discovery
+## Conversation Discovery (message-first)
 
-### Method A — From local wiki (preferred)
+> The local wiki customer list is **not** the starting point. Discover conversations from Lark activity first; cross-reference the wiki afterward for context enrichment only.
 
-```bash
-# Scan all customer pages for lark_chat field
-grep -r "^lark_chat:" $LOCAL_WIKI_ROOT/wiki/entities/customers/ \
-  | sed 's/.*lark_chat: //'
-```
+### Step 1 — Collect all P2P messages from yesterday
 
-For each non-empty `lark_chat` value:
-- If it looks like `oc_xxx` → use directly as chat_id
-- If it's a chat name → resolve via `+chat-search`
-
-### Method B — Chat search by name
+P2P discovery does not require enumerating contacts — search across all P2P conversations at once:
 
 ```bash
-lark-cli im +chat-search \
-  --keyword "<customer_name>" \
+lark-cli im +messages-search \
+  --chat-type p2p \
+  --start "$START_TIME" --end "$END_TIME" \
+  --exclude-sender-type bot \
+  --page-all \
   --format json \
   --as user
-# Returns: chat_id, name, member_count, description
 ```
 
-Pick the best match (exact name match preferred; ask if ambiguous).
+Group the returned messages by `chat_id` to reconstruct per-conversation threads. Each distinct `chat_id` in the result is a P2P thread that was active yesterday.
 
-### Method C — User provides
+### Step 2 — Enumerate all joined group chats and probe for activity
 
-Accept chat_ids or names as comma-separated input. Resolve names via Method B.
+```bash
+# Page through all joined groups, newest-activity first
+lark-cli im +chat-search \
+  --sort-by update_time_desc \
+  --page-size 100 \
+  --format json \
+  --as user
+# Repeat with --page-token until has_more=false (cap at 500 groups)
+```
+
+For every group, batch-probe for yesterday's messages in parallel (batches of 20):
+
+```bash
+lark-cli im +chat-messages-list \
+  --chat-id <oc_xxx> \
+  --start "$START_TIME" --end "$END_TIME" \
+  --sort asc --page-size 1 \
+  --format json --as user
+# page-size 1 for probe; re-fetch with page-size 50 in Phase 1 if active
+```
+
+Error handling:
+
+| Error | Action |
+|---|---|
+| `99991400` / `403` | Log "no access: <chat_name>"; skip |
+| 0 messages | Skip silently |
+| Rate limit (`99991663`) | Wait 1 s; retry once |
+
+### Step 3 — Wiki cross-reference (enrichment only)
+
+After the user confirms the scan list, cross-reference each active conversation against `$LOCAL_WIKI_ROOT/wiki/entities/customers/*.md` using the `lark_chat` field, person name (for P2P), or fuzzy chat-name match. Attach existing customer/person context for richer analysis. Conversations with no wiki match are flagged as **potential new customer or contact** in the digest.
+
+### Step 4 — User provides additional conversations
+
+The user may add extra group chats (`oc_xxx` or name) or P2P contacts (name or `ou_xxx`) at confirmation time. Resolve names via `+chat-search --keyword` (groups) or `lark-cli contact +search` (P2P).
 
 ---
 
