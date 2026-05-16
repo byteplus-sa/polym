@@ -29,4 +29,4 @@ description: One sentence, ≤ 250 chars, starting with a verb. Describe what th
 
 ## IO contract (must match manifest.yaml)
 - Reads: …
-- Writes: signal envelopes of type `…` to `supper-sa-wiki/write_queue`
+- Writes: signal envelopes of type `…` to `polymath-sa-wiki/write_queue`

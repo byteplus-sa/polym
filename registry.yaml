@@ -3,10 +3,10 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-16T00:35:34Z
+generated_at: 2026-05-16T00:44:16Z
 
 skills:
-  - name: supper-customer-brief
+  - name: polymath-customer-brief
     version: 0.1.1
     stage: beta
     description_for_install: |
@@ -14,10 +14,10 @@ skills:
       scannable 2-minute snapshot in ~10 seconds: recent activity, open issues,
       our commitments, competitive signals, and AI-generated talking-point
       suggestions driven by rules (quota alerts, overdue commitments, risk signals).
-      Queries supper-sa-wiki + local wiki + live Lark IM in parallel; optional C360 data
+      Queries polymath-sa-wiki + local wiki + live Lark IM in parallel; optional C360 data
       with --full flag. Read-only — no wiki writes.
     owners: ['Carey8175']
-    path: skills/supper-customer-brief
+    path: skills/polymath-customer-brief
     triggers:
       - "帮我备一下课"
       - "customer brief"
@@ -27,7 +27,7 @@ skills:
       - "我要去见"
       - "会前准备"
 
-  - name: supper-dashboard-watch
+  - name: polymath-dashboard-watch
     version: 0.1.1
     stage: beta
     description_for_install: |
@@ -37,7 +37,7 @@ skills:
       Requires the Claude for Chrome extension for browser automation. If significant
       insights are found, offers to save them to the knowledge base.
     owners: ['Carey8175']
-    path: skills/supper-dashboard-watch
+    path: skills/polymath-dashboard-watch
     triggers:
       - "查一下客户的数据"
       - "dashboard watch"
@@ -48,7 +48,31 @@ skills:
       - "客户用量"
       - "月度用量"
 
-  - name: supper-im-digest
+  - name: polymath-help
+    version: 0.2.2
+    stage: stable
+    description_for_install: |
+      Onboarding guide for Polymath. Covers what the pack does,
+      step-by-step installation (lark-cli auth, Syncore, Chrome extension, local
+      wiki setup), common daily use cases for each skill, and a guide for
+      contributing new skills including versioning rules and CI workflow.
+      Invoke when lost, new to the system, or needing a refresher.
+    owners: ['Carey8175']
+    path: skills/polymath-help
+    triggers:
+      - "help"
+      - "what is polymath"
+      - "how do I use this"
+      - "how do I get started"
+      - "how do I install"
+      - "what can you do"
+      - "polymath help"
+      - "how do I add a skill"
+      - "how to contribute"
+      - "getting started"
+      - "onboarding"
+
+  - name: polymath-im-digest
     version: 0.3.1
     stage: beta
     description_for_install: |
@@ -58,7 +82,7 @@ skills:
       (raw snapshot + wiki entity pages) and the Lark SA Wiki (via write_queue).
       Runs daily to compound customer knowledge over time.
     owners: ['Carey8175']
-    path: skills/supper-im-digest
+    path: skills/polymath-im-digest
     triggers:
       - "整理昨天的消息"
       - "拉一下昨天的群消息"
@@ -68,7 +92,7 @@ skills:
       - "把昨天的聊天记录整理进 wiki"
       - "IM 消息整理"
 
-  - name: supper-lark-doc-ingest
+  - name: polymath-lark-doc-ingest
     version: 0.1.1
     stage: beta
     description_for_install: |
@@ -77,9 +101,9 @@ skills:
       via URL, folder filtering, and --dry-run preview. Fetches outline first to
       classify and skip irrelevant docs, then full content for qualifying ones.
       Writes raw snapshots, source pages, and entity updates to local wiki (silent),
-      and TIMELINE/topic pages to Lark wiki via supper-sa-wiki.
+      and TIMELINE/topic pages to Lark wiki via polymath-sa-wiki.
     owners: ['Carey8175']
-    path: skills/supper-lark-doc-ingest
+    path: skills/polymath-lark-doc-ingest
     triggers:
       - "把最近的文档入库"
       - "帮我整理一下最近的文档"
@@ -88,7 +112,7 @@ skills:
       - "文档入库"
       - "ingest 文档"
 
-  - name: supper-local-wiki-init
+  - name: polymath-local-wiki-init
     version: 0.1.1
     stage: beta
     description_for_install: |
@@ -99,7 +123,7 @@ skills:
       BytePlus SA workflow: customers, products, and the relationships between them
       as first-class entities.
     owners: ['Carey8175']
-    path: skills/supper-local-wiki-init
+    path: skills/polymath-local-wiki-init
     triggers:
       - "初始化本地 wiki"
       - "set up my local wiki"
@@ -110,7 +134,7 @@ skills:
       - "本地知识库"
       - "llm wiki"
 
-  - name: supper-meeting-recorder
+  - name: polymath-meeting-recorder
     version: 0.1.2
     stage: experimental
     description_for_install: |
@@ -120,7 +144,7 @@ skills:
       wiki when available. Replaces Syncore's default Google Calendar kickoff with
       lark-cli calendar lookup.
     owners: ['Carey8175']
-    path: skills/supper-meeting-recorder
+    path: skills/polymath-meeting-recorder
     triggers:
       - "开始录会"
       - "开始会议录制"
@@ -133,7 +157,7 @@ skills:
       - "end meeting"
       - "summarize so far"
 
-  - name: supper-meeting-summary
+  - name: polymath-meeting-summary
     version: 0.1.1
     stage: beta
     description_for_install: |
@@ -143,7 +167,7 @@ skills:
       to the knowledge base automatically. Prioritises Lark Minutes AI summaries; falls back
       to transcripts or VC details.
     owners: ['Carey8175']
-    path: skills/supper-meeting-summary
+    path: skills/polymath-meeting-summary
     triggers:
       - "整理最近的会议"
       - "帮我总结一下昨天的会"
@@ -152,31 +176,7 @@ skills:
       - "整理会议"
       - "会议总结"
 
-  - name: supper-sa-super-skill-help
-    version: 0.2.2
-    stage: stable
-    description_for_install: |
-      Onboarding guide for SA Super Skill Pack. Covers what the pack does,
-      step-by-step installation (lark-cli auth, Syncore, Chrome extension, local
-      wiki setup), common daily use cases for each skill, and a guide for
-      contributing new skills including versioning rules and CI workflow.
-      Invoke when lost, new to the system, or needing a refresher.
-    owners: ['Carey8175']
-    path: skills/supper-sa-super-skill-help
-    triggers:
-      - "help"
-      - "what is sa super skill"
-      - "how do I use this"
-      - "how do I get started"
-      - "how do I install"
-      - "what can you do"
-      - "sa super skill help"
-      - "how do I add a skill"
-      - "how to contribute"
-      - "getting started"
-      - "onboarding"
-
-  - name: supper-sa-wiki
+  - name: polymath-sa-wiki
     version: 0.2.2
     stage: beta
     description_for_install: |
@@ -186,7 +186,7 @@ skills:
       write_queue flow that is safe for concurrent multi-agent use.
       Requires lark-cli authenticated as the team user.
     owners: ['Carey8175']
-    path: skills/supper-sa-wiki
+    path: skills/polymath-sa-wiki
     triggers:
       - "SA wiki"
       - "knowledge base"
@@ -205,14 +205,14 @@ profiles:
     audience: SA
     description: |
       SA daily minimum set — live recording, meeting history, IM digest, C360,
-      and document ingestion flowing into supper-sa-wiki, plus local wiki bootstrap,
+      and document ingestion flowing into polymath-sa-wiki, plus local wiki bootstrap,
       customer briefing, and onboarding help.
     includes:
-      - supper-sa-wiki: "^0.2"
-      - supper-meeting-summary: "^0.1"
-      - supper-im-digest: "^0.3"
-      - supper-dashboard-watch: "^0.1"
-      - supper-local-wiki-init: "^0.1"
-      - supper-customer-brief: "^0.1"
-      - supper-sa-super-skill-help: "^0.2"
+      - polymath-sa-wiki: "^0.2"
+      - polymath-meeting-summary: "^0.1"
+      - polymath-im-digest: "^0.3"
+      - polymath-dashboard-watch: "^0.1"
+      - polymath-local-wiki-init: "^0.1"
+      - polymath-customer-brief: "^0.1"
+      - polymath-help: "^0.2"
 

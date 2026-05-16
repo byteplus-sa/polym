@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
-# SA Super Skill Pack — one-liner installer
+# Polymath — one-liner installer
 #
 # ── Ways to install (pick whichever works for you) ────────────────────────────
 #
 # Option A — gh CLI (recommended, requires gh auth login once):
-#   gh repo clone Carey8175/sa-super-skill /tmp/sa-super-skill \
-#     && /tmp/sa-super-skill/install.sh
+#   gh repo clone byteplus-sa/polymath /tmp/polymath \
+#     && /tmp/polymath/install.sh
 #
 # Option B — SSH (if you have an SSH key on GitHub):
-#   git clone git@github.com:Carey8175/sa-super-skill.git /tmp/sa-super-skill \
-#     && /tmp/sa-super-skill/install.sh
+#   git clone git@github.com:byteplus-sa/polymath.git /tmp/polymath \
+#     && /tmp/polymath/install.sh
 #
 # Option C — GitHub Personal Access Token (no special CLI needed):
 #   GITHUB_TOKEN=ghp_xxxx bash <(curl -fsSL \
 #     -H "Authorization: token ghp_xxxx" \
-#     https://raw.githubusercontent.com/Carey8175/sa-super-skill/main/install.sh)
+#     https://raw.githubusercontent.com/byteplus-sa/polymath/main/install.sh)
 #
 # Option D — from inside a cloned repo:
 #   ./install.sh [--profile sa-mvp]
@@ -24,10 +24,10 @@
 
 set -euo pipefail
 
-REPO="Carey8175/sa-super-skill"
-DEFAULT_CLONE_DIR="$HOME/.local/share/sa-super-skill"
+REPO="byteplus-sa/polymath"
+DEFAULT_CLONE_DIR="$HOME/.local/share/polymath"
 BIN_DIR="$HOME/.local/bin"
-PROFILE="${SA_SUPER_SKILL_PROFILE:-}"
+PROFILE="${POLYMATH_PROFILE:-}"
 GITHUB_TOKEN="${GITHUB_TOKEN:-}"
 
 BOLD='\033[1m'; GREEN='\033[0;32m'; BLUE='\033[0;34m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; NC='\033[0m'
@@ -35,7 +35,7 @@ BOLD='\033[1m'; GREEN='\033[0;32m'; BLUE='\033[0;34m'; YELLOW='\033[1;33m'; RED=
 banner() {
   echo ""
   echo -e "${BOLD}╔══════════════════════════════════════════╗${NC}"
-  echo -e "${BOLD}║   SA Native AI · Super Skill Pack        ║${NC}"
+  echo -e "${BOLD}║   Polymath · SA Native AI Skill Pack     ║${NC}"
   echo -e "${BOLD}╚══════════════════════════════════════════╝${NC}"
   echo ""
 }
@@ -61,8 +61,8 @@ parse_args() {
         echo "  --token <pat>       GitHub Personal Access Token (for private repo access)"
         echo ""
         echo "Environment:"
-        echo "  SA_SUPER_SKILL_PROFILE   Same as --profile"
-        echo "  SA_SUPER_SKILL_DIR       Override clone directory"
+        echo "  POLYMATH_PROFILE   Same as --profile"
+        echo "  POLYMATH_DIR       Override clone directory"
         echo "  GITHUB_TOKEN             Same as --token"
         echo ""
         echo "Get a token at: https://github.com/settings/tokens (repo:read scope)"
@@ -95,7 +95,7 @@ acquire_repo() {
     return
   fi
 
-  REPO_DIR="${SA_SUPER_SKILL_DIR:-$DEFAULT_CLONE_DIR}"
+  REPO_DIR="${POLYMATH_DIR:-$DEFAULT_CLONE_DIR}"
   step "Acquiring repo → $REPO_DIR"
 
   if [[ -d "$REPO_DIR/.git" ]]; then
@@ -134,11 +134,11 @@ acquire_repo() {
 # ── Install CLI ───────────────────────────────────────────────────────────────
 
 install_cli() {
-  step "Installing super-skill CLI → $BIN_DIR"
+  step "Installing polymath CLI → $BIN_DIR"
   mkdir -p "$BIN_DIR"
-  chmod +x "$REPO_DIR/cli/super-skill"
-  ln -sf "$REPO_DIR/cli/super-skill" "$BIN_DIR/super-skill"
-  ok "super-skill linked at $BIN_DIR/super-skill"
+  chmod +x "$REPO_DIR/cli/polymath"
+  ln -sf "$REPO_DIR/cli/polymath" "$BIN_DIR/polymath"
+  ok "polymath linked at $BIN_DIR/polymath"
   echo ""
 }
 
@@ -162,14 +162,14 @@ maybe_warn_path() {
 
 install_skills() {
   step "Installing skills"
-  local super_skill="$REPO_DIR/cli/super-skill"
+  local polymath="$REPO_DIR/cli/polymath"
 
   if [[ -n "$PROFILE" ]]; then
     ok "Mode: profile '$PROFILE'"
-    "$super_skill" install "profile:$PROFILE"
+    "$polymath" install "profile:$PROFILE"
   else
     ok "Mode: install all"
-    "$super_skill" install all
+    "$polymath" install all
   fi
 }
 
@@ -187,9 +187,9 @@ main() {
   echo ""
   echo -e "${GREEN}${BOLD}Setup complete!${NC}"
   echo ""
-  echo "  super-skill list              # see what's installed"
-  echo "  super-skill doctor            # verify dependencies"
-  echo "  super-skill update            # update CLI + installed skills"
+  echo "  polymath list              # see what's installed"
+  echo "  polymath doctor            # verify dependencies"
+  echo "  polymath update            # update CLI + installed skills"
   echo ""
 }
 

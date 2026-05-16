@@ -1,0 +1,655 @@
+#!/usr/bin/env bash
+# polymath — SA Native AI Skill Package Manager
+# https://github.com/byteplus-sa/polymath
+
+set -euo pipefail
+
+VERSION="0.2.2"
+
+resolve_script_path() {
+  local source="${BASH_SOURCE[0]}"
+  local dir
+  while [[ -L "$source" ]]; do
+    dir="$(cd -P "$(dirname "$source")" && pwd)"
+    source="$(readlink "$source")"
+    [[ "$source" != /* ]] && source="$dir/$source"
+  done
+  cd -P "$(dirname "$source")" && pwd
+}
+
+SCRIPT_DIR="$(resolve_script_path)"
+REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+SKILLS_SRC="$REPO_DIR/skills"
+SKILLS_DST="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
+LOCK_FILE="$SKILLS_DST/.polymath.lock"
+TEMPLATE_NAME="_template"
+BIN_DIR="${POLYMATH_BIN_DIR:-$HOME/.local/bin}"
+LEGACY_SKILLS=(
+  # Pre-supper era (gen 0) — kept for very old installs.
+  "customer-brief"
+  "dashboard-watch"
+  "im-digest"
+  "lark-doc-ingest"
+  "local-wiki-init"
+  "meeting-recorder"
+  "meeting-summary"
+  "sa-super-skill-help"
+  "sa-wiki"
+  # supper-* era (gen 1) — renamed to polymath-* in May 2026.
+  "supper-customer-brief"
+  "supper-dashboard-watch"
+  "supper-im-digest"
+  "supper-lark-doc-ingest"
+  "supper-local-wiki-init"
+  "supper-meeting-recorder"
+  "supper-meeting-summary"
+  "supper-sa-super-skill-help"
+  "supper-sa-wiki"
+)
+
+RED=$'\033[0;31m'; GREEN=$'\033[0;32m'; YELLOW=$'\033[1;33m'; BLUE=$'\033[0;34m'; BOLD=$'\033[1m'; NC=$'\033[0m'
+
+log_info()  { echo -e "${BLUE}▸${NC} $*"; }
+log_ok()    { echo -e "${GREEN}✓${NC} $*"; }
+log_warn()  { echo -e "${YELLOW}!${NC} $*"; }
+log_error() { echo -e "${RED}✗${NC} $*" >&2; }
+log_head()  { echo -e "\n${BOLD}$*${NC}"; }
+
+usage() {
+  cat <<EOF
+
+${BOLD}polymath${NC} v${VERSION} — SA Native AI Skill Package Manager
+
+${BOLD}USAGE${NC}
+  polymath install [all]            Install all skills (default)
+  polymath install profile:<name>   Install a named profile bundle
+  polymath install <skill-name>     Install a single skill
+  polymath list                     List all available skills
+  polymath list --installed         List installed skills
+  polymath self-update              Update CLI/catalog repo only
+  polymath update [target]          Update CLI + installed skills (default)
+  polymath sync [target]            Alias for update
+  polymath doctor                   Check dependencies & env
+  polymath new <name>               Scaffold a new skill
+  polymath bump <name> <version>    Update SKILL.md + manifest versions
+  polymath publish -m <message>     Lint, registry-build, commit, rebase, push
+
+${BOLD}EXAMPLES${NC}
+  polymath install                  # install everything
+  polymath install profile:sa-mvp   # install the SA MVP bundle
+  polymath install polymath-meeting-summary  # install one skill
+  polymath update                   # pull latest CLI/catalog + reinstall installed skills
+  polymath update profile:sa-mvp    # pull latest + reinstall profile
+  polymath bump polymath-im-digest 0.4.0     # maintain per-skill version consistently
+  polymath publish -m "feat(x): ..."# push local skill changes to GitHub
+  polymath doctor                   # verify setup
+
+EOF
+}
+
+# ── YAML helpers ──────────────────────────────────────────────────────────────
+
+# Extract skill names from profiles/<name>.yaml includes section
+parse_profile_skills() {
+  local file="$1"
+  grep -E "^  - [a-zA-Z]" "$file" | sed 's/^  - //' | cut -d: -f1 | tr -d '"' | tr -d "'"
+}
+
+# Read a top-level scalar from a manifest.yaml
+yaml_get() {
+  local file="$1" key="$2"
+  grep -E "^${key}:" "$file" 2>/dev/null | head -1 | sed "s/^${key}: *//" | tr -d '"'
+}
+
+# ── Skill helpers ─────────────────────────────────────────────────────────────
+
+all_skills() {
+  for dir in "$SKILLS_SRC"/*/; do
+    [[ -d "$dir" ]] || continue
+    local name; name=$(basename "$dir")
+    [[ "$name" == "$TEMPLATE_NAME" ]] && continue
+    echo "$name"
+  done
+}
+
+skill_exists_src() { [[ -d "$SKILLS_SRC/$1" ]]; }
+skill_installed()  { [[ -d "$SKILLS_DST/$1" ]]; }
+
+ensure_git_repo() {
+  git -C "$REPO_DIR" rev-parse --is-inside-work-tree &>/dev/null \
+    || { log_error "$REPO_DIR is not a git repository. Reinstall with install.sh."; exit 1; }
+}
+
+current_commit() {
+  git -C "$REPO_DIR" rev-parse --short HEAD 2>/dev/null || echo "unknown"
+}
+
+installed_skill_names() {
+  if [[ ! -f "$LOCK_FILE" ]]; then
+    return 0
+  fi
+  python3 - <<PYEOF
+import json
+try:
+    lock = json.load(open("$LOCK_FILE"))
+except Exception:
+    raise SystemExit(0)
+for s in sorted(lock.get("skills", []), key=lambda x: x.get("name", "")):
+    name = s.get("name")
+    if name:
+        print(name)
+PYEOF
+}
+
+cleanup_legacy_skill_names() {
+  # Remove legacy skill installs from disk AND prune their entries from the
+  # active lockfile + any older lockfile names (e.g. .super-skill.lock from
+  # the pre-polymath era). Runs idempotently before every install.
+
+  local legacy_csv
+  legacy_csv="$(IFS=,; echo "${LEGACY_SKILLS[*]}")"
+
+  # Older lockfile names we still want to drain on first run after rename.
+  local old_lock_file="$SKILLS_DST/.super-skill.lock"
+
+  local removed
+  removed="$(LOCK_FILE="$LOCK_FILE" OLD_LOCK_FILE="$old_lock_file" REPO_DIR="$REPO_DIR" LEGACY_CSV="$legacy_csv" SKILLS_DST="$SKILLS_DST" python3 - <<'PYEOF'
+import json
+import os
+from pathlib import Path
+
+lock_path = Path(os.environ["LOCK_FILE"])
+old_lock_path = Path(os.environ["OLD_LOCK_FILE"])
+repo_dir = os.environ["REPO_DIR"]
+skills_dst = Path(os.environ["SKILLS_DST"])
+legacy = set(filter(None, os.environ.get("LEGACY_CSV", "").split(",")))
+pack_repo_names = {"polymath", "sa-super-skill", "sa_supper_skill"}
+
+removed = set()
+
+# Drain current lockfile (.polymath.lock) of any legacy entries.
+if lock_path.exists():
+    try:
+        lock = json.loads(lock_path.read_text())
+    except Exception:
+        lock = None
+    if lock is not None:
+        kept = []
+        for item in lock.get("skills", []):
+            name = item.get("name")
+            source = item.get("source")
+            source_name = Path(source).name if source else ""
+            is_this_pack = source == repo_dir or source_name in pack_repo_names
+            if name in legacy and is_this_pack:
+                removed.add(name)
+            else:
+                kept.append(item)
+        if kept != lock.get("skills", []):
+            lock["skills"] = kept
+            lock_path.write_text(json.dumps(lock, indent=2))
+
+# One-time migration: drain old .super-skill.lock and delete it.
+if old_lock_path.exists():
+    try:
+        old_lock = json.loads(old_lock_path.read_text())
+        for item in old_lock.get("skills", []):
+            name = item.get("name")
+            source = item.get("source")
+            source_name = Path(source).name if source else ""
+            is_this_pack = source == repo_dir or source_name in pack_repo_names
+            if name in legacy and is_this_pack:
+                removed.add(name)
+    except Exception:
+        pass
+    try:
+        old_lock_path.unlink()
+    except Exception:
+        pass
+
+# Also scan disk for orphaned legacy skill directories that are not recorded
+# in any lockfile (e.g. installed manually or by a buggy old CLI).
+if skills_dst.is_dir():
+    for entry in skills_dst.iterdir():
+        if entry.is_dir() and entry.name in legacy:
+            removed.add(entry.name)
+
+if removed:
+    print("\n".join(sorted(removed)))
+PYEOF
+)"
+
+  [[ -z "$removed" ]] && return 0
+
+  while IFS= read -r old; do
+    [[ -z "$old" ]] && continue
+    rm -rf "$SKILLS_DST/$old"
+    log_warn "Removed legacy installed skill '$old' (renamed under polymath-* prefix)"
+  done <<< "$removed"
+}
+
+# ── Lockfile ──────────────────────────────────────────────────────────────────
+
+lock_upsert() {
+  local name="$1"
+  local version; version=$(yaml_get "$SKILLS_SRC/$name/manifest.yaml" version 2>/dev/null || echo "unknown")
+  local ts; ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+  mkdir -p "$(dirname "$LOCK_FILE")"
+  [[ -f "$LOCK_FILE" ]] || echo '{"skills":[]}' > "$LOCK_FILE"
+
+  python3 - <<PYEOF
+import json, sys
+lock = json.load(open("$LOCK_FILE"))
+lock["skills"] = [s for s in lock["skills"] if s["name"] != "$name"]
+lock["skills"].append({
+    "name": "$name",
+    "version": "$version",
+    "installed_at": "$ts",
+    "source": "$REPO_DIR"
+})
+open("$LOCK_FILE", "w").write(json.dumps(lock, indent=2))
+PYEOF
+}
+
+# ── Core: install one skill ───────────────────────────────────────────────────
+
+install_one() {
+  local name="$1"
+  local mode="${2:-bulk}"   # "bulk" = install all / install profile:*; "explicit" = install <name>
+
+  if ! skill_exists_src "$name"; then
+    log_warn "Skill '$name' not found in source — skipping (not yet implemented?)"
+    return 0
+  fi
+
+  local stage; stage=$(yaml_get "$SKILLS_SRC/$name/manifest.yaml" stage)
+  if [[ "$stage" == "deprecated" ]]; then
+    log_warn "Skill '$name' is deprecated — skipping"
+    return 0
+  fi
+  # Experimental skills are excluded from bulk installs (install all / install profile:*),
+  # but can still be installed explicitly by name. Use this for skills that aren't ready
+  # for general release (e.g. blocked by upstream instability).
+  if [[ "$stage" == "experimental" && "$mode" == "bulk" ]]; then
+    log_warn "Skill '$name' is experimental — skipping (run 'polymath install $name' to force)"
+    return 0
+  fi
+
+  mkdir -p "$SKILLS_DST/$name"
+  cp -r "$SKILLS_SRC/$name/." "$SKILLS_DST/$name/"
+  lock_upsert "$name"
+  log_ok "Installed ${BOLD}$name${NC} (stage: $stage)"
+}
+
+# ── Commands ──────────────────────────────────────────────────────────────────
+
+cmd_install() {
+  local target="${1:-all}"
+  local -a queue=()
+
+  local mode="bulk"
+  case "$target" in
+    all)
+      log_head "Installing all skills → $SKILLS_DST"
+      while IFS= read -r s; do queue+=("$s"); done < <(all_skills)
+      ;;
+    profile:*)
+      local pname="${target#profile:}"
+      local pfile="$REPO_DIR/profiles/$pname.yaml"
+      [[ -f "$pfile" ]] || { log_error "Profile '$pname' not found: $pfile"; exit 1; }
+      log_head "Installing profile '${BOLD}$pname${NC}' → $SKILLS_DST"
+      while IFS= read -r s; do queue+=("$s"); done < <(parse_profile_skills "$pfile")
+      ;;
+    *)
+      log_head "Installing skill '${BOLD}$target${NC}'"
+      queue=("$target")
+      mode="explicit"
+      ;;
+  esac
+
+  mkdir -p "$SKILLS_DST"
+  cleanup_legacy_skill_names
+  local count=0
+  for skill in "${queue[@]}"; do
+    if install_one "$skill" "$mode"; then count=$((count + 1)); fi
+  done
+
+  echo ""
+  log_ok "Done — ${count} skill(s) installed to $SKILLS_DST"
+  log_info "Run ${BOLD}polymath doctor${NC} to verify dependencies."
+}
+
+cmd_list() {
+  local mode="${1:-}"
+
+  if [[ "$mode" == "--installed" ]]; then
+    log_head "Installed skills"
+    if [[ -f "$LOCK_FILE" ]]; then
+      python3 - <<PYEOF
+import json
+lock = json.load(open("$LOCK_FILE"))
+skills = lock.get("skills", [])
+if not skills:
+    print("  (none)")
+else:
+    for s in sorted(skills, key=lambda x: x["name"]):
+        print(f"  {s['name']:<30} v{s['version']:<10} installed {s['installed_at']}")
+PYEOF
+    else
+      echo "  (none — lockfile not found)"
+    fi
+    return
+  fi
+
+  log_head "Available skills"
+  local found=0
+  while IFS= read -r skill; do
+    local stage; stage=$(yaml_get "$SKILLS_SRC/$skill/manifest.yaml" stage 2>/dev/null || echo "unknown")
+    local installed=""
+    if skill_installed "$skill"; then installed=" ${GREEN}[installed]${NC}"; fi
+    printf "  ${BOLD}%-30s${NC} %-14s%b\n" "$skill" "$stage" "$installed"
+    found=$((found + 1))
+  done < <(all_skills)
+  if [[ $found -eq 0 ]]; then echo "  (no skills yet — run 'polymath new <name>' to add one)"; fi
+}
+
+cmd_update() {
+  local target="${1:-installed}"
+
+  cmd_self_update
+
+  case "$target" in
+    installed|"")
+      log_head "Reinstalling currently installed skills → $SKILLS_DST"
+      local -a queue=()
+      while IFS= read -r s; do queue+=("$s"); done < <(installed_skill_names)
+
+      if [[ ${#queue[@]} -eq 0 ]]; then
+        log_warn "No installed-skill lockfile entries found; installing all skills instead."
+        cmd_install all
+        return
+      fi
+
+      mkdir -p "$SKILLS_DST"
+      local count=0
+      for skill in "${queue[@]}"; do
+        # Already-installed skills were chosen by the user — refresh them
+        # regardless of stage (experimental skills don't get re-filtered out).
+        if install_one "$skill" "explicit"; then count=$((count + 1)); fi
+      done
+      echo ""
+      log_ok "Done — ${count} installed skill(s) refreshed from latest catalog."
+      ;;
+    all|profile:*|*)
+      cmd_install "$target"
+      ;;
+  esac
+}
+
+cmd_self_update() {
+  ensure_git_repo
+
+  log_head "Updating polymath CLI/catalog repo"
+  local before after
+  before="$(current_commit)"
+
+  git -C "$REPO_DIR" pull --ff-only
+
+  after="$(current_commit)"
+  mkdir -p "$BIN_DIR"
+  chmod +x "$REPO_DIR/cli/polymath"
+  ln -sf "$REPO_DIR/cli/polymath" "$BIN_DIR/polymath"
+
+  if [[ "$before" == "$after" ]]; then
+    log_ok "Already up to date ($after)."
+  else
+    log_ok "Updated $before → $after."
+  fi
+  log_ok "CLI linked at $BIN_DIR/polymath"
+  echo ""
+}
+
+cmd_doctor() {
+  log_head "Doctor — checking installed skills"
+  local issues=0
+
+  while IFS= read -r skill; do
+    skill_installed "$skill" || continue
+    local manifest="$SKILLS_SRC/$skill/manifest.yaml"
+    [[ -f "$manifest" ]] || continue
+
+    # Check required binaries (lines under "binaries:" that start with "    - ")
+    local in_binaries=false
+    while IFS= read -r line; do
+      if [[ "$line" =~ ^[[:space:]]+binaries: ]]; then
+        in_binaries=true; continue
+      fi
+      if $in_binaries; then
+        [[ "$line" =~ ^[[:space:]]+-[[:space:]] ]] || { in_binaries=false; continue; }
+        local bin; bin=$(echo "$line" | sed 's/.*- //' | cut -d: -f1 | tr -d ' ')
+        [[ -z "$bin" ]] && continue
+        if ! command -v "$bin" &>/dev/null; then
+          log_warn "$skill: missing binary '$bin'"
+          (( issues++ )) || true
+        fi
+      fi
+    done < "$manifest"
+
+    # Check required env vars
+    local in_env=false
+    while IFS= read -r line; do
+      if [[ "$line" =~ ^[[:space:]]+env: ]]; then
+        in_env=true; continue
+      fi
+      if $in_env; then
+        [[ "$line" =~ ^[[:space:]]+-[[:space:]] ]] || { in_env=false; continue; }
+        local var; var=$(echo "$line" | sed 's/.*- //' | tr -d ' ')
+        [[ -z "$var" ]] && continue
+        if [[ -z "${!var:-}" ]]; then
+          log_warn "$skill: env var '\$$var' not set"
+          (( issues++ )) || true
+        fi
+      fi
+    done < "$manifest"
+  done < <(all_skills)
+
+  echo ""
+  if [[ $issues -eq 0 ]]; then
+    log_ok "All checks passed."
+  else
+    log_warn "$issues issue(s) found. Fix the above and re-run doctor."
+    exit 1
+  fi
+}
+
+cmd_new() {
+  local name="${1:-}"
+  [[ -z "$name" ]] && { log_error "Usage: polymath new <name>"; exit 1; }
+
+  if [[ "$name" != polymath-* ]]; then
+    log_warn "Skill names in this repo must use the 'polymath-' prefix; using 'polymath-$name'."
+    name="polymath-$name"
+  fi
+
+  local dst="$SKILLS_SRC/$name"
+  [[ -d "$dst" ]] && { log_error "Skill '$name' already exists at $dst"; exit 1; }
+
+  cp -r "$SKILLS_SRC/$TEMPLATE_NAME" "$dst"
+  sed -i.bak "s/TEMPLATE-RENAME-ME/$name/" "$dst/manifest.yaml" && rm -f "$dst/manifest.yaml.bak"
+  sed -i.bak "s/TEMPLATE-RENAME-ME/$name/" "$dst/SKILL.md" && rm -f "$dst/SKILL.md.bak"
+
+  log_ok "Scaffolded ${BOLD}$name${NC} at skills/$name/"
+  log_info "Next steps:"
+  echo "  1. Edit skills/$name/manifest.yaml  (set owners, stage, deps)"
+  echo "  2. Edit skills/$name/SKILL.md       (write the skill prompt)"
+  echo "  3. Run: polymath install $name"
+}
+
+cmd_bump() {
+  local name="${1:-}" version="${2:-}"
+  [[ -z "$name" || -z "$version" ]] && { log_error "Usage: polymath bump <skill-name> <semver>"; exit 1; }
+  [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9.-]+)?$ ]] \
+    || { log_error "Invalid semver: $version"; exit 1; }
+  skill_exists_src "$name" || { log_error "Skill '$name' not found in $SKILLS_SRC"; exit 1; }
+
+  local skill_dir="$SKILLS_SRC/$name"
+  python3 - "$skill_dir" "$version" <<'PYEOF'
+import datetime
+import pathlib
+import re
+import sys
+
+skill_dir = pathlib.Path(sys.argv[1])
+version = sys.argv[2]
+today = datetime.date.today().isoformat()
+
+manifest = skill_dir / "manifest.yaml"
+text = manifest.read_text()
+text_new = re.sub(r"(?m)^version:\s*.*$", f"version: {version}", text, count=1)
+if text_new == text:
+    raise SystemExit(f"{manifest}: no top-level version field found")
+manifest.write_text(text_new)
+
+skill_md = skill_dir / "SKILL.md"
+text = skill_md.read_text()
+text_new = re.sub(r"(?m)^version:\s*.*$", f"version: {version}", text, count=1)
+if text_new == text:
+    lines = text.splitlines()
+    if lines and lines[0].strip() == "---":
+        inserted = False
+        out = []
+        for line in lines:
+            out.append(line)
+            if not inserted and line.startswith("name:"):
+                out.append(f"version: {version}")
+                inserted = True
+        if not inserted:
+            out.insert(1, f"version: {version}")
+        text_new = "\n".join(out) + ("\n" if text.endswith("\n") else "")
+    else:
+        raise SystemExit(f"{skill_md}: no YAML frontmatter found")
+skill_md.write_text(text_new)
+
+changelog = skill_dir / "CHANGELOG.md"
+if changelog.exists():
+    text = changelog.read_text()
+else:
+    text = "# Changelog\n"
+
+if f"{version}" not in text.splitlines()[0:20]:
+    entry = f"\n## {version} — {today}\n\n- TODO: describe this release.\n"
+    if text.startswith("#"):
+        first_newline = text.find("\n")
+        if first_newline != -1:
+            text = text[:first_newline + 1] + entry + text[first_newline + 1:]
+        else:
+            text = text + entry
+    else:
+        text = "# Changelog\n" + entry + "\n" + text
+    changelog.write_text(text)
+PYEOF
+
+  log_ok "Bumped $name to v$version"
+  log_info "Edit skills/$name/CHANGELOG.md before publishing."
+}
+
+cmd_publish() {
+  ensure_git_repo
+
+  local message=""
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -m|--message) message="${2:-}"; shift 2 ;;
+      -m=*) message="${1#-m=}"; shift ;;
+      --message=*) message="${1#--message=}"; shift ;;
+      -h|--help)
+        echo "Usage: polymath publish -m <commit-message>"
+        exit 0 ;;
+      *) log_error "Unknown publish argument: $1"; exit 1 ;;
+    esac
+  done
+  [[ -n "$message" ]] || { log_error "Usage: polymath publish -m <commit-message>"; exit 1; }
+
+  log_head "Publishing local skill changes"
+
+  if git -C "$REPO_DIR" diff --quiet && git -C "$REPO_DIR" diff --cached --quiet; then
+    log_info "No local file changes yet; rebasing before validation"
+    git -C "$REPO_DIR" pull --rebase
+  else
+    log_info "Local changes detected; validating before commit, then rebasing after commit"
+  fi
+
+  log_info "Running lint"
+  (cd "$REPO_DIR" && bash tools/lint.sh)
+
+  log_info "Rebuilding registry.yaml"
+  (cd "$REPO_DIR" && bash tools/build-registry.sh)
+
+  git -C "$REPO_DIR" add -A
+  if git -C "$REPO_DIR" diff --cached --quiet; then
+    log_ok "No changes to publish."
+    return
+  fi
+
+  git -C "$REPO_DIR" commit -m "$message"
+
+  log_info "Rebasing committed changes onto latest origin"
+  if ! git -C "$REPO_DIR" pull --rebase; then
+    local conflicts
+    conflicts="$(git -C "$REPO_DIR" diff --name-only --diff-filter=U || true)"
+    if [[ "$conflicts" == "registry.yaml" ]]; then
+      log_warn "Resolving registry.yaml conflict by rebuilding registry."
+      (cd "$REPO_DIR" && bash tools/build-registry.sh)
+      git -C "$REPO_DIR" add registry.yaml
+      GIT_EDITOR=true git -C "$REPO_DIR" rebase --continue
+    else
+      log_error "Rebase failed with conflicts:"
+      echo "$conflicts" >&2
+      log_error "Resolve manually, then run git rebase --continue."
+      exit 1
+    fi
+  fi
+
+  log_info "Pushing to origin"
+  if ! git -C "$REPO_DIR" push; then
+    log_warn "Push rejected; rebasing and retrying."
+    if ! git -C "$REPO_DIR" pull --rebase; then
+      local conflicts
+      conflicts="$(git -C "$REPO_DIR" diff --name-only --diff-filter=U || true)"
+      if [[ "$conflicts" == "registry.yaml" ]]; then
+        log_warn "Resolving registry.yaml conflict by rebuilding registry."
+        (cd "$REPO_DIR" && bash tools/build-registry.sh)
+        git -C "$REPO_DIR" add registry.yaml
+        GIT_EDITOR=true git -C "$REPO_DIR" rebase --continue
+      else
+        log_error "Rebase failed with conflicts:"
+        echo "$conflicts" >&2
+        log_error "Resolve manually, then run git rebase --continue."
+        exit 1
+      fi
+    fi
+    git -C "$REPO_DIR" push
+  fi
+
+  log_ok "Published successfully."
+}
+
+# ── Dispatch ──────────────────────────────────────────────────────────────────
+
+main() {
+  case "${1:-}" in
+    install)          cmd_install "${2:-all}" ;;
+    list)             cmd_list    "${2:-}" ;;
+    self-update)      cmd_self_update ;;
+    update|sync)      cmd_update  "${2:-installed}" ;;
+    doctor)           cmd_doctor ;;
+    new)              cmd_new    "${2:-}" ;;
+    bump)             cmd_bump   "${2:-}" "${3:-}" ;;
+    publish)          shift; cmd_publish "$@" ;;
+    -v|--version)     echo "polymath $VERSION" ;;
+    -h|--help|"")     usage ;;
+    *) log_error "Unknown command: $1"; usage; exit 1 ;;
+  esac
+}
+
+main "$@"

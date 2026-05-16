@@ -1,7 +1,7 @@
 # JSON-Schema (written in YAML) for skills/<name>/manifest.yaml
 # Validated by tools/lint.sh on every PR.
 $schema: "https://json-schema.org/draft/2020-12/schema"
-$id: "https://super-skill/manifest.schema.yaml"
+$id: "https://polymath/manifest.schema.yaml"
 title: SkillManifest
 type: object
 required: [name, version, stage, owners, description_for_install]
@@ -28,7 +28,7 @@ properties:
     type: string
     minLength: 10
     maxLength: 500
-    description: shown by `super-skill list` and on install
+    description: shown by `polymath list` and on install
   depends_on:
     type: object
     additionalProperties: false
@@ -72,7 +72,7 @@ properties:
           properties:
             target:
               type: string
-              description: "logical sink, e.g. 'supper-sa-wiki/write_queue'"
+              description: "logical sink, e.g. 'polymath-sa-wiki/write_queue'"
             schema:
               type: string
               description: "relative path to JSON schema in core/"

@@ -1,0 +1,43 @@
+name: polymath-dashboard-watch
+version: 0.1.1
+stage: beta
+owners:
+  - Carey8175
+
+description_for_install: |
+  Query BytePlus C360 customer usage dashboards by customer name and specific
+  question. Presents usage trends (tokens, MoM, product breakdown, quota status)
+  and surfaces actionable insights (usage drops, quota alerts, usage spikes).
+  Requires the Claude for Chrome extension for browser automation. If significant
+  insights are found, offers to save them to the knowledge base.
+
+depends_on:
+  skills:
+    - polymath-sa-wiki: "^0.2"
+    - polymath-local-wiki-init: "^0.1"
+  binaries:
+    - lark-cli: ">=1.0.20"
+  env: []
+
+io_contract:
+  reads:
+    - c360/customer-usage
+  writes:
+    - target: local-filesystem/wiki-root/wiki
+      schema: core/signal-envelope.schema.json
+      signal_type: dashboard-insight
+    - target: polymath-sa-wiki/write_queue
+      schema: core/signal-envelope.schema.json
+      signal_type: dashboard-insight
+
+triggers:
+  - "查一下客户的数据"
+  - "dashboard watch"
+  - "用了多少 tokens"
+  - "看一下用量"
+  - "C360"
+  - "数据看板"
+  - "客户用量"
+  - "月度用量"
+
+deprecates: []

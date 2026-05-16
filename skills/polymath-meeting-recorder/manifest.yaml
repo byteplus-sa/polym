@@ -1,0 +1,52 @@
+name: polymath-meeting-recorder
+version: 0.1.2
+stage: experimental
+owners:
+  - Carey8175
+
+description_for_install: |
+  Live meeting recording for SA work. Uses Lark Calendar to identify the current
+  meeting, starts Syncore note-taker recording, supports mid-meeting summaries
+  and Q&A, then saves the final AI summary to the SA knowledge base and local
+  wiki when available. Replaces Syncore's default Google Calendar kickoff with
+  lark-cli calendar lookup.
+
+depends_on:
+  skills:
+    - polymath-sa-wiki: "^0.2"
+    - polymath-local-wiki-init: "^0.1"
+  binaries:
+    - lark-cli: ">=1.0.20"
+    - syncore: ">=0.1.100"
+  env: []
+
+io_contract:
+  reads:
+    - lark-calendar/events
+    - syncore/note-taker/transcripts
+    - local-filesystem/wiki-root
+  writes:
+    - target: syncore/note-taker/session
+      schema: core/signal-envelope.schema.json
+      signal_type: meeting-recording
+    - target: polymath-sa-wiki/write_queue
+      schema: core/signal-envelope.schema.json
+      signal_type: meeting-summary
+    - target: local-filesystem/wiki-root/wiki
+      schema: core/signal-envelope.schema.json
+      signal_type: meeting-summary
+
+triggers:
+  - "开始录会"
+  - "开始会议录制"
+  - "录一下这个会"
+  - "record this meeting"
+  - "start meeting recording"
+  - "start meeting notes"
+  - "结束录会"
+  - "结束会议"
+  - "end meeting"
+  - "summarize so far"
+
+deprecates: []
+

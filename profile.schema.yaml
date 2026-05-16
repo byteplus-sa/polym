@@ -1,6 +1,6 @@
 # JSON-Schema (written in YAML) for profiles/<name>.yaml
 $schema: "https://json-schema.org/draft/2020-12/schema"
-$id: "https://super-skill/profile.schema.yaml"
+$id: "https://polymath/profile.schema.yaml"
 title: Profile
 type: object
 required: [name, description, includes]
@@ -13,7 +13,7 @@ properties:
     type: string
     minLength: 10
     maxLength: 300
-    description: shown by `super-skill install profile:<name>` and `list`
+    description: shown by `polymath install profile:<name>` and `list`
   audience:
     type: string
     description: "who this profile is for, e.g. 'SA', 'Sales', 'Content'"

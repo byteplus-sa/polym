@@ -1,32 +1,32 @@
 name: sa-mvp
 description: |
   SA daily minimum set — live recording, meeting history, IM digest, C360,
-  and document ingestion flowing into supper-sa-wiki, plus local wiki bootstrap,
+  and document ingestion flowing into polymath-sa-wiki, plus local wiki bootstrap,
   customer briefing, and onboarding help.
 audience: SA
 
 includes:
   # data foundation (read + write paths)
-  - supper-sa-wiki: "^0.2"
+  - polymath-sa-wiki: "^0.2"
 
   # signal producers
-  - supper-meeting-summary: "^0.1"    # ✅ implemented
-  # - supper-meeting-recorder: "^0.1" # ⏸ disabled this release — Syncore upstream unstable, re-enable once stable
-  - supper-im-digest: "^0.3"          # ✅ implemented
-  - supper-dashboard-watch: "^0.1"    # ✅ implemented
+  - polymath-meeting-summary: "^0.1"    # ✅ implemented
+  # - polymath-meeting-recorder: "^0.1" # ⏸ disabled this release — Syncore upstream unstable, re-enable once stable
+  - polymath-im-digest: "^0.3"          # ✅ implemented
+  - polymath-dashboard-watch: "^0.1"    # ✅ implemented
 
   # local wiki bootstrap
-  - supper-local-wiki-init: "^0.1"    # ✅ implemented
+  - polymath-local-wiki-init: "^0.1"    # ✅ implemented
 
   # reader / consumer
-  - supper-customer-brief: "^0.1"     # ✅ implemented
+  - polymath-customer-brief: "^0.1"     # ✅ implemented
 
   # onboarding
-  - supper-sa-super-skill-help: "^0.2" # ✅ implemented
+  - polymath-help: "^0.2" # ✅ implemented
 
 notes: |
   All core skills implemented. MVP complete.
   All skills follow core/local-wiki-ux.md UX standard (no "双写" exposed to users).
-  supper-meeting-recorder is temporarily excluded from this release while the
+  polymath-meeting-recorder is temporarily excluded from this release while the
   Syncore upstream stabilizes — the skill code still ships in the repo and can
-  be installed directly via `super-skill install supper-meeting-recorder`.
+  be installed directly via `polymath install polymath-meeting-recorder`.
