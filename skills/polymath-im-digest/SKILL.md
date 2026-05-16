@@ -60,6 +60,10 @@ YESTERDAY=$(date -d yesterday +%Y-%m-%d)
 
 > **Principle: messages are the ground truth. The local wiki is used only for context enrichment afterward — never as the primary source for discovering which conversations to scan.**
 
+**Steps 1 & 2 — Run in parallel**
+
+Fire both branches simultaneously; merge results before Step 3.
+
 **Step 1 — Collect all P2P messages from yesterday (one query)**
 
 ```bash
@@ -72,12 +76,14 @@ lark-cli im +messages-search \
   --as user
 ```
 
-This returns every P2P message (sent or received) in a single paginated query — no need to enumerate contacts first. Group results by `chat_id` to reconstruct per-conversation threads.
+Returns every P2P message (sent or received) in a single paginated query — no need to enumerate contacts first. Group results by `chat_id` to reconstruct per-conversation threads.
 
-**Step 2 — Enumerate all joined group chats and probe for activity**
+**Step 2 — Enumerate ALL joined group chats and probe for activity**
+
+This covers every group the user is in — including new customer groups not yet in the local wiki.
 
 ```bash
-# Enumerate all joined groups, newest-activity first
+# Enumerate ALL joined groups, newest-activity first
 lark-cli im +chat-search \
   --sort-by update_time_desc \
   --page-size 100 \
@@ -86,7 +92,7 @@ lark-cli im +chat-search \
 # Repeat with --page-token until has_more=false (cap at 500 groups)
 ```
 
-For every group, batch-probe for yesterday's messages in parallel (batches of 20):
+For every group returned, batch-probe for yesterday's messages in parallel (batches of 20):
 
 ```bash
 lark-cli im +chat-messages-list \
@@ -94,7 +100,7 @@ lark-cli im +chat-messages-list \
   --start "$START_TIME" --end "$END_TIME" \
   --sort asc --page-size 1 \
   --format json --as user
-# Keep only groups where messages list is non-empty
+# page-size 1 for probe; re-fetch with page-size 50 in Phase 1 if active
 ```
 
 Skip silently: 0 messages, access error (`99991400` / `403`).

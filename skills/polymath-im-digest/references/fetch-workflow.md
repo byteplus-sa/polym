@@ -22,6 +22,10 @@ Override with `--date YYYY-MM-DD` if user specifies a different date.
 
 > The local wiki customer list is **not** the starting point. Discover conversations from Lark activity first; cross-reference the wiki afterward for context enrichment only.
 
+### Steps 1 & 2 — Run in parallel
+
+Fire both branches at the same time; merge before Step 3.
+
 ### Step 1 — Collect all P2P messages from yesterday
 
 P2P discovery does not require enumerating contacts — search across all P2P conversations at once:
@@ -38,7 +42,9 @@ lark-cli im +messages-search \
 
 Group the returned messages by `chat_id` to reconstruct per-conversation threads. Each distinct `chat_id` in the result is a P2P thread that was active yesterday.
 
-### Step 2 — Enumerate all joined group chats and probe for activity
+### Step 2 — Enumerate ALL joined group chats and probe for activity
+
+> Covers every group the user is in — including new customer groups not yet in the local wiki.
 
 ```bash
 # Page through all joined groups, newest-activity first
