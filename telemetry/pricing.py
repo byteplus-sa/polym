@@ -28,8 +28,8 @@ CLAUDE = {
 
 # Codex / OpenAI side — placeholders, calibrate when we have a billing cross-check.
 CODEX = {
-    "gpt-5": Pricing(1.25, 10.0, 0.125),
-    "gpt-5-mini": Pricing(0.25, 2.0, 0.025),
+    "gpt-5": Pricing(1.25, 10.0, 0.125, 0.0),
+    "gpt-5-mini": Pricing(0.25, 2.0, 0.025, 0.0),
     "gpt-4o": Pricing(2.5, 10.0, 1.25),
 }
 

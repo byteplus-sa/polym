@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -17,4 +17,4 @@ class UsageRecord:
     dedup_id: str
     # Skill names invoked in this turn via the `Skill` tool (cc only).
     # e.g. ["polymath-customer-brief", "lark-im", "anthropic-skills:pptx"].
-    skills: list[str] = None
+    skills: list[str] = field(default_factory=list)

@@ -18,7 +18,6 @@ from pathlib import Path
 from typing import Iterator
 
 from . import UsageRecord
-from ..state import FileState, SyncState
 
 
 def projects_dir() -> Path:
@@ -37,17 +36,13 @@ def collect_files() -> list[Path]:
     return files
 
 
-def parse_file(path: Path, fs: FileState) -> Iterator[UsageRecord]:
+def parse_file(path: Path) -> Iterator[UsageRecord]:
     """Yield UsageRecord for each assistant turn in this file.
 
-    Re-reads the file fully whenever mtime advances. Per-message dedup uses
-    msg.id, so callers can union runs without double-counting.
+    Re-reads the file fully on every sync. Per-message dedup (msg.id) prevents
+    double-counting across runs, and the daily aggregator filters by date.
     """
-    try:
-        stat = path.stat()
-    except FileNotFoundError:
-        return
-    if stat.st_mtime_ns <= fs.mtime_ns:
+    if not path.exists():
         return
 
     # Per-file dedup: same message.id can appear multiple times in JSONL
@@ -114,10 +109,9 @@ def parse_file(path: Path, fs: FileState) -> Iterator[UsageRecord]:
             if existing is None or (not existing[0] and stop_reason):
                 seen[msg_id] = (bool(stop_reason), ur)
 
-    fs.mtime_ns = stat.st_mtime_ns
     yield from (rec for _, rec in seen.values())
 
 
-def parse_all(state: SyncState) -> Iterator[UsageRecord]:
+def parse_all() -> Iterator[UsageRecord]:
     for path in collect_files():
-        yield from parse_file(path, state.cc(str(path)))
+        yield from parse_file(path)

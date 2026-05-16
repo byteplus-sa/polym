@@ -78,7 +78,7 @@ def install(hour: int = 14, minute: int = 0) -> dict:
         raise RuntimeError(
             "Auto-schedule currently supports macOS only. "
             "On Linux, use a user-level systemd timer or cron entry pointing at "
-            "`python3 -m polymath.telemetry sync`."
+            "`PYTHONPATH=/path/to/polymath python3 -m telemetry sync`."
         )
 
     # Unload old plist so the new one takes effect without a reboot.

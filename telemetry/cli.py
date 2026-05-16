@@ -16,7 +16,7 @@ import sys
 from datetime import date
 
 from . import __version__
-from . import state as state_mod
+from . import state as state_mod  # kept for --reset-state and future use
 from . import identity
 from . import aggregator
 from . import scheduler
@@ -34,13 +34,11 @@ def cmd_sync(args: argparse.Namespace) -> int:
     # Registration is the installer's job — `install.sh` and `polymath telemetry
     # install` both call into scheduler.install(). `sync` purely syncs.
 
-    state = state_mod.load()
-
     records = []
     if "claude-code" in args.agents:
-        records.extend(claude_code.parse_all(state))
+        records.extend(claude_code.parse_all())
     if "codex" in args.agents:
-        records.extend(codex.parse_all(state))
+        records.extend(codex.parse_all())
 
     rows = aggregator.aggregate(records)
 
@@ -84,7 +82,6 @@ def cmd_sync(args: argparse.Namespace) -> int:
         result = uploader.upload(payload)
         print(json.dumps(result, indent=2, ensure_ascii=False))
 
-    state_mod.save(state)
     return 0
 
 

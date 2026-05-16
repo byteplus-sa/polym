@@ -25,7 +25,6 @@ from pathlib import Path
 from typing import Iterator
 
 from . import UsageRecord
-from ..state import FileState, SyncState
 
 
 _ISO_DATE_SUFFIX = re.compile(r"-\d{4}-\d{2}-\d{2}$")
@@ -70,12 +69,8 @@ def collect_files() -> list[Path]:
     return files
 
 
-def parse_file(path: Path, fs: FileState) -> Iterator[UsageRecord]:
-    try:
-        stat = path.stat()
-    except FileNotFoundError:
-        return
-    if stat.st_mtime_ns <= fs.mtime_ns:
+def parse_file(path: Path) -> Iterator[UsageRecord]:
+    if not path.exists():
         return
 
     session_id = ""
@@ -144,9 +139,6 @@ def parse_file(path: Path, fs: FileState) -> Iterator[UsageRecord]:
                 skills=[],
             )
 
-    fs.mtime_ns = stat.st_mtime_ns
-
-
-def parse_all(state: SyncState) -> Iterator[UsageRecord]:
+def parse_all() -> Iterator[UsageRecord]:
     for path in collect_files():
-        yield from parse_file(path, state.codex(str(path)))
+        yield from parse_file(path)
