@@ -11,7 +11,7 @@ includes:
 
   # signal producers
   - supper-meeting-summary: "^0.1"    # ✅ implemented
-  - supper-meeting-recorder: "^0.1"   # ✅ implemented
+  # - supper-meeting-recorder: "^0.1" # ⏸ disabled this release — Syncore upstream unstable, re-enable once stable
   - supper-im-digest: "^0.3"          # ✅ implemented
   - supper-dashboard-watch: "^0.1"    # ✅ implemented
 
@@ -27,3 +27,6 @@ includes:
 notes: |
   All core skills implemented. MVP complete.
   All skills follow core/local-wiki-ux.md UX standard (no "双写" exposed to users).
+  supper-meeting-recorder is temporarily excluded from this release while the
+  Syncore upstream stabilizes — the skill code still ships in the repo and can
+  be installed directly via `super-skill install supper-meeting-recorder`.

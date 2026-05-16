@@ -208,6 +208,7 @@ PYEOF
 
 install_one() {
   local name="$1"
+  local mode="${2:-bulk}"   # "bulk" = install all / install profile:*; "explicit" = install <name>
 
   if ! skill_exists_src "$name"; then
     log_warn "Skill '$name' not found in source — skipping (not yet implemented?)"
@@ -217,6 +218,13 @@ install_one() {
   local stage; stage=$(yaml_get "$SKILLS_SRC/$name/manifest.yaml" stage)
   if [[ "$stage" == "deprecated" ]]; then
     log_warn "Skill '$name' is deprecated — skipping"
+    return 0
+  fi
+  # Experimental skills are excluded from bulk installs (install all / install profile:*),
+  # but can still be installed explicitly by name. Use this for skills that aren't ready
+  # for general release (e.g. blocked by upstream instability).
+  if [[ "$stage" == "experimental" && "$mode" == "bulk" ]]; then
+    log_warn "Skill '$name' is experimental — skipping (run 'super-skill install $name' to force)"
     return 0
   fi
 
@@ -232,6 +240,7 @@ cmd_install() {
   local target="${1:-all}"
   local -a queue=()
 
+  local mode="bulk"
   case "$target" in
     all)
       log_head "Installing all skills → $SKILLS_DST"
@@ -247,6 +256,7 @@ cmd_install() {
     *)
       log_head "Installing skill '${BOLD}$target${NC}'"
       queue=("$target")
+      mode="explicit"
       ;;
   esac
 
@@ -254,7 +264,7 @@ cmd_install() {
   cleanup_legacy_skill_names
   local count=0
   for skill in "${queue[@]}"; do
-    if install_one "$skill"; then count=$((count + 1)); fi
+    if install_one "$skill" "$mode"; then count=$((count + 1)); fi
   done
 
   echo ""
@@ -316,7 +326,9 @@ cmd_update() {
       mkdir -p "$SKILLS_DST"
       local count=0
       for skill in "${queue[@]}"; do
-        if install_one "$skill"; then count=$((count + 1)); fi
+        # Already-installed skills were chosen by the user — refresh them
+        # regardless of stage (experimental skills don't get re-filtered out).
+        if install_one "$skill" "explicit"; then count=$((count + 1)); fi
       done
       echo ""
       log_ok "Done — ${count} installed skill(s) refreshed from latest catalog."

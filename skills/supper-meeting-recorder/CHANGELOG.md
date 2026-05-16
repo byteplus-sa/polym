@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.2 — 2026-05-16
+
+- Demoted to `stage: experimental` while the Syncore upstream stabilizes.
+  Now excluded from bulk installs (`super-skill install all`,
+  `super-skill install profile:sa-mvp`); still installable explicitly via
+  `super-skill install supper-meeting-recorder`.
+
 ## 0.1.1 — 2026-05-13
 
 - Renamed package to `supper-meeting-recorder` to adopt the SA Super Skill `supper-` prefix convention.

@@ -1,6 +1,6 @@
 ---
 name: supper-meeting-recorder
-version: 0.1.1
+version: 0.1.2
 description: "Live meeting recording for SA work. Uses Lark Calendar to identify the current meeting, starts Syncore note-taker recording, supports mid-meeting Q&A/progress summaries, and saves the final AI summary to the knowledge base. Trigger phrases: '开始录会', '开始会议录制', 'record this meeting', 'start meeting notes'."
 metadata:
   requires:

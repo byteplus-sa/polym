@@ -1,6 +1,6 @@
 name: supper-meeting-recorder
-version: 0.1.1
-stage: beta
+version: 0.1.2
+stage: experimental
 owners:
   - Carey8175
 
