@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-16T03:47:30Z
+generated_at: 2026-05-18T02:58:44Z
 
 skills:
   - name: polym-customer-brief
