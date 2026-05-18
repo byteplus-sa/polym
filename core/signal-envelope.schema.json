@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://polymath/core/signal-envelope.schema.json",
+  "$id": "https://polym/core/signal-envelope.schema.json",
   "title": "SignalEnvelope",
-  "description": "Shared shape any skill must produce when writing customer-related output into the data foundation (currently polymath-sa-wiki).",
+  "description": "Shared shape any skill must produce when writing customer-related output into the data foundation (currently polym-sa-wiki).",
   "type": "object",
   "required": [
     "schema_version",

@@ -24,7 +24,7 @@
 3. If NOT FOUND → ask ONCE:
    「还没有本地 wiki，要创建一个吗？[Y/n]」
    - Y → 「保存在哪里？（直接回车默认 ~/sa-wiki）」
-         → run polymath-local-wiki-init skill at that path
+         → run polym-local-wiki-init skill at that path
          → save path to Claude memory (write memory file)
          → set LOCAL_WIKI_ROOT
    - N → set LOCAL_WIKI_ROOT="" (skip local write for this session)
@@ -59,9 +59,9 @@ Set on: <YYYY-MM-DD>
 
 ## Lark wiki write
 
-- Always write to Lark wiki via **polymath-sa-wiki skill WRITE workflow** (§5 in polymath-sa-wiki SKILL.md)
+- Always write to Lark wiki via **polym-sa-wiki skill WRITE workflow** (§5 in polym-sa-wiki SKILL.md)
 - Never reimplement write_queue logic in another skill
-- Desensitisation check is part of polymath-sa-wiki's write flow — handled there
+- Desensitisation check is part of polym-sa-wiki's write flow — handled there
 - Show proposal_ids in the final summary (so user can track/audit)
 
 ## Banned phrases

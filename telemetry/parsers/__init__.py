@@ -16,5 +16,5 @@ class UsageRecord:
     # Source-side dedup key. cc uses message.id; codex uses (session_id, event_index).
     dedup_id: str
     # Skill names invoked in this turn via the `Skill` tool (cc only).
-    # e.g. ["polymath-customer-brief", "lark-im", "anthropic-skills:pptx"].
+    # e.g. ["polym-customer-brief", "lark-im", "anthropic-skills:pptx"].
     skills: list[str] = field(default_factory=list)

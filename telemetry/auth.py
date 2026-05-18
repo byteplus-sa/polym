@@ -1,7 +1,7 @@
-"""Verify lark-cli has the scopes polymath needs.
+"""Verify lark-cli has the scopes polym needs.
 
 The set below is deliberately the minimum union of scopes used across the
-polymath skill pack today (Bitable read/write for the leaderboard + wiki, doc
+polym skill pack today (Bitable read/write for the leaderboard + wiki, doc
 read/write, IM send/read, calendar/minutes/VC for the meeting skills, contact
 search). Adding a skill that needs more should grow this set, then the next
 install.sh run will surface the gap.
@@ -21,7 +21,7 @@ REQUIRED_SCOPES: frozenset[str] = frozenset({
     # Docs (read for ingest; write for leaderboard weekly summary)
     "docx:document:create", "docx:document:write_only",
     "docs:document.content:read",
-    # IM (im-digest, polymath-help bot DMs)
+    # IM (im-digest, polym-help bot DMs)
     "im:message", "im:message:readonly",
     "im:message.group_msg:get_as_user", "im:message.p2p_msg:get_as_user",
     "im:chat:read",

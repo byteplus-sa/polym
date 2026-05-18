@@ -6,7 +6,7 @@ owners:
 
 description_for_install: |
   One paragraph describing what a user gets when they install this skill.
-  Shown by `polymath list` and on install.
+  Shown by `polym list` and on install.
 
 depends_on:
   skills: []
@@ -19,7 +19,7 @@ io_contract:
   writes: []
   # Example for a producer skill:
   # writes:
-  #   - target: polymath-sa-wiki/write_queue
+  #   - target: polym-sa-wiki/write_queue
   #     schema: core/signal-envelope.schema.json
   #     signal_type: meeting
 

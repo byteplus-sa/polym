@@ -77,7 +77,7 @@ def parse_file(path: Path) -> Iterator[UsageRecord]:
             model = msg.get("model") or "unknown"
             stop_reason = msg.get("stop_reason")
 
-            # We track Skill invocations only (e.g. polymath-customer-brief,
+            # We track Skill invocations only (e.g. polym-customer-brief,
             # lark-im, anthropic-skills:pptx) — not built-in tools like Bash/Edit
             # which dominate but say little about how the skill pack is used.
             skills: list[str] = []

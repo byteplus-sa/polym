@@ -1,11 +1,11 @@
-"""Polymath telemetry CLI entry point.
+"""Polym telemetry CLI entry point.
 
 Subcommands:
   sync         parse local cc + codex data and upload yesterday's daily row
   install      register the daily 14:00 launchd job (macOS)
   uninstall    remove the launchd job
   status       inspect launchd / state file
-  auth-check   verify lark-cli has every scope polymath needs
+  auth-check   verify lark-cli has every scope polym needs
 """
 
 from __future__ import annotations
@@ -31,7 +31,7 @@ def cmd_sync(args: argparse.Namespace) -> int:
             state_mod.STATE_FILE.unlink()
             print(f"removed {state_mod.STATE_FILE}", file=sys.stderr)
 
-    # Registration is the installer's job — `install.sh` and `polymath telemetry
+    # Registration is the installer's job — `install.sh` and `polym telemetry
     # install` both call into scheduler.install(). `sync` purely syncs.
 
     records = []
@@ -54,7 +54,7 @@ def cmd_sync(args: argparse.Namespace) -> int:
     sa = identity.resolve_sa_name()
     mid = identity.machine_id()
     payload = [
-        row.to_record(sa=sa, cli_version=f"polymath/{__version__}", machine_id=mid)
+        row.to_record(sa=sa, cli_version=f"polym/{__version__}", machine_id=mid)
         for row in eligible
     ]
 
@@ -130,7 +130,7 @@ def cmd_status(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(prog="polymath-telemetry")
+    p = argparse.ArgumentParser(prog="polym-telemetry")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     sync = sub.add_parser("sync", help="parse local agent data and upload daily aggregates")
@@ -167,7 +167,7 @@ def main(argv: list[str] | None = None) -> int:
 
     auth_check = sub.add_parser(
         "auth-check",
-        help="verify lark-cli is logged in with every scope polymath needs",
+        help="verify lark-cli is logged in with every scope polym needs",
     )
     auth_check.set_defaults(func=cmd_auth_check)
 

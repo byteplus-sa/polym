@@ -1,32 +1,32 @@
 name: sa-mvp
 description: |
   SA daily minimum set — live recording, meeting history, IM digest, C360,
-  and document ingestion flowing into polymath-sa-wiki, plus local wiki bootstrap,
+  and document ingestion flowing into polym-sa-wiki, plus local wiki bootstrap,
   customer briefing, and onboarding help.
 audience: SA
 
 includes:
   # data foundation (read + write paths)
-  - polymath-sa-wiki: "^0.2"
+  - polym-sa-wiki: "^0.2"
 
   # signal producers
-  - polymath-meeting-summary: "^0.1"    # ✅ implemented
-  # - polymath-meeting-recorder: "^0.1" # ⏸ disabled this release — Syncore upstream unstable, re-enable once stable
-  - polymath-im-digest: "^0.3"          # ✅ implemented
-  - polymath-dashboard-watch: "^0.1"    # ✅ implemented
+  - polym-meeting-summary: "^0.1"    # ✅ implemented
+  # - polym-meeting-recorder: "^0.1" # ⏸ disabled this release — Syncore upstream unstable, re-enable once stable
+  - polym-im-digest: "^0.3"          # ✅ implemented
+  - polym-dashboard-watch: "^0.1"    # ✅ implemented
 
   # local wiki bootstrap
-  - polymath-local-wiki-init: "^0.1"    # ✅ implemented
+  - polym-local-wiki-init: "^0.1"    # ✅ implemented
 
   # reader / consumer
-  - polymath-customer-brief: "^0.1"     # ✅ implemented
+  - polym-customer-brief: "^0.1"     # ✅ implemented
 
   # onboarding
-  - polymath-help: "^0.2" # ✅ implemented
+  - polym-help: "^0.2" # ✅ implemented
 
 notes: |
   All core skills implemented. MVP complete.
   All skills follow core/local-wiki-ux.md UX standard (no "双写" exposed to users).
-  polymath-meeting-recorder is temporarily excluded from this release while the
+  polym-meeting-recorder is temporarily excluded from this release while the
   Syncore upstream stabilizes — the skill code still ships in the repo and can
-  be installed directly via `polymath install polymath-meeting-recorder`.
+  be installed directly via `polym install polym-meeting-recorder`.

@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
-# Polymath — one-liner installer
+# Polym — one-liner installer
 #
 # ── Ways to install (pick whichever works for you) ────────────────────────────
 #
 # Option A — gh CLI (recommended, requires gh auth login once):
-#   gh repo clone byteplus-sa/polymath /tmp/polymath \
-#     && /tmp/polymath/install.sh
+#   gh repo clone byteplus-sa/polym /tmp/polym \
+#     && /tmp/polym/install.sh
 #
 # Option B — SSH (if you have an SSH key on GitHub):
-#   git clone git@github.com:byteplus-sa/polymath.git /tmp/polymath \
-#     && /tmp/polymath/install.sh
+#   git clone git@github.com:byteplus-sa/polym.git /tmp/polym \
+#     && /tmp/polym/install.sh
 #
 # Option C — GitHub Personal Access Token (no special CLI needed):
 #   GITHUB_TOKEN=ghp_xxxx bash <(curl -fsSL \
 #     -H "Authorization: token ghp_xxxx" \
-#     https://raw.githubusercontent.com/byteplus-sa/polymath/main/install.sh)
+#     https://raw.githubusercontent.com/byteplus-sa/polym/main/install.sh)
 #
 # Option D — from inside a cloned repo:
 #   ./install.sh [--profile sa-mvp]
@@ -24,10 +24,10 @@
 
 set -euo pipefail
 
-REPO="byteplus-sa/polymath"
-DEFAULT_CLONE_DIR="$HOME/.local/share/polymath"
+REPO="byteplus-sa/polym"
+DEFAULT_CLONE_DIR="$HOME/.local/share/polym"
 BIN_DIR="$HOME/.local/bin"
-PROFILE="${POLYMATH_PROFILE:-}"
+PROFILE="${POLYM_PROFILE:-}"
 GITHUB_TOKEN="${GITHUB_TOKEN:-}"
 
 BOLD='\033[1m'; GREEN='\033[0;32m'; BLUE='\033[0;34m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; NC='\033[0m'
@@ -35,7 +35,7 @@ BOLD='\033[1m'; GREEN='\033[0;32m'; BLUE='\033[0;34m'; YELLOW='\033[1;33m'; RED=
 banner() {
   echo ""
   echo -e "${BOLD}╔══════════════════════════════════════════╗${NC}"
-  echo -e "${BOLD}║   Polymath · SA Native AI Skill Pack     ║${NC}"
+  echo -e "${BOLD}║   Polym · SA Native AI Skill Pack     ║${NC}"
   echo -e "${BOLD}╚══════════════════════════════════════════╝${NC}"
   echo ""
 }
@@ -61,8 +61,8 @@ parse_args() {
         echo "  --token <pat>       GitHub Personal Access Token (for private repo access)"
         echo ""
         echo "Environment:"
-        echo "  POLYMATH_PROFILE   Same as --profile"
-        echo "  POLYMATH_DIR       Override clone directory"
+        echo "  POLYM_PROFILE   Same as --profile"
+        echo "  POLYM_DIR       Override clone directory"
         echo "  GITHUB_TOKEN             Same as --token"
         echo ""
         echo "Get a token at: https://github.com/settings/tokens (repo:read scope)"
@@ -95,7 +95,7 @@ acquire_repo() {
     return
   fi
 
-  REPO_DIR="${POLYMATH_DIR:-$DEFAULT_CLONE_DIR}"
+  REPO_DIR="${POLYM_DIR:-$DEFAULT_CLONE_DIR}"
   step "Acquiring repo → $REPO_DIR"
 
   if [[ -d "$REPO_DIR/.git" ]]; then
@@ -134,11 +134,11 @@ acquire_repo() {
 # ── Install CLI ───────────────────────────────────────────────────────────────
 
 install_cli() {
-  step "Installing polymath CLI → $BIN_DIR"
+  step "Installing polym CLI → $BIN_DIR"
   mkdir -p "$BIN_DIR"
-  chmod +x "$REPO_DIR/cli/polymath"
-  ln -sf "$REPO_DIR/cli/polymath" "$BIN_DIR/polymath"
-  ok "polymath linked at $BIN_DIR/polymath"
+  chmod +x "$REPO_DIR/cli/polym"
+  ln -sf "$REPO_DIR/cli/polym" "$BIN_DIR/polym"
+  ok "polym linked at $BIN_DIR/polym"
   echo ""
 }
 
@@ -170,7 +170,7 @@ setup_telemetry() {
   if PYTHONPATH="$REPO_DIR" python3 -m telemetry auth-check >/dev/null 2>&1; then
     ok "lark-cli auth — all required scopes granted"
   else
-    warn "lark-cli is missing some scopes polymath needs."
+    warn "lark-cli is missing some scopes polym needs."
     if command -v lark-cli &>/dev/null; then
       echo "   Running: lark-cli auth login --domain all"
       lark-cli auth login --domain all || warn "Auth login skipped; rerun later."
@@ -199,14 +199,14 @@ setup_telemetry() {
 
 install_skills() {
   step "Installing skills"
-  local polymath="$REPO_DIR/cli/polymath"
+  local polym="$REPO_DIR/cli/polym"
 
   if [[ -n "$PROFILE" ]]; then
     ok "Mode: profile '$PROFILE'"
-    "$polymath" install "profile:$PROFILE"
+    "$polym" install "profile:$PROFILE"
   else
     ok "Mode: install all"
-    "$polymath" install all
+    "$polym" install all
   fi
 }
 
@@ -225,9 +225,9 @@ main() {
   echo ""
   echo -e "${GREEN}${BOLD}Setup complete!${NC}"
   echo ""
-  echo "  polymath list              # see what's installed"
-  echo "  polymath doctor            # verify dependencies"
-  echo "  polymath update            # update CLI + installed skills"
+  echo "  polym list              # see what's installed"
+  echo "  polym doctor            # verify dependencies"
+  echo "  polym update            # update CLI + installed skills"
   echo ""
 }
 

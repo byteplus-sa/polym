@@ -1,7 +1,7 @@
 """Register a daily background run on macOS (launchd) or Linux (systemd timer).
 
 Idempotent: re-running `install` replaces the prior schedule. `uninstall` removes
-it. We deliberately point launchd at `sys.executable` and the polymath repo root
+it. We deliberately point launchd at `sys.executable` and the polym repo root
 so the user can upgrade Python or move the repo without re-installing — just
 re-run `install`.
 """
@@ -15,21 +15,21 @@ import subprocess
 import sys
 from pathlib import Path
 
-LABEL = "io.polymath.telemetry"
+LABEL = "io.polym.telemetry"
 PLIST_PATH = Path.home() / "Library" / "LaunchAgents" / f"{LABEL}.plist"
-CONFIG_DIR = Path.home() / ".config" / "polymath" / "telemetry"
+CONFIG_DIR = Path.home() / ".config" / "polym" / "telemetry"
 LOG_DIR = CONFIG_DIR / "logs"
 
 
-def _polymath_root() -> Path:
+def _polym_root() -> Path:
     """Path that needs to be on PYTHONPATH for `-m telemetry` to import."""
-    # /…/polymath/telemetry/scheduler.py → /…/polymath  (the repo root)
+    # /…/polym/telemetry/scheduler.py → /…/polym  (the repo root)
     return Path(__file__).resolve().parents[1]
 
 
 def _plist_xml(hour: int, minute: int) -> str:
     python = sys.executable
-    root = _polymath_root()
+    root = _polym_root()
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -78,7 +78,7 @@ def install(hour: int = 14, minute: int = 0) -> dict:
         raise RuntimeError(
             "Auto-schedule currently supports macOS only. "
             "On Linux, use a user-level systemd timer or cron entry pointing at "
-            "`PYTHONPATH=/path/to/polymath python3 -m telemetry sync`."
+            "`PYTHONPATH=/path/to/polym python3 -m telemetry sync`."
         )
 
     # Unload old plist so the new one takes effect without a reboot.

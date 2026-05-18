@@ -17,7 +17,7 @@ from dataclasses import dataclass, field, asdict, fields
 from pathlib import Path
 
 
-STATE_DIR = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "polymath" / "telemetry"
+STATE_DIR = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "polym" / "telemetry"
 STATE_FILE = STATE_DIR / "sync_state.json"
 
 

@@ -6,7 +6,7 @@
 generated_at: 2026-05-16T03:47:30Z
 
 skills:
-  - name: polymath-customer-brief
+  - name: polym-customer-brief
     version: 0.1.1
     stage: beta
     description_for_install: |
@@ -14,10 +14,10 @@ skills:
       scannable 2-minute snapshot in ~10 seconds: recent activity, open issues,
       our commitments, competitive signals, and AI-generated talking-point
       suggestions driven by rules (quota alerts, overdue commitments, risk signals).
-      Queries polymath-sa-wiki + local wiki + live Lark IM in parallel; optional C360 data
+      Queries polym-sa-wiki + local wiki + live Lark IM in parallel; optional C360 data
       with --full flag. Read-only — no wiki writes.
     owners: ['Carey8175']
-    path: skills/polymath-customer-brief
+    path: skills/polym-customer-brief
     triggers:
       - "帮我备一下课"
       - "customer brief"
@@ -27,7 +27,7 @@ skills:
       - "我要去见"
       - "会前准备"
 
-  - name: polymath-dashboard-watch
+  - name: polym-dashboard-watch
     version: 0.1.1
     stage: beta
     description_for_install: |
@@ -37,7 +37,7 @@ skills:
       Requires the Claude for Chrome extension for browser automation. If significant
       insights are found, offers to save them to the knowledge base.
     owners: ['Carey8175']
-    path: skills/polymath-dashboard-watch
+    path: skills/polym-dashboard-watch
     triggers:
       - "查一下客户的数据"
       - "dashboard watch"
@@ -48,31 +48,31 @@ skills:
       - "客户用量"
       - "月度用量"
 
-  - name: polymath-help
+  - name: polym-help
     version: 0.2.2
     stage: stable
     description_for_install: |
-      Onboarding guide for Polymath. Covers what the pack does,
+      Onboarding guide for Polym. Covers what the pack does,
       step-by-step installation (lark-cli auth, Syncore, Chrome extension, local
       wiki setup), common daily use cases for each skill, and a guide for
       contributing new skills including versioning rules and CI workflow.
       Invoke when lost, new to the system, or needing a refresher.
     owners: ['Carey8175']
-    path: skills/polymath-help
+    path: skills/polym-help
     triggers:
       - "help"
-      - "what is polymath"
+      - "what is polym"
       - "how do I use this"
       - "how do I get started"
       - "how do I install"
       - "what can you do"
-      - "polymath help"
+      - "polym help"
       - "how do I add a skill"
       - "how to contribute"
       - "getting started"
       - "onboarding"
 
-  - name: polymath-im-digest
+  - name: polym-im-digest
     version: 0.4.0
     stage: beta
     description_for_install: |
@@ -82,7 +82,7 @@ skills:
       (raw snapshot + wiki entity pages) and the Lark SA Wiki (via write_queue).
       Runs daily to compound customer knowledge over time.
     owners: ['Carey8175']
-    path: skills/polymath-im-digest
+    path: skills/polym-im-digest
     triggers:
       - "整理昨天的消息"
       - "拉一下昨天的群消息"
@@ -92,7 +92,7 @@ skills:
       - "把昨天的聊天记录整理进 wiki"
       - "IM 消息整理"
 
-  - name: polymath-lark-doc-ingest
+  - name: polym-lark-doc-ingest
     version: 0.1.1
     stage: beta
     description_for_install: |
@@ -101,9 +101,9 @@ skills:
       via URL, folder filtering, and --dry-run preview. Fetches outline first to
       classify and skip irrelevant docs, then full content for qualifying ones.
       Writes raw snapshots, source pages, and entity updates to local wiki (silent),
-      and TIMELINE/topic pages to Lark wiki via polymath-sa-wiki.
+      and TIMELINE/topic pages to Lark wiki via polym-sa-wiki.
     owners: ['Carey8175']
-    path: skills/polymath-lark-doc-ingest
+    path: skills/polym-lark-doc-ingest
     triggers:
       - "把最近的文档入库"
       - "帮我整理一下最近的文档"
@@ -112,7 +112,7 @@ skills:
       - "文档入库"
       - "ingest 文档"
 
-  - name: polymath-local-wiki-init
+  - name: polym-local-wiki-init
     version: 0.1.1
     stage: beta
     description_for_install: |
@@ -123,7 +123,7 @@ skills:
       BytePlus SA workflow: customers, products, and the relationships between them
       as first-class entities.
     owners: ['Carey8175']
-    path: skills/polymath-local-wiki-init
+    path: skills/polym-local-wiki-init
     triggers:
       - "初始化本地 wiki"
       - "set up my local wiki"
@@ -134,7 +134,7 @@ skills:
       - "本地知识库"
       - "llm wiki"
 
-  - name: polymath-meeting-recorder
+  - name: polym-meeting-recorder
     version: 0.1.2
     stage: experimental
     description_for_install: |
@@ -144,7 +144,7 @@ skills:
       wiki when available. Replaces Syncore's default Google Calendar kickoff with
       lark-cli calendar lookup.
     owners: ['Carey8175']
-    path: skills/polymath-meeting-recorder
+    path: skills/polym-meeting-recorder
     triggers:
       - "开始录会"
       - "开始会议录制"
@@ -157,7 +157,7 @@ skills:
       - "end meeting"
       - "summarize so far"
 
-  - name: polymath-meeting-summary
+  - name: polym-meeting-summary
     version: 0.1.1
     stage: beta
     description_for_install: |
@@ -167,7 +167,7 @@ skills:
       to the knowledge base automatically. Prioritises Lark Minutes AI summaries; falls back
       to transcripts or VC details.
     owners: ['Carey8175']
-    path: skills/polymath-meeting-summary
+    path: skills/polym-meeting-summary
     triggers:
       - "整理最近的会议"
       - "帮我总结一下昨天的会"
@@ -176,7 +176,7 @@ skills:
       - "整理会议"
       - "会议总结"
 
-  - name: polymath-sa-wiki
+  - name: polym-sa-wiki
     version: 0.3.0
     stage: beta
     description_for_install: |
@@ -186,7 +186,7 @@ skills:
       write_queue flow that is safe for concurrent multi-agent use.
       Requires lark-cli authenticated as the team user.
     owners: ['Carey8175']
-    path: skills/polymath-sa-wiki
+    path: skills/polym-sa-wiki
     triggers:
       - "SA wiki"
       - "knowledge base"
@@ -205,14 +205,14 @@ profiles:
     audience: SA
     description: |
       SA daily minimum set — live recording, meeting history, IM digest, C360,
-      and document ingestion flowing into polymath-sa-wiki, plus local wiki bootstrap,
+      and document ingestion flowing into polym-sa-wiki, plus local wiki bootstrap,
       customer briefing, and onboarding help.
     includes:
-      - polymath-sa-wiki: "^0.2"
-      - polymath-meeting-summary: "^0.1"
-      - polymath-im-digest: "^0.3"
-      - polymath-dashboard-watch: "^0.1"
-      - polymath-local-wiki-init: "^0.1"
-      - polymath-customer-brief: "^0.1"
-      - polymath-help: "^0.2"
+      - polym-sa-wiki: "^0.2"
+      - polym-meeting-summary: "^0.1"
+      - polym-im-digest: "^0.3"
+      - polym-dashboard-watch: "^0.1"
+      - polym-local-wiki-init: "^0.1"
+      - polym-customer-brief: "^0.1"
+      - polym-help: "^0.2"
 

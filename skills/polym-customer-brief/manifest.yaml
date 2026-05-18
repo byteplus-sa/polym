@@ -1,0 +1,39 @@
+name: polym-customer-brief
+version: 0.1.1
+stage: beta
+owners:
+  - Carey8175
+
+description_for_install: |
+  Pre-meeting customer intelligence brief. Input a customer name and get a
+  scannable 2-minute snapshot in ~10 seconds: recent activity, open issues,
+  our commitments, competitive signals, and AI-generated talking-point
+  suggestions driven by rules (quota alerts, overdue commitments, risk signals).
+  Queries polym-sa-wiki + local wiki + live Lark IM in parallel; optional C360 data
+  with --full flag. Read-only — no wiki writes.
+
+depends_on:
+  skills:
+    - polym-sa-wiki: "^0.2"
+  binaries:
+    - lark-cli: ">=1.0.20"
+  env: []
+
+io_contract:
+  reads:
+    - polym-sa-wiki/knowledge_index
+    - local-filesystem/wiki-root/wiki
+    - lark-im/chat-messages
+    - c360/customer-usage
+
+triggers:
+  - "帮我备一下课"
+  - "customer brief"
+  - "客户情报"
+  - "开会前看一下"
+  - "给我一份 brief"
+  - "我要去见"
+  - "会前准备"
+
+deprecates:
+  - customer-lookup

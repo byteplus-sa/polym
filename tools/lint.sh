@@ -71,11 +71,11 @@ if m.get("name") and m["name"] != folder:
     fail(f"manifest name '{m['name']}' != folder name '{folder}'")
 
 # repo naming convention
-if m.get("name") and not str(m["name"]).startswith("polymath-"):
-    fail(f"manifest name '{m['name']}' must start with 'polymath-'")
+if m.get("name") and not str(m["name"]).startswith("polym-"):
+    fail(f"manifest name '{m['name']}' must start with 'polym-'")
 
-if folder and not folder.startswith("polymath-"):
-    fail(f"skill folder '{folder}' must start with 'polymath-'")
+if folder and not folder.startswith("polym-"):
+    fail(f"skill folder '{folder}' must start with 'polym-'")
 
 # version is semver
 ver = m.get("version", "")

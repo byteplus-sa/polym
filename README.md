@@ -1,9 +1,9 @@
-# polymath
+# polym
 
 > **For contributors / agents:** This README is the routing manual. Read it top-to-bottom once.
 > **For new SA members:** See the quickstart below — two commands and you're set.
 
-`polymath` is a curated, versioned collection of Claude Code skills for the SA Native AI program.
+`polym` is a curated, versioned collection of Claude Code skills for the SA Native AI program.
 It is **not** a single skill — it is the package manager + registry + contribution workflow
 that lets many people (and many agents) ship skills into a shared, governed catalog.
 
@@ -20,15 +20,15 @@ Pick whichever option matches your setup:
 brew install gh && gh auth login
 
 # Install
-gh repo clone byteplus-sa/polymath /tmp/polymath \
-  && /tmp/polymath/install.sh
+gh repo clone byteplus-sa/polym /tmp/polym \
+  && /tmp/polym/install.sh
 ```
 
 ### Option B — SSH (if you have an SSH key on GitHub)
 
 ```bash
-git clone git@github.com:byteplus-sa/polymath.git /tmp/polymath \
-  && /tmp/polymath/install.sh
+git clone git@github.com:byteplus-sa/polym.git /tmp/polym \
+  && /tmp/polym/install.sh
 ```
 
 ### Option C — GitHub Personal Access Token (no special CLI needed)
@@ -41,7 +41,7 @@ git clone git@github.com:byteplus-sa/polymath.git /tmp/polymath \
 # Replace ghp_xxxx with your actual token
 GITHUB_TOKEN=ghp_xxxx bash <(curl -fsSL \
   -H "Authorization: token ghp_xxxx" \
-  https://raw.githubusercontent.com/byteplus-sa/polymath/main/install.sh)
+  https://raw.githubusercontent.com/byteplus-sa/polym/main/install.sh)
 ```
 
 ---
@@ -56,8 +56,8 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bash_profile && source ~/.bash_profile
 
 # Verify
-polymath list
-polymath doctor
+polym list
+polym doctor
 ```
 
 Once installed, open Claude Code and say **"help"** for an interactive guide.
@@ -65,23 +65,23 @@ Once installed, open Claude Code and say **"help"** for an interactive guide.
 ## Update
 
 ```bash
-polymath self-update     # update the CLI/catalog repo only
-polymath update          # update CLI + refresh currently installed skills
-polymath update profile:sa-mvp
+polym self-update     # update the CLI/catalog repo only
+polym update          # update CLI + refresh currently installed skills
+polym update profile:sa-mvp
 ```
 
 For contributors pushing local skill changes back to GitHub:
 
 ```bash
-polymath bump <skill-name> <new-version>
+polym bump <skill-name> <new-version>
 # edit SKILL.md + CHANGELOG.md
-polymath publish -m "feat(<skill-name>): describe the change"
+polym publish -m "feat(<skill-name>): describe the change"
 ```
 
 Contributor flow (probably you, if you are reading this):
 
 ```
-read this file → read CONTRIBUTING.md → polymath new <name> → edit → open PR
+read this file → read CONTRIBUTING.md → polym new <name> → edit → open PR
 ```
 
 ---
@@ -95,12 +95,12 @@ read this file → read CONTRIBUTING.md → polymath new <name> → edit → ope
    - `D` — change the SHARED CONTRACT in `core/` (rare; needs 2 owners)
    - `E` — work on the CLI in `cli/`
 2. **Read the matching doc**:
-   - `A` or `B` → `CONTRIBUTING.md` (mandatory; covers manifest, `polymath-` naming, IO contract, lint rules)
+   - `A` or `B` → `CONTRIBUTING.md` (mandatory; covers manifest, `polym-` naming, IO contract, lint rules)
    - `C` → `profile.schema.yaml` + `profiles/sa-mvp.yaml`
    - `D` → `core/signal-envelope.schema.json` + ping CODEOWNERS for `core/`
    - `E` → `cli/README.md`
 3. **Never reach across skills.** Skill `foo` MUST NOT `Read skills/bar/references/*`.
-   Cross-skill calls go through the CLI surface of the other skill (e.g. `lark-cli`, `polymath`),
+   Cross-skill calls go through the CLI surface of the other skill (e.g. `lark-cli`, `polym`),
    or through a shared schema in `core/`. See "Hard rules" below.
 4. **Never bloat the catalog with a skill that has no owner, no version, or no `stage`.**
    The CI will block it. Fill the manifest first; write the SKILL.md second.
@@ -110,7 +110,7 @@ read this file → read CONTRIBUTING.md → polymath new <name> → edit → ope
 ## Folder map
 
 ```
-polymath/
+polym/
 ├─ README.md                    ← you are here (agent-facing entry)
 ├─ CONTRIBUTING.md              ← how to add or edit a skill
 ├─ manifest.schema.yaml         ← JSON-Schema for skills/*/manifest.yaml
@@ -130,7 +130,7 @@ polymath/
 │  └─ sa-mvp.yaml               ← curated bundles users install by name
 ├─ core/
 │  └─ signal-envelope.schema.json  ← shared data contract between skills
-├─ cli/                         ← source of the `polymath` CLI
+├─ cli/                         ← source of the `polym` CLI
 ├─ tools/                       ← lint, scaffold, registry-build scripts
 └─ .github/workflows/           ← CI: lint manifests, check trigger collisions, run smoke tests
 ```
@@ -159,7 +159,7 @@ loading 50+ skill descriptions at once. See `profiles/sa-mvp.yaml`.
 
 ### Signal envelope
 The shared message shape that any skill writing into the data foundation
-(currently `polymath-sa-wiki`) must produce. Defined in `core/signal-envelope.schema.json`.
+(currently `polym-sa-wiki`) must produce. Defined in `core/signal-envelope.schema.json`.
 **If your skill writes customer-related output, it produces signal envelopes.**
 
 ### Stages
@@ -181,7 +181,7 @@ The shared message shape that any skill writing into the data foundation
 4. **Trigger-word collisions across skills are warned on PR.** If two skills declare
    `triggers: ["会议摘要"]`, one must be renamed or scoped.
 5. **Breaking changes bump major.** Changing input/output of a skill (its CLI flags,
-   what it writes to `polymath-sa-wiki`, what it expects from upstream) is a major bump and
+   what it writes to `polym-sa-wiki`, what it expects from upstream) is a major bump and
    requires a CHANGELOG entry with a migration note.
 6. **No `experimental` skills inside profiles.** Profiles are user-facing; they need beta+.
 
@@ -222,4 +222,4 @@ Full step-by-step (with manifest field walkthrough) lives in `CONTRIBUTING.md`.
 ## Status
 
 Bootstrapped. Not yet wired to CI. CLI is design-only (see `cli/README.md`).
-First profile target: `sa-mvp` covering meeting summary, IM digest, dashboard watch, polymath-sa-wiki.
+First profile target: `sa-mvp` covering meeting summary, IM digest, dashboard watch, polym-sa-wiki.
