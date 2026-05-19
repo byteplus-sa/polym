@@ -1,7 +1,7 @@
 ---
 name: polym-im-digest
-version: 0.4.0
-description: "Fetches yesterday's Lark IM messages, organises topics and key content, and saves automatically to the knowledge base. Trigger phrases: 'organize yesterday's messages', 'daily IM digest', 'pull yesterday's group messages', 'im digest'."
+version: 0.5.0
+description: "Fetches yesterday's Lark IM messages, organises topics and key content, materialises a Feishu digest doc for the day, and saves automatically to the knowledge base. Trigger phrases: 'organize yesterday's messages', 'daily IM digest', 'pull yesterday's group messages', 'im digest'."
 metadata:
   requires:
     bins: ["lark-cli"]
@@ -25,7 +25,7 @@ Compiles Lark group chat information into structured knowledge daily and saves i
 
 ## Dependencies
 
-- `lark-cli` (im module)
+- `lark-cli` (`im` module for fetch; `docs` + `drive` modules for the Feishu doc output)
 - Local wiki (path auto-resolved, see Phase 0)
 - Lark wiki writes delegated to **polym-sa-wiki skill**
 
@@ -170,13 +170,69 @@ See [`references/digest-schema.md`](references/digest-schema.md):
 
 ### Phase 3 — Output Digest
 
-Output the structured summary in the terminal (format defined in `references/digest-schema.md` § Output Format).
+Render the structured summary as markdown following `references/digest-schema.md`
+§ Output Format. Show it in the terminal **and** persist a copy to:
 
-**Proceed directly to the write phase after output — do not ask the user.**
+```
+DIGEST_MD="${TMPDIR:-/tmp}/polym-im-digest-${YESTERDAY}.md"
+```
+
+This file is the source of truth Phase 4 hands to `lark-cli docs +create`. The
+first line MUST be `# IM Digest · ${YESTERDAY}` so the Feishu doc title is
+derived correctly when uploading as markdown.
+
+Proceed directly to Phase 4 after rendering — do not ask the user.
 
 ---
 
-### Phase 4 — Write to Local Wiki (Silent)
+### Phase 4 — Create Feishu Doc
+
+Materialise the digest as a standalone Feishu document so the user has a real
+artefact to open / share, not just terminal output.
+
+**4.1 Ask the user where to put it (once per run)**
+
+> "Where should the Feishu doc go?
+>   - Press Enter for the root of your personal Feishu drive (default)
+>   - Paste a folder URL like `https://bytedance.larkoffice.com/drive/folder/fldcn...`
+>   - Or reply `new <name>` to create a new folder for it"
+
+Parse the reply:
+
+| Reply | Action |
+|---|---|
+| empty / Enter | `FOLDER_TOKEN=""` (personal drive root) |
+| folder URL | extract token from `/drive/folder/<token>` |
+| `new <name>` | `lark-cli drive +folder-create --name "<name>" --parent-token "" --as user --format json` → capture `data.token` |
+
+**4.2 Create the doc**
+
+```bash
+lark-cli docs +create --api-version v2 \
+  --content @"$DIGEST_MD" \
+  --doc-format markdown \
+  --parent-token "$FOLDER_TOKEN" \
+  --as user --format json
+# → capture data.document.document_id  → DOC_TOKEN
+# → capture data.url (if returned) or build:
+#   DOC_URL="https://bytedance.larkoffice.com/docx/${DOC_TOKEN}"
+```
+
+**4.3 Failure handling**
+
+- `lark-cli` not authenticated / scope missing → print one-line warning with the
+  exact `lark-cli auth login` hint, keep `DOC_URL=""`, and continue. Do not
+  block the rest of the flow — local wiki and write_queue writes are still
+  valuable on their own.
+- Folder token invalid → retry once with `FOLDER_TOKEN=""`; if still failing,
+  same graceful fallback as above.
+
+The doc URL is reported back in Phase 7. No state file is persisted — the user
+is asked again on the next run.
+
+---
+
+### Phase 5 — Write to Local Wiki (Silent)
 
 **Only execute when LOCAL_WIKI_ROOT is valid. Do not notify the user.**
 
@@ -188,7 +244,7 @@ Follow `$LOCAL_WIKI_ROOT/SCHEMA.md`: raw is read-only, bidirectional relationshi
 
 ---
 
-### Phase 5 — Write to Lark Wiki
+### Phase 6 — Write to Lark Wiki
 
 **Execute automatically using polym-sa-wiki skill §5 WRITE workflow. Do not mention "dual-write" to the user.**
 
@@ -200,12 +256,15 @@ Read `~/.claude/skills/polym-sa-wiki/SKILL.md` §5 and follow its process:
 
 ---
 
-### Phase 6 — Final Report
+### Phase 7 — Final Report
 
 ```
 ✅  Yesterday's (<YESTERDAY>) IM digest complete
 
 Scanned <N> chats · <M> valid messages
+
+📄 Feishu doc: <DOC_URL>
+   (or "(skipped — see Phase 4 warning)" if creation failed)
 
 Summary:
   Customer feedback: <N>  Feature asks: <N>

@@ -1,5 +1,35 @@
 # polym-im-digest CHANGELOG
 
+## 0.5.0 — 2026-05-19
+
+### Added
+- **Phase 4 — Create Feishu Doc**: each run now materialises the rendered
+  digest as a standalone Feishu document titled `IM Digest · <YESTERDAY>`,
+  so the user has a real artefact to open / share instead of just terminal
+  output and write_queue proposals. The doc is created via
+  `lark-cli docs +create --doc-format markdown` from the same markdown
+  Phase 3 writes to `$TMPDIR/polym-im-digest-<date>.md`.
+- Asks the user once per run where to put the doc — Enter for personal
+  drive root, paste a folder URL, or `new <name>` to create one.
+- Phase 7 (Final Report) now surfaces the Feishu doc URL.
+
+### Changed
+- Phase 3 now persists the rendered markdown to `$TMPDIR` (was: terminal
+  only) so Phase 4 can hand it to `lark-cli docs +create`.
+- Renumbered the old Phases 4/5/6 to 5/6/7 to make room for the doc
+  creation step. Behaviour of those phases is unchanged.
+- Bumped `lark-cli` dependency note in SKILL.md to call out the `docs` and
+  `drive` modules in addition to `im`.
+
+### Notes
+- This intentionally ships the minimal Feishu doc surface — no onboarding
+  state file, no index-doc pin, no IM notification card. The fuller design
+  with state persistence + pin-to-top + interactive card lives on the
+  `feat/im-digest-lark-doc` branch (commit `767f937`).
+- Doc creation failures (auth missing, scope missing, folder invalid) log
+  a one-line warning and continue — local wiki and Lark write_queue
+  writes still happen.
+
 ## 0.3.1 — 2026-05-13
 
 - Renamed package to `polym-im-digest` to adopt the Polym `polym-` prefix convention.

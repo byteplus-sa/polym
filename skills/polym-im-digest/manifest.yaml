@@ -1,5 +1,5 @@
 name: polym-im-digest
-version: 0.4.0
+version: 0.5.0
 stage: beta
 owners:
   - Carey8175
@@ -7,9 +7,10 @@ owners:
 description_for_install: |
   Pulls yesterday's Lark group-chat messages via lark-cli, organises them into
   topics and key content (customer feedback, feature asks, technical issues,
-  decisions, pending items), then writes the digest to both the local wiki
-  (raw snapshot + wiki entity pages) and the Lark SA Wiki (via write_queue).
-  Runs daily to compound customer knowledge over time.
+  decisions, pending items), materialises a standalone Feishu digest doc for
+  the day, and writes the digest to both the local wiki (raw snapshot + wiki
+  entity pages) and the Lark SA Wiki (via write_queue). Runs daily to
+  compound customer knowledge over time.
 
 depends_on:
   skills:
