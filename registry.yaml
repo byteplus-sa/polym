@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-18T02:58:44Z
+generated_at: 2026-05-19T02:46:53Z
 
 skills:
   - name: polym-customer-brief
@@ -28,7 +28,7 @@ skills:
       - "会前准备"
 
   - name: polym-dashboard-watch
-    version: 0.1.1
+    version: 0.1.2
     stage: beta
     description_for_install: |
       Query BytePlus C360 customer usage dashboards by customer name and specific
