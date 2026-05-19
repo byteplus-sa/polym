@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-VERSION="0.2.2"
+VERSION="0.3.0"
 
 resolve_script_path() {
   local source="${BASH_SOURCE[0]}"
@@ -64,6 +64,7 @@ ${BOLD}USAGE${NC}
   polym install [all]            Install all skills (default)
   polym install profile:<name>   Install a named profile bundle
   polym install <skill-name>     Install a single skill
+  polym uninstall [-y]           Uninstall polym (skills + lockfile + CLI + launchd)
   polym list                     List all available skills
   polym list --installed         List installed skills
   polym self-update              Update CLI/catalog repo only
@@ -78,6 +79,7 @@ ${BOLD}EXAMPLES${NC}
   polym install                  # install everything
   polym install profile:sa-mvp   # install the SA MVP bundle
   polym install polym-meeting-summary  # install one skill
+  polym uninstall                # remove everything except the source repo
   polym update                   # pull latest CLI/catalog + reinstall installed skills
   polym update profile:sa-mvp    # pull latest + reinstall profile
   polym bump polym-im-digest 0.4.0     # maintain per-skill version consistently
@@ -317,6 +319,146 @@ cmd_install() {
   echo ""
   log_ok "Done — ${count} skill(s) installed to $SKILLS_DST"
   log_info "Run ${BOLD}polym doctor${NC} to verify dependencies."
+}
+
+# ── Core: uninstall ───────────────────────────────────────────────────────────
+
+cmd_uninstall() {
+  local force=false
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -y|--yes|--force) force=true; shift ;;
+      -h|--help)
+        cat <<EOF
+Usage: polym uninstall [-y]
+
+Fully uninstalls polym from this machine.
+
+What gets removed:
+  - All skills tracked in the polym lockfile  ($SKILLS_DST/<name>)
+  - The polym lockfile                         ($LOCK_FILE)
+  - The polym CLI symlink                      ($BIN_DIR/polym)
+  - Telemetry launchd job (if registered)      (io.polym*.telemetry)
+
+NOT removed:
+  - The polym source repo at $REPO_DIR
+    (it's a git checkout — remove it manually with 'rm -rf' if you want).
+
+Pass -y / --yes to skip the confirmation prompt.
+EOF
+        exit 0
+        ;;
+      *) log_error "Unknown uninstall argument: $1"; exit 1 ;;
+    esac
+  done
+
+  log_head "Uninstall preview"
+
+  # 1. Skills tracked in the lockfile
+  local -a skills=()
+  if [[ -f "$LOCK_FILE" ]]; then
+    while IFS= read -r s; do
+      [[ -z "$s" ]] && continue
+      [[ -d "$SKILLS_DST/$s" ]] && skills+=("$s")
+    done < <(installed_skill_names)
+  fi
+  if [[ ${#skills[@]} -eq 0 ]]; then
+    echo "  Skills:         (none)"
+  else
+    echo "  Skills (${#skills[@]}):"
+    for s in "${skills[@]}"; do echo "    - $SKILLS_DST/$s"; done
+  fi
+
+  # 2. Lockfile
+  if [[ -f "$LOCK_FILE" ]]; then
+    echo "  Lockfile:       $LOCK_FILE"
+  else
+    echo "  Lockfile:       (not present)"
+  fi
+
+  # 3. CLI symlink — only if it actually points at THIS repo
+  local cli_link="$BIN_DIR/polym"
+  local cli_action="skip"
+  if [[ -L "$cli_link" ]]; then
+    local cli_target; cli_target="$(readlink "$cli_link")"
+    if [[ "$cli_target" == "$REPO_DIR/cli/polym" ]]; then
+      echo "  CLI symlink:    $cli_link → $cli_target"
+      cli_action="remove"
+    else
+      echo "  CLI symlink:    $cli_link → $cli_target  ${YELLOW}(not pointing to this repo — leaving alone)${NC}"
+    fi
+  elif [[ -e "$cli_link" ]]; then
+    echo "  CLI:            $cli_link  ${YELLOW}(not a symlink — leaving alone)${NC}"
+  else
+    echo "  CLI:            (not present)"
+  fi
+
+  # 4. Launchd telemetry jobs (macOS only; old polymath releases registered one)
+  local -a launch_jobs=()
+  if [[ "$(uname)" == "Darwin" ]]; then
+    while IFS= read -r label; do
+      [[ -n "$label" ]] && launch_jobs+=("$label")
+    done < <(launchctl list 2>/dev/null | awk '/io\.polym(ath)?\.telemetry/ {print $3}')
+  fi
+  if [[ ${#launch_jobs[@]} -eq 0 ]]; then
+    echo "  Launchd jobs:   (none)"
+  else
+    echo "  Launchd jobs (${#launch_jobs[@]}):"
+    for l in "${launch_jobs[@]}"; do echo "    - $l"; done
+  fi
+
+  echo ""
+  echo "  ${BOLD}NOT removed:${NC} source repo at $REPO_DIR"
+
+  if ! $force; then
+    echo ""
+    read -r -p "Proceed with uninstall? [y/N] " ans
+    [[ "$ans" =~ ^[yY]$ ]] || { log_warn "Aborted."; exit 0; }
+  fi
+
+  log_head "Uninstalling"
+
+  # 1. Skills
+  for s in "${skills[@]}"; do
+    rm -rf "$SKILLS_DST/$s"
+    log_ok "Removed skill $s"
+  done
+
+  # 2. Lockfile
+  if [[ -f "$LOCK_FILE" ]]; then
+    rm -f "$LOCK_FILE"
+    log_ok "Removed lockfile $LOCK_FILE"
+  fi
+
+  # 3. CLI symlink (only if it points at this repo)
+  if [[ "$cli_action" == "remove" ]]; then
+    rm -f "$cli_link"
+    log_ok "Removed CLI symlink $cli_link"
+  fi
+
+  # 4. Launchd jobs
+  for label in "${launch_jobs[@]}"; do
+    local plist_removed=false
+    for plist_dir in "$HOME/Library/LaunchAgents" "/Library/LaunchAgents"; do
+      local plist="$plist_dir/${label}.plist"
+      if [[ -f "$plist" ]]; then
+        launchctl unload "$plist" 2>/dev/null || true
+        rm -f "$plist"
+        log_ok "Unloaded + removed launchd job $label ($plist)"
+        plist_removed=true
+        break
+      fi
+    done
+    if ! $plist_removed; then
+      launchctl remove "$label" 2>/dev/null || true
+      log_ok "Removed launchd job $label (no plist file on disk)"
+    fi
+  done
+
+  echo ""
+  log_ok "Polym uninstalled."
+  log_info "Source repo preserved at: $REPO_DIR"
+  log_info "Delete it manually if you want a full wipe: rm -rf $REPO_DIR"
 }
 
 cmd_list() {
@@ -639,6 +781,7 @@ cmd_publish() {
 main() {
   case "${1:-}" in
     install)          cmd_install "${2:-all}" ;;
+    uninstall)        shift; cmd_uninstall "$@" ;;
     list)             cmd_list    "${2:-}" ;;
     self-update)      cmd_self_update ;;
     update|sync)      cmd_update  "${2:-installed}" ;;
