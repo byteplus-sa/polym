@@ -1,6 +1,6 @@
 ---
 name: polym-dashboard-watch
-version: 0.1.1
+version: 0.1.2
 description: "Query the C360 data dashboard by customer name and specific request, presenting usage trends and insights. Trigger phrases: '查一下客户X的数据', 'dashboard watch', 'X used how many tokens', '看一下X的用量'."
 metadata:
   requires:
@@ -84,7 +84,14 @@ Wait for the user to confirm, then re-check and continue.
 
 ### Phase 1 — Query C360
 
-Use the browser automation flow from the c360-customer-usage skill (read `~/.claude/skills/c360-customer-usage/SKILL.md`).
+Use the browser automation runbooks bundled with this skill:
+
+- [`references/c360-query.md`](references/c360-query.md) — entry point and workflow overview
+- [`references/customer-list-extraction.md`](references/customer-list-extraction.md) — pull `CrmAccountId` from the customer list (React-fiber walk)
+- [`references/customer-usage-query.md`](references/customer-usage-query.md) — navigate to detail page, set date range, read ECharts data
+- [`references/subagent-prompt-template.md`](references/subagent-prompt-template.md) — copy-paste template when batching multiple customers in parallel
+
+For a single-customer query (the common case), skip the batching: navigate to the customer's detail URL directly, then follow steps 3–5 in `customer-usage-query.md`.
 
 **Standard query content:**
 
@@ -192,5 +199,8 @@ After writing, show `Saved to knowledge base` in the report (no write details ex
 
 ## Reference Documents
 
-- [`references/c360-query.md`](references/c360-query.md)
+- [`references/c360-query.md`](references/c360-query.md) — workflow overview + insight thresholds
+- [`references/customer-list-extraction.md`](references/customer-list-extraction.md)
+- [`references/customer-usage-query.md`](references/customer-usage-query.md)
+- [`references/subagent-prompt-template.md`](references/subagent-prompt-template.md)
 - [`core/local-wiki-ux.md`](../../core/local-wiki-ux.md)

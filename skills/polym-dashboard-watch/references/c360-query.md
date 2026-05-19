@@ -5,9 +5,9 @@
 C360 (Customer 360) is BytePlus's internal customer data platform.
 Queries are performed via Chrome browser automation using the Claude in Chrome extension.
 
-The `c360-customer-usage` skill (in `~/.claude/skills/c360-customer-usage/`) contains
-the detailed browser automation runbook. This file documents how polym-dashboard-watch
-calls into it.
+This file is the entry point for the browser-automation flow used by
+`polym-dashboard-watch`. The detailed runbooks live in sibling files in this
+same `references/` directory — no external skill is required.
 
 ---
 
@@ -23,47 +23,73 @@ Expected response when connected:
 [{"id": "...", "title": "...", "url": "..."}]
 ```
 
-Empty array or error → guide user through installation (see SKILL.md § Chrome Extension Setup).
+Empty array or error → guide user through installation (see SKILL.md § Chrome Extension Installation Guide).
 
 ---
 
-## Invoking c360-customer-usage
+## Workflow at a glance
 
-polym-dashboard-watch delegates all C360 browser automation to the `c360-customer-usage` skill.
+```
+Customer list  ──► extract CrmAccountIds  ──► save to customers.json
+                                                    │
+                                                    ▼
+                              split into batches (5-6 customers each)
+                                                    │
+                                                    ▼
+                          spawn N parallel subagents (general-purpose, bg)
+                                                    │
+                                                    ▼
+             each subagent: open tab → navigate to detail → read chart data
+                                                    │
+                                                    ▼
+                                  batch_A.json … batch_N.json
+                                                    │
+                                                    ▼
+                              main agent consolidates into report
+```
 
-Read `~/.claude/skills/c360-customer-usage/SKILL.md` and follow its instructions for:
-1. Navigating to C360
-2. Searching for the customer by name
-3. Extracting usage data
-4. Handling pagination and date range filters
-
-Do not duplicate the browser automation logic here.
+Single-customer queries (the common case for polym-dashboard-watch) skip the
+batching and run steps 1, 3, 4 directly in the main tab.
 
 ---
 
-## Data Points to Extract
+## Detailed runbooks
+
+| Step | File | What it covers |
+|---|---|---|
+| 1. List | [`customer-list-extraction.md`](customer-list-extraction.md) | React-fiber walk to pull `CrmAccountId` from the customer table |
+| 2. Plan | [`subagent-prompt-template.md`](subagent-prompt-template.md) | Batch sizing, copy-paste subagent prompt, output schema |
+| 3. Query | [`customer-usage-query.md`](customer-usage-query.md) | Detail-page navigation, date picker, ECharts data extraction |
+
+For a single-customer query:
+- Skip step 2 (no subagents).
+- Step 1 reduces to a name → `CrmAccountId` lookup; if the user gave a name only, navigate to the list URL once and find the row, or use the saved `crmId` from local wiki / prior runs.
+
+---
+
+## Data points to extract
 
 | Field | Where in C360 | Notes |
 |---|---|---|
 | Daily tokens | Usage chart | Last 30 days, daily granularity |
 | Monthly total | Summary card | Current month + last month |
-| MoM % change | Computed from monthly totals | |
+| MoM % change | Summary card / computed | Displayed as `+3.26%` |
 | Product breakdown | Product usage tab | % per product |
 | Quota / balance | Account tab | Remaining quota % |
 | Account ID | Account info | 10-digit IAM account ID |
 
 ---
 
-## Customer Name Lookup
+## Customer name lookup
 
 If the customer name doesn't match exactly in C360:
-1. Try partial name match
-2. Try company alias (from local wiki `aliases` frontmatter if available)
-3. Try `~/.claude/skills/seedance-account-lookup/` if need to look up by account ID
+1. Try partial name match.
+2. Try company alias (from local wiki `aliases` frontmatter, if available).
+3. If you only have a 10-digit IAM account ID (and not a customer name), search the C360 customer list (`?tab=all`) for the matching `AccountId` column. The `seedance-account-lookup` skill, if installed, does the same reverse lookup faster — but it's not required.
 
 ---
 
-## Insight Thresholds
+## Insight thresholds
 
 | Metric | Threshold | Severity |
 |---|---|---|
@@ -77,7 +103,7 @@ If the customer name doesn't match exactly in C360:
 
 ---
 
-## Error Handling
+## Error handling
 
 | Situation | Action |
 |---|---|

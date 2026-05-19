@@ -1,5 +1,15 @@
 # polym-dashboard-watch CHANGELOG
 
+## 0.1.2 — 2026-05-19
+
+- Inlined the C360 browser-automation runbooks (`customer-list-extraction.md`,
+  `customer-usage-query.md`, `subagent-prompt-template.md`) into `references/`.
+  The skill no longer depends on the external `c360-customer-usage` skill, so
+  it works on a fresh polym install without any extra setup.
+- Rewrote `references/c360-query.md` as the workflow entry point pointing at
+  the three new local runbooks.
+- Updated SKILL.md Phase 1 and the Reference Documents section accordingly.
+
 ## 0.1.1 — 2026-05-13
 
 - Renamed package to `polym-dashboard-watch` to adopt the Polym `polym-` prefix convention.
