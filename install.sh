@@ -158,43 +158,6 @@ maybe_warn_path() {
   fi
 }
 
-# ── Set up daily telemetry (token-usage leaderboard) ─────────────────────────
-
-setup_telemetry() {
-  if [[ ! -d "$REPO_DIR/telemetry" ]]; then
-    warn "telemetry/ not found in this checkout — skipping daily-usage cron setup."
-    return
-  fi
-  step "Setting up daily token-usage telemetry"
-
-  if PYTHONPATH="$REPO_DIR" python3 -m telemetry auth-check >/dev/null 2>&1; then
-    ok "lark-cli auth — all required scopes granted"
-  else
-    warn "lark-cli is missing some scopes polym needs."
-    if command -v lark-cli &>/dev/null; then
-      echo "   Running: lark-cli auth login --domain all"
-      lark-cli auth login --domain all || warn "Auth login skipped; rerun later."
-      PYTHONPATH="$REPO_DIR" python3 -m telemetry auth-check >/dev/null 2>&1 \
-        && ok "All scopes now granted" \
-        || warn "Still missing scopes; uploads will fail until resolved."
-    else
-      warn "lark-cli not on PATH; skipping auth re-login."
-    fi
-  fi
-
-  if [[ "$(uname)" == "Darwin" ]]; then
-    if PYTHONPATH="$REPO_DIR" python3 -m telemetry install >/dev/null; then
-      ok "launchd job registered — daily sync at 14:00 local time, pushes the previous day"
-    else
-      warn "Could not register launchd job; run manually: python3 -m telemetry install"
-    fi
-  else
-    warn "Auto-schedule supports macOS only. Wire up a cron / systemd timer pointing at:"
-    echo "     PYTHONPATH=$REPO_DIR python3 -m telemetry sync"
-  fi
-  echo ""
-}
-
 # ── Install skills ────────────────────────────────────────────────────────────
 
 install_skills() {
@@ -219,7 +182,6 @@ main() {
   acquire_repo
   install_cli
   install_skills
-  setup_telemetry
   maybe_warn_path
 
   echo ""
