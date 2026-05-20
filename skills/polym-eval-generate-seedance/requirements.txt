@@ -1,0 +1,6 @@
+byteplus-python-sdk-v2
+Pillow
+requests
+tqdm
+python-dotenv
+tos  # optional, for reference image upload to TOS

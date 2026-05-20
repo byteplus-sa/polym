@@ -1,0 +1,26 @@
+name: polym-eval-report-generator
+version: 0.1.0
+stage: beta
+owners:
+  - Carey8175
+description_for_install: |
+  Generate Markdown reports from polym-eval-db data, including image/video stats,
+  Elo rankings, scenario analysis, sample cases, and recommendations.
+depends_on:
+  skills:
+    - polym-eval-db: ">=0.1.0"
+  binaries:
+    - python3: ">=3.10"
+  env: []
+io_contract:
+  reads:
+    - local-filesystem/skills/polym-eval-db/eval.db
+  writes:
+    - target: local-filesystem/reports
+      schema: core/signal-envelope.schema.json
+      signal_type: eval-report
+triggers:
+  - "generate eval report"
+  - "评测报告"
+  - "Elo 报告"
+deprecates: []

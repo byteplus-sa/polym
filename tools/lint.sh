@@ -37,9 +37,9 @@ lint_skill() {
 
   [[ ! -f "$dir/manifest.yaml" ]] && return  # can't continue without manifest
 
-  # Parse manifest with Python
+  # Parse the small subset of manifest.yaml needed for lint without requiring PyYAML.
   python3 - "$dir/manifest.yaml" "$skill" <<'PYEOF'
-import sys, yaml, re
+import sys, re
 
 path, folder = sys.argv[1], sys.argv[2]
 errors = 0
@@ -52,12 +52,49 @@ def fail(msg):
 def ok(msg):
     print(f"  \033[0;32m  OK\033[0m    {msg}")
 
-with open(path) as f:
-    try:
-        m = yaml.safe_load(f)
-    except yaml.YAMLError as e:
-        fail(f"manifest.yaml is not valid YAML: {e}")
-        sys.exit(1)
+def clean(value):
+    value = value.strip()
+    if value in {"|", ">"}:
+        return value
+    if (value.startswith('"') and value.endswith('"')) or (value.startswith("'") and value.endswith("'")):
+        return value[1:-1]
+    return value
+
+def parse_manifest(path):
+    data = {}
+    current = None
+    current_indent = 0
+    with open(path) as f:
+        for raw in f:
+            if not raw.strip() or raw.lstrip().startswith("#"):
+                continue
+            indent = len(raw) - len(raw.lstrip(" "))
+            line = raw.rstrip("\n")
+            if indent == 0 and ":" in line:
+                key, value = line.split(":", 1)
+                key = key.strip()
+                value = clean(value)
+                if value == "":
+                    data[key] = []
+                    current = key
+                    current_indent = indent
+                elif value in {"|", ">"}:
+                    data[key] = value
+                    current = key
+                    current_indent = indent
+                else:
+                    data[key] = value
+                    current = key
+                    current_indent = indent
+                continue
+            if current and indent > current_indent and line.strip().startswith("- "):
+                item = clean(line.strip()[2:])
+                if not isinstance(data.get(current), list):
+                    data[current] = []
+                data[current].append(item)
+    return data
+
+m = parse_manifest(path)
 
 # Required fields
 for field in ["name", "version", "stage", "owners", "description_for_install"]:
@@ -94,7 +131,7 @@ if not isinstance(owners, list) or len(owners) == 0:
     fail("owners must be a non-empty list")
 
 # deprecation block required when stage=deprecated
-if stage == "deprecated" and not m.get("deprecation"):
+if stage == "deprecated" and "deprecation" not in m:
     fail("stage=deprecated requires a 'deprecation' block with 'since' and 'remove_after'")
 
 sys.exit(errors)
@@ -114,19 +151,40 @@ check_trigger_collisions() {
   echo ""
   echo "▸ Checking trigger collisions across skills..."
   python3 - "$SKILLS_DIR" "$TEMPLATE" <<'PYEOF'
-import sys, os, glob, yaml
+import sys, os, glob
 from collections import defaultdict
 
 skills_dir, template = sys.argv[1], sys.argv[2]
 trigger_map = defaultdict(list)
+
+def clean(value):
+    value = value.strip()
+    if (value.startswith('"') and value.endswith('"')) or (value.startswith("'") and value.endswith("'")):
+        return value[1:-1]
+    return value
+
+def parse_triggers(path):
+    triggers = []
+    in_triggers = False
+    with open(path) as f:
+        for raw in f:
+            line = raw.rstrip("\n")
+            if not line.strip() or line.lstrip().startswith("#"):
+                continue
+            indent = len(raw) - len(raw.lstrip(" "))
+            if indent == 0:
+                in_triggers = line.startswith("triggers:")
+                continue
+            if in_triggers and line.strip().startswith("- "):
+                triggers.append(clean(line.strip()[2:]))
+    return triggers
 
 for path in glob.glob(os.path.join(skills_dir, "*/manifest.yaml")):
     skill = os.path.basename(os.path.dirname(path))
     if skill == template:
         continue
     try:
-        m = yaml.safe_load(open(path))
-        for t in (m.get("triggers") or []):
+        for t in parse_triggers(path):
             trigger_map[t].append(skill)
     except Exception:
         pass

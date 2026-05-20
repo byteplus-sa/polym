@@ -1,0 +1,28 @@
+name: polym-eval-run-evaluation
+version: 0.1.0
+stage: beta
+owners:
+  - Carey8175
+description_for_install: |
+  Orchestrate model generation, pairwise scoring, and saving results into polym-eval-db
+  for image/video benchmarking workflows.
+depends_on:
+  skills:
+    - polym-eval-db: ">=0.1.0"
+    - polym-eval-score-image-gemini: ">=0.1.0"
+    - polym-eval-score-video-gemini: ">=0.1.0"
+  binaries:
+    - python3: ">=3.10"
+  env: []
+io_contract:
+  reads:
+    - local-filesystem/generated-assets
+  writes:
+    - target: local-filesystem/skills/polym-eval-db/eval.db
+      schema: core/signal-envelope.schema.json
+      signal_type: eval-result
+triggers:
+  - "run evaluation"
+  - "compare models"
+  - "run GSB"
+deprecates: []

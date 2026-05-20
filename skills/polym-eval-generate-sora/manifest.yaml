@@ -1,0 +1,27 @@
+name: polym-eval-generate-sora
+version: 0.1.0
+stage: beta
+owners:
+  - Carey8175
+description_for_install: |
+  Generate videos with Sora models through OpenAI or ByteDance AIDP. Supports
+  text-to-video, image-to-video, first-frame references, duration, size, and resolution.
+depends_on:
+  skills: []
+  binaries:
+    - python3: ">=3.10"
+  env:
+    - OPENAI_API_KEY
+    - AIDP_AK
+io_contract:
+  reads:
+    - local-filesystem/reference-images
+  writes:
+    - target: local-filesystem/generated-assets
+      schema: core/signal-envelope.schema.json
+      signal_type: generated-video
+triggers:
+  - "generate Sora"
+  - "Sora video"
+  - "sora-2"
+deprecates: []

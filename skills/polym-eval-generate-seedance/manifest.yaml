@@ -1,0 +1,26 @@
+name: polym-eval-generate-seedance
+version: 0.1.0
+stage: beta
+owners:
+  - Carey8175
+description_for_install: |
+  Generate videos with BytePlus Seedance models through Ark. Supports text-to-video,
+  image-to-video, first/last frame references, camera options, draft mode, and seeds.
+depends_on:
+  skills: []
+  binaries:
+    - python3: ">=3.10"
+  env:
+    - BYTEPLUS_API_KEY
+io_contract:
+  reads:
+    - local-filesystem/reference-images
+  writes:
+    - target: local-filesystem/generated-assets
+      schema: core/signal-envelope.schema.json
+      signal_type: generated-video
+triggers:
+  - "generate Seedance"
+  - "Seedance video"
+  - "seedance I2V"
+deprecates: []

@@ -8,7 +8,7 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 python3 - "$REPO_DIR" <<'PYEOF'
-import sys, os, glob, yaml
+import sys, os, glob, json
 from datetime import datetime, timezone
 
 repo = sys.argv[1]
@@ -18,12 +18,71 @@ out_file = os.path.join(repo, "registry.yaml")
 TEMPLATE = "_template"
 
 skills = []
+def clean(value):
+    value = value.strip()
+    if value in {"|", ">"}:
+        return value
+    if "#" in value and not value.startswith(('"', "'")):
+        value = value.split("#", 1)[0].rstrip()
+    if (value.startswith('"') and value.endswith('"')) or (value.startswith("'") and value.endswith("'")):
+        return value[1:-1]
+    return value
+
+def parse_yaml_subset(path):
+    data = {}
+    current = None
+    current_indent = 0
+    block_key = None
+    block_indent = None
+    block_lines = []
+    with open(path) as f:
+        for raw in f:
+            if not raw.strip() or raw.lstrip().startswith("#"):
+                continue
+            indent = len(raw) - len(raw.lstrip(" "))
+            line = raw.rstrip("\n")
+            if block_key and indent > block_indent:
+                block_lines.append(line[block_indent + 2:] if len(line) > block_indent + 2 else "")
+                continue
+            elif block_key:
+                data[block_key] = "\n".join(block_lines).strip()
+                block_key = None
+                block_lines = []
+            if indent == 0 and ":" in line:
+                key, value = line.split(":", 1)
+                key = key.strip()
+                value = clean(value)
+                if value in {"|", ">"}:
+                    block_key = key
+                    block_indent = indent
+                    block_lines = []
+                    data[key] = ""
+                elif value == "":
+                    data[key] = []
+                    current = key
+                    current_indent = indent
+                else:
+                    data[key] = value
+                    current = key
+                    current_indent = indent
+                continue
+            if current and indent > current_indent and line.strip().startswith("- "):
+                item = clean(line.strip()[2:])
+                if ":" in item and not item.startswith(('"', "'")):
+                    k, v = item.split(":", 1)
+                    item = {k.strip(): clean(v)}
+                if not isinstance(data.get(current), list):
+                    data[current] = []
+                data[current].append(item)
+    if block_key:
+        data[block_key] = "\n".join(block_lines).strip()
+    return data
+
 for manifest_path in sorted(glob.glob(os.path.join(skills_dir, "*/manifest.yaml"))):
     skill_name = os.path.basename(os.path.dirname(manifest_path))
     if skill_name == TEMPLATE:
         continue
-    with open(manifest_path) as f:
-        m = yaml.safe_load(f)
+    m = parse_yaml_subset(manifest_path)
     skills.append({
         "name":                    m.get("name", skill_name),
         "version":                 m.get("version", "0.0.0"),
@@ -37,8 +96,7 @@ for manifest_path in sorted(glob.glob(os.path.join(skills_dir, "*/manifest.yaml"
 
 profiles = []
 for profile_path in sorted(glob.glob(os.path.join(profiles_dir, "*.yaml"))):
-    with open(profile_path) as f:
-        p = yaml.safe_load(f)
+    p = parse_yaml_subset(profile_path)
     profiles.append({
         "name":        p.get("name", os.path.splitext(os.path.basename(profile_path))[0]),
         "description": (p.get("description") or "").strip(),
@@ -75,10 +133,7 @@ for s in skills:
         lines.append(f"    triggers:")
         for t in s['triggers']:
             # quote if needed, keep unicode readable
-            if any(c in t for c in ':#{}[]|>&*!,?'):
-                lines.append(f"      - {yaml.dump(t, allow_unicode=True, default_flow_style=True).strip()}")
-            else:
-                lines.append(f"      - \"{t}\"")
+            lines.append(f"      - {json.dumps(t, ensure_ascii=False)}")
     lines.append("")
 
 lines.append("profiles:")

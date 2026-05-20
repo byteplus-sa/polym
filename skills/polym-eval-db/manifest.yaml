@@ -1,0 +1,24 @@
+name: polym-eval-db
+version: 0.1.0
+stage: beta
+owners:
+  - Carey8175
+description_for_install: |
+  Query and maintain the local image/video evaluation SQLite database. Includes
+  pairwise stats, dimensions, examples, Elo rankings, and reporting helpers.
+depends_on:
+  skills: []
+  binaries:
+    - python3: ">=3.10"
+  env: []
+io_contract:
+  reads:
+    - local-filesystem/skills/polym-eval-db/eval.db
+  writes:
+    - local-filesystem/skills/polym-eval-db/eval.db
+triggers:
+  - "eval db"
+  - "Elo ranking"
+  - "评测数据库"
+  - "模型胜率"
+deprecates: []

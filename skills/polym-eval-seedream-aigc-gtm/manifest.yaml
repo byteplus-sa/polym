@@ -1,0 +1,24 @@
+name: polym-eval-seedream-aigc-gtm
+version: 0.1.0
+stage: beta
+owners:
+  - Carey8175
+description_for_install: |
+  GTM positioning, competitive analysis, strengths, gaps, pricing notes, and
+  customer-facing messaging for the Seedream image generation model family.
+depends_on:
+  skills:
+    - polym-eval-db: ">=0.1.0"
+  binaries:
+    - lark-cli: ">=1.0.20"
+  env: []
+io_contract:
+  reads:
+    - lark-docs/seedream-gtm
+    - local-filesystem/skills/polym-eval-db/eval.db
+  writes: []
+triggers:
+  - "Seedream GTM"
+  - "Seedream 竞品"
+  - "Seedream 优势"
+deprecates: []

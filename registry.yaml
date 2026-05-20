@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-19T03:50:57Z
+generated_at: 2026-05-20T06:41:16Z
 
 skills:
   - name: polym-customer-brief
@@ -47,6 +47,203 @@ skills:
       - "数据看板"
       - "客户用量"
       - "月度用量"
+
+  - name: polym-eval-db
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Query and maintain the local image/video evaluation SQLite database. Includes
+      pairwise stats, dimensions, examples, Elo rankings, and reporting helpers.
+    owners: ['Carey8175']
+    path: skills/polym-eval-db
+    triggers:
+      - "eval db"
+      - "Elo ranking"
+      - "评测数据库"
+      - "模型胜率"
+
+  - name: polym-eval-generate-gemini
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Generate or edit images with Gemini/Imagen through Google or ByteDance AIDP
+      backends. Supports text prompts, reference images, image sizes, and backend
+      preflight guidance.
+    owners: ['Carey8175']
+    path: skills/polym-eval-generate-gemini
+    triggers:
+      - "generate Gemini image"
+      - "Imagen"
+      - "Nano Banana"
+
+  - name: polym-eval-generate-gpt-image
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Generate or edit images with GPT Image through the AIDP backend. Supports
+      text-to-image, image editing, masks, quality settings, sizes, and multiple outputs.
+    owners: ['Carey8175']
+    path: skills/polym-eval-generate-gpt-image
+    triggers:
+      - "GPT image"
+      - "gpt-image"
+      - "OpenAI image"
+
+  - name: polym-eval-generate-seedance
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Generate videos with BytePlus Seedance models through Ark. Supports text-to-video,
+      image-to-video, first/last frame references, camera options, draft mode, and seeds.
+    owners: ['Carey8175']
+    path: skills/polym-eval-generate-seedance
+    triggers:
+      - "generate Seedance"
+      - "Seedance video"
+      - "seedance I2V"
+
+  - name: polym-eval-generate-seedream
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Generate or edit images with BytePlus Seedream models. Supports reference
+      images, output sizes, seeds, guidance scale, prompt optimization, and streaming.
+    owners: ['Carey8175']
+    path: skills/polym-eval-generate-seedream
+    triggers:
+      - "generate Seedream"
+      - "Seedream image"
+      - "seedream edit"
+
+  - name: polym-eval-generate-sora
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Generate videos with Sora models through OpenAI or ByteDance AIDP. Supports
+      text-to-video, image-to-video, first-frame references, duration, size, and resolution.
+    owners: ['Carey8175']
+    path: skills/polym-eval-generate-sora
+    triggers:
+      - "generate Sora"
+      - "Sora video"
+      - "sora-2"
+
+  - name: polym-eval-generate-veo
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Generate videos with Google Veo or ByteDance AIDP backends. Supports prompts,
+      first-frame references, duration, aspect ratio, and output file selection.
+    owners: ['Carey8175']
+    path: skills/polym-eval-generate-veo
+    triggers:
+      - "generate Veo"
+      - "Veo video"
+      - "veo-3"
+
+  - name: polym-eval-prompt-optimizer
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Optimize prompts for image and video generation models, including Seedream,
+      Gemini, Seedance, Veo, Imagen, and Sora, with scenario and task-specific guidance.
+    owners: ['Carey8175']
+    path: skills/polym-eval-prompt-optimizer
+    triggers:
+      - "optimize prompt"
+      - "提示词优化"
+      - "prompt rewrite"
+
+  - name: polym-eval-report-generator
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Generate Markdown reports from polym-eval-db data, including image/video stats,
+      Elo rankings, scenario analysis, sample cases, and recommendations.
+    owners: ['Carey8175']
+    path: skills/polym-eval-report-generator
+    triggers:
+      - "generate eval report"
+      - "评测报告"
+      - "Elo 报告"
+
+  - name: polym-eval-run-evaluation
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Orchestrate model generation, pairwise scoring, and saving results into polym-eval-db
+      for image/video benchmarking workflows.
+    owners: ['Carey8175']
+    path: skills/polym-eval-run-evaluation
+    triggers:
+      - "run evaluation"
+      - "compare models"
+      - "run GSB"
+
+  - name: polym-eval-score-image-gemini
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Evaluate generated images with Gemini in pointwise or pairwise mode, including
+      prompt fidelity, dimensions, reasons, and optional AIDP session routing.
+    owners: ['Carey8175']
+    path: skills/polym-eval-score-image-gemini
+    triggers:
+      - "score image"
+      - "evaluate image"
+      - "image GSB"
+
+  - name: polym-eval-score-video-gemini
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      Evaluate generated videos with Gemini in pointwise or pairwise mode, extracting
+      frames when available and producing structured dimension scores and rationale.
+    owners: ['Carey8175']
+    path: skills/polym-eval-score-video-gemini
+    triggers:
+      - "score video"
+      - "evaluate video"
+      - "video GSB"
+
+  - name: polym-eval-seed-llm-gtm
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      GTM positioning and competitive analysis for Seed LLM models, including Seed
+      1.8 and Seed 2.0 Pro/Lite/Mini against current global frontier LLMs.
+    owners: ['Carey8175']
+    path: skills/polym-eval-seed-llm-gtm
+    triggers:
+      - "Seed LLM GTM"
+      - "Seed 2.0 优势"
+      - "Seed 模型竞品"
+
+  - name: polym-eval-seedance-aigc-gtm
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      GTM positioning, competitive analysis, strengths, gaps, and customer-facing
+      messaging for the Seedance video generation model family.
+    owners: ['Carey8175']
+    path: skills/polym-eval-seedance-aigc-gtm
+    triggers:
+      - "Seedance GTM"
+      - "Seedance 竞品"
+      - "Seedance 优势"
+
+  - name: polym-eval-seedream-aigc-gtm
+    version: 0.1.0
+    stage: beta
+    description_for_install: |
+      GTM positioning, competitive analysis, strengths, gaps, pricing notes, and
+      customer-facing messaging for the Seedream image generation model family.
+    owners: ['Carey8175']
+    path: skills/polym-eval-seedream-aigc-gtm
+    triggers:
+      - "Seedream GTM"
+      - "Seedream 竞品"
+      - "Seedream 优势"
 
   - name: polym-help
     version: 0.2.2
