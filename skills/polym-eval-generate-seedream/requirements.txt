@@ -1,0 +1,4 @@
+requests
+tqdm
+python-dotenv
+tos  # optional, for reference image upload

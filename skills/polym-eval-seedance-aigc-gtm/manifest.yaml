@@ -1,0 +1,24 @@
+name: polym-eval-seedance-aigc-gtm
+version: 0.1.0
+stage: beta
+owners:
+  - Carey8175
+description_for_install: |
+  GTM positioning, competitive analysis, strengths, gaps, and customer-facing
+  messaging for the Seedance video generation model family.
+depends_on:
+  skills:
+    - polym-eval-db: ">=0.1.0"
+  binaries:
+    - lark-cli: ">=1.0.20"
+  env: []
+io_contract:
+  reads:
+    - lark-docs/seedance-gtm
+    - local-filesystem/skills/polym-eval-db/eval.db
+  writes: []
+triggers:
+  - "Seedance GTM"
+  - "Seedance 竞品"
+  - "Seedance 优势"
+deprecates: []

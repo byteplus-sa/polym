@@ -1,0 +1,27 @@
+name: polym-eval-score-video-gemini
+version: 0.1.0
+stage: beta
+owners:
+  - Carey8175
+description_for_install: |
+  Evaluate generated videos with Gemini in pointwise or pairwise mode, extracting
+  frames when available and producing structured dimension scores and rationale.
+depends_on:
+  skills: []
+  binaries:
+    - python3: ">=3.10"
+  env:
+    - GOOGLE_AI_STUDIO_API_KEY
+    - AIDP_API_KEY
+io_contract:
+  reads:
+    - local-filesystem/generated-assets
+  writes:
+    - target: local-filesystem/evaluation-results
+      schema: core/signal-envelope.schema.json
+      signal_type: video-score
+triggers:
+  - "score video"
+  - "evaluate video"
+  - "video GSB"
+deprecates: []

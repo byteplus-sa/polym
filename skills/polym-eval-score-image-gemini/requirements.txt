@@ -1,0 +1,4 @@
+google-genai
+Pillow
+python-dotenv
+openai>=2.0.0
