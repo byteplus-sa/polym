@@ -1,0 +1,26 @@
+name: polym-eval-generate-gpt-image
+version: 0.1.0
+stage: beta
+owners:
+  - Carey8175
+description_for_install: |
+  Generate or edit images with GPT Image through the AIDP backend. Supports
+  text-to-image, image editing, masks, quality settings, sizes, and multiple outputs.
+depends_on:
+  skills: []
+  binaries:
+    - python3: ">=3.10"
+  env:
+    - AIDP_API_KEY
+io_contract:
+  reads:
+    - local-filesystem/reference-images
+  writes:
+    - target: local-filesystem/generated-assets
+      schema: core/signal-envelope.schema.json
+      signal_type: generated-image
+triggers:
+  - "GPT image"
+  - "gpt-image"
+  - "OpenAI image"
+deprecates: []

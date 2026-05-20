@@ -1,0 +1,22 @@
+name: polym-eval-seed-llm-gtm
+version: 0.1.0
+stage: beta
+owners:
+  - Carey8175
+description_for_install: |
+  GTM positioning and competitive analysis for Seed LLM models, including Seed
+  1.8 and Seed 2.0 Pro/Lite/Mini against current global frontier LLMs.
+depends_on:
+  skills: []
+  binaries:
+    - lark-cli: ">=1.0.20"
+  env: []
+io_contract:
+  reads:
+    - lark-docs/polym-eval-seed-llm-gtm
+  writes: []
+triggers:
+  - "Seed LLM GTM"
+  - "Seed 2.0 优势"
+  - "Seed 模型竞品"
+deprecates: []

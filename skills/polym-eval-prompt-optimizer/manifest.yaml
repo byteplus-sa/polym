@@ -1,0 +1,22 @@
+name: polym-eval-prompt-optimizer
+version: 0.1.0
+stage: beta
+owners:
+  - Carey8175
+description_for_install: |
+  Optimize prompts for image and video generation models, including Seedream,
+  Gemini, Seedance, Veo, Imagen, and Sora, with scenario and task-specific guidance.
+depends_on:
+  skills: []
+  binaries:
+    - python3: ">=3.10"
+  env:
+    - BYTEPLUS_API_KEY
+io_contract:
+  reads: []
+  writes: []
+triggers:
+  - "optimize prompt"
+  - "提示词优化"
+  - "prompt rewrite"
+deprecates: []

@@ -1,0 +1,28 @@
+name: polym-eval-generate-veo
+version: 0.1.0
+stage: beta
+owners:
+  - Carey8175
+description_for_install: |
+  Generate videos with Google Veo or ByteDance AIDP backends. Supports prompts,
+  first-frame references, duration, aspect ratio, and output file selection.
+depends_on:
+  skills: []
+  binaries:
+    - python3: ">=3.10"
+  env:
+    - VERTEX_PROJECT
+    - VERTEX_LOCATION
+    - AIDP_AK
+io_contract:
+  reads:
+    - local-filesystem/reference-images
+  writes:
+    - target: local-filesystem/generated-assets
+      schema: core/signal-envelope.schema.json
+      signal_type: generated-video
+triggers:
+  - "generate Veo"
+  - "Veo video"
+  - "veo-3"
+deprecates: []

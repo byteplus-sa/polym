@@ -1,0 +1,28 @@
+name: polym-eval-score-image-gemini
+version: 0.1.0
+stage: beta
+owners:
+  - Carey8175
+description_for_install: |
+  Evaluate generated images with Gemini in pointwise or pairwise mode, including
+  prompt fidelity, dimensions, reasons, and optional AIDP session routing.
+depends_on:
+  skills: []
+  binaries:
+    - python3: ">=3.10"
+  env:
+    - GOOGLE_CLOUD_PROJECT
+    - GOOGLE_CLOUD_LOCATION
+    - AIDP_API_KEY
+io_contract:
+  reads:
+    - local-filesystem/generated-assets
+  writes:
+    - target: local-filesystem/evaluation-results
+      schema: core/signal-envelope.schema.json
+      signal_type: image-score
+triggers:
+  - "score image"
+  - "evaluate image"
+  - "image GSB"
+deprecates: []
