@@ -1,0 +1,47 @@
+name: eval
+description: |
+  Model evaluation & benchmarking bundle — generate images/videos across
+  Seedream / Seedance / Gemini / GPT-Image / Sora / Veo, run pairwise Gemini
+  scoring, persist results in the eval SQLite DB, and produce reports plus
+  GTM positioning narratives.
+audience: Evaluation / Benchmarking
+
+includes:
+  # data foundation
+  - polym-eval-db: "^0.1"             # SQLite store + import/query CLIs
+
+  # generators (image)
+  - polym-eval-generate-gemini: "^0.1"
+  - polym-eval-generate-gpt-image: "^0.1"
+  - polym-eval-generate-seedream: "^0.1"
+
+  # generators (video)
+  - polym-eval-generate-seedance: "^0.1"
+  - polym-eval-generate-sora: "^0.1"
+  - polym-eval-generate-veo: "^0.1"
+
+  # pairwise scorers
+  - polym-eval-score-image-gemini: "^0.1"
+  - polym-eval-score-video-gemini: "^0.1"
+
+  # orchestration / reporting
+  - polym-eval-run-evaluation: "^0.1"
+  - polym-eval-report-generator: "^0.1"
+  - polym-eval-prompt-optimizer: "^0.1"
+
+  # GTM analysis
+  - polym-eval-seed-llm-gtm: "^0.1"
+  - polym-eval-seedance-aigc-gtm: "^0.1"
+  - polym-eval-seedream-aigc-gtm: "^0.1"
+
+notes: |
+  Install with: polym install profile:eval
+
+  Each generator/scorer skill has its own Python requirements (requests,
+  google-genai, byteplus-python-sdk-v2, etc.) and required env vars
+  (GOOGLE_AI_STUDIO_API_KEY, AIDP_API_KEY, ARK_API_KEY, OPENAI_API_KEY,
+  TOS credentials, ...). After install, run `polym doctor` and consult each
+  skill's SKILL.md for backend-specific setup.
+
+  polym-eval-db will auto-download a starter eval.db on first real query
+  from the upstream TOS bucket; subsequent imports append locally.
