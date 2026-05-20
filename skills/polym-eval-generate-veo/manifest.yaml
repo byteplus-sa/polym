@@ -11,8 +11,9 @@ depends_on:
   binaries:
     - python3: ">=3.10"
   env:
-    - GOOGLE_AI_STUDIO_API_KEY
-    - AIDP_API_KEY
+    - VERTEX_PROJECT
+    - VERTEX_LOCATION
+    - AIDP_AK
 io_contract:
   reads:
     - local-filesystem/reference-images
