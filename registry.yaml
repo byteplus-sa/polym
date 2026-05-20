@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-20T06:55:05Z
+generated_at: 2026-05-20T07:11:48Z
 
 skills:
   - name: polym-customer-brief
@@ -399,6 +399,30 @@ skills:
       - "整理进 wiki"
 
 profiles:
+  - name: eval
+    audience: Evaluation / Benchmarking
+    description: |
+      Model evaluation & benchmarking bundle — generate images/videos across
+      Seedream / Seedance / Gemini / GPT-Image / Sora / Veo, run pairwise Gemini
+      scoring, persist results in the eval SQLite DB, and produce reports plus
+      GTM positioning narratives.
+    includes:
+      - polym-eval-db: "^0.1"
+      - polym-eval-generate-gemini: "^0.1"
+      - polym-eval-generate-gpt-image: "^0.1"
+      - polym-eval-generate-seedream: "^0.1"
+      - polym-eval-generate-seedance: "^0.1"
+      - polym-eval-generate-sora: "^0.1"
+      - polym-eval-generate-veo: "^0.1"
+      - polym-eval-score-image-gemini: "^0.1"
+      - polym-eval-score-video-gemini: "^0.1"
+      - polym-eval-run-evaluation: "^0.1"
+      - polym-eval-report-generator: "^0.1"
+      - polym-eval-prompt-optimizer: "^0.1"
+      - polym-eval-seed-llm-gtm: "^0.1"
+      - polym-eval-seedance-aigc-gtm: "^0.1"
+      - polym-eval-seedream-aigc-gtm: "^0.1"
+
   - name: sa-mvp
     audience: SA
     description: |
