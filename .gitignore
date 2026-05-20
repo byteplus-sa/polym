@@ -10,3 +10,7 @@ dist/
 build/
 .cache/
 skills/polym-eval-db/eval.db
+
+# Local secrets — populated from each skill's .env.example, never commit
+.env
+**/.env
