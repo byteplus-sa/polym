@@ -27,7 +27,7 @@ All three live as **repo secrets** at `Settings → Secrets and variables → Ac
 
 | Gateway | Base URL | Auth | Notes |
 |---|---|---|---|
-| **BytePlus ModelArk (海外)** | `https://ark.ap-southeast-1.bytepluses.com/api/v3` | `Authorization: Bearer <ARK_API_KEY>` | Public internet OK. Use this by default. |
+| **BytePlus ModelArk (海外)** | `https://ark.ap-southeast.bytepluses.com/api/v3` | `Authorization: Bearer <ARK_API_KEY>` | Public internet OK. Use this by default. Note: hostname is `ap-southeast` (no `-1`). |
 | **Volcengine 火山方舟 (国内)** | `https://ark.cn-beijing.volces.com/api/v3` | `Authorization: Bearer <ARK_API_KEY>` | Public internet OK. |
 | **AIDP (内部)** | `https://aidp.bytedance.net/...` | `?ak=<AIDP_API_KEY>` query param | **Not reachable from GitHub-hosted runners.** Requires a self-hosted runner inside ByteDance network, plus a header/query-param shim because AIDP doesn't use bearer auth. |
 
