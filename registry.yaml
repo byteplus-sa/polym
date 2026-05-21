@@ -3,9 +3,26 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-21T02:31:10Z
+generated_at: 2026-05-21T04:11:44Z
 
 skills:
+  - name: polym-autocase-image-gen
+    version: 0.1.0
+    stage: experimental
+    description_for_install: |
+      Generate images with gpt-image-2 (ChatGPT-image-2) by driving the internal
+      AutoCase playground (autocase.bytedance.net/arena) in a real Chrome browser.
+      Supports text-to-image and image-to-image with reference photos. Stopgap
+      until AIDP exposes gpt-image-2 — once it does, prefer polym-eval-generate-gpt-image
+      with --model gpt-image-2 (much faster, scriptable, no Chrome extension required).
+    owners: ['Carey8175']
+    path: skills/polym-autocase-image-gen
+    triggers:
+      - "gpt-image-2"
+      - "ChatGPT-image-2"
+      - "autocase playground"
+      - "用 gpt-image-2 出图"
+
   - name: polym-customer-brief
     version: 0.1.1
     stage: beta
