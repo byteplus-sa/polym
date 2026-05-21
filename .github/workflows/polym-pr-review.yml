@@ -28,15 +28,23 @@ jobs:
        contains(github.event.comment.body, '@polym'))
     runs-on: ubuntu-latest
     steps:
-      - name: Resolve PR number
+      - name: Resolve PR number and head SHA
         id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
             echo "head_sha=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
           else
-            echo "number=${{ github.event.issue.number }}" >> "$GITHUB_OUTPUT"
-            echo "head_sha=" >> "$GITHUB_OUTPUT"
+            pr_number="${{ github.event.issue.number }}"
+            # issue_comment events ship GITHUB_SHA pointing at the default branch.
+            # Resolve the PR's actual head so checkout reads the PR's files.
+            head_sha=$(gh pr view "$pr_number" \
+              --repo "${{ github.repository }}" \
+              --json headRefOid -q .headRefOid)
+            echo "number=$pr_number" >> "$GITHUB_OUTPUT"
+            echo "head_sha=$head_sha" >> "$GITHUB_OUTPUT"
           fi
 
       - uses: actions/checkout@v4
