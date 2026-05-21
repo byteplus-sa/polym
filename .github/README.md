@@ -13,15 +13,15 @@ compliance checklist. **Advisory only:** it never blocks merge.
 The workflow speaks OpenAI-compatible chat completions, so any OpenAI-compatible
 gateway works. Pick one and configure these three values:
 
-| Where | Key | Value |
-|---|---|---|
-| Repo **secret** | `POLYM_LLM_BASE_URL` | Chat completions root URL (no `/chat/completions` suffix) |
-| Repo **secret** | `POLYM_LLM_API_KEY` | Bearer token for that endpoint |
-| Repo **variable** | `POLYM_LLM_MODEL` | Model id (e.g. `doubao-seed-2.0-pro`) |
+All three live as **repo secrets** at `Settings → Secrets and variables → Actions → New repository secret`:
 
-Set them at:
-- Secrets: `Settings → Secrets and variables → Actions → New repository secret`
-- Variables: `Settings → Secrets and variables → Actions → Variables → New repository variable`
+| Key | Value |
+|---|---|
+| `POLYM_LLM_BASE_URL` | Chat completions root URL (no `/chat/completions` suffix) |
+| `POLYM_LLM_API_KEY` | Bearer token for that endpoint |
+| `POLYM_LLM_MODEL` | Model id (e.g. `doubao-seed-2.0-pro`) |
+
+`POLYM_LLM_MODEL` isn't sensitive but lives next to the other two for simpler setup.
 
 ### Reachable gateways (from a GitHub-hosted runner)
 

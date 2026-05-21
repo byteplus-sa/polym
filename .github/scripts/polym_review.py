@@ -155,8 +155,8 @@ def call_llm(user_prompt: str) -> str:
         raise SystemExit(
             "Missing required workflow inputs: "
             + ", ".join(missing)
-            + ". Set repo secrets POLYM_LLM_BASE_URL and POLYM_LLM_API_KEY, "
-            "and repo variable POLYM_LLM_MODEL."
+            + ". Set these as repo secrets at "
+            "Settings → Secrets and variables → Actions → Secrets."
         )
     client = OpenAI(base_url=base_url, api_key=api_key)
     resp = client.chat.completions.create(

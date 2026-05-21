@@ -61,5 +61,5 @@ jobs:
           TRIGGER_COMMENT: ${{ github.event.comment.body }}
           POLYM_LLM_BASE_URL: ${{ secrets.POLYM_LLM_BASE_URL }}
           POLYM_LLM_API_KEY: ${{ secrets.POLYM_LLM_API_KEY }}
-          POLYM_LLM_MODEL: ${{ vars.POLYM_LLM_MODEL }}
+          POLYM_LLM_MODEL: ${{ secrets.POLYM_LLM_MODEL }}
         run: python .github/scripts/polym_review.py
