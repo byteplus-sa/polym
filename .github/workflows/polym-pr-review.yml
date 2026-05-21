@@ -1,0 +1,73 @@
+name: Polym PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths-ignore:
+      - 'registry.yaml'   # auto-generated, nothing to review
+      - '**/*.lock'
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: read
+
+concurrency:
+  group: polym-pr-review-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    # Auto on PR events. On comments, only when @polym is mentioned in a PR thread.
+    if: |
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request != null &&
+       contains(github.event.comment.body, '@polym'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve PR number and head SHA
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
+            echo "head_sha=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            pr_number="${{ github.event.issue.number }}"
+            # issue_comment events ship GITHUB_SHA pointing at the default branch.
+            # Resolve the PR's actual head so checkout reads the PR's files.
+            head_sha=$(gh pr view "$pr_number" \
+              --repo "${{ github.repository }}" \
+              --json headRefOid -q .headRefOid)
+            echo "number=$pr_number" >> "$GITHUB_OUTPUT"
+            echo "head_sha=$head_sha" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ steps.pr.outputs.head_sha }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install --quiet -r .github/scripts/requirements.txt
+
+      - name: Run Polym review
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          REPO: ${{ github.repository }}
+          EVENT_NAME: ${{ github.event_name }}
+          TRIGGER_COMMENT: ${{ github.event.comment.body }}
+          POLYM_LLM_BASE_URL: ${{ secrets.POLYM_LLM_BASE_URL }}
+          POLYM_LLM_API_KEY: ${{ secrets.POLYM_LLM_API_KEY }}
+          POLYM_LLM_MODEL: ${{ secrets.POLYM_LLM_MODEL }}
+        run: python .github/scripts/polym_review.py
