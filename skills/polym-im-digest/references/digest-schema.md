@@ -1,8 +1,45 @@
-# Digest Schema — 12 Analysis Dimensions & Output Format
+# Digest Schema — Priority-First IM Digest
+
+This schema converts raw Lark IM messages into an SA-ready daily intelligence
+report. It preserves the original 12 signal dimensions, but the rendered output
+is priority-first rather than chat-first.
+
+## Product Taxonomy
+
+Apply product classification before prioritisation. See
+[`product-context.md`](product-context.md) for aliases and ownership hints.
+
+Use three separate fields instead of mixing platform, product, and modality:
+
+| Field | Meaning | Examples |
+|-|-|-|
+| Product line | Commercial/platform owner bucket | ModelArk / MaaS, Public Cloud / Infra / Ops, Other |
+| Offering / model | Concrete product/model/service | Seedance, Seedream, Seed2.0, Seed-SC, Doubao, DeepSeek, Ark API, Viking |
+| Capability / modality | Workload or topic | Video generation, image generation, LoRA, copyright review, endpoint integration |
+
+`AIGC Video / Image` is not a product line. It is a capability/modality label
+for Seedance / Seedream workflows. ModelArk / MaaS items must not be buried
+behind public-cloud or internal ops chatter.
+
+## Priority Model
+
+Assign exactly one priority to every actionable signal:
+
+| Priority | Meaning | Examples |
+|-|-|-|
+| P0 | Immediate customer/business risk, production incident, compliance/legal red line, major escalation | production outage, compliance violation, customer public escalation, payment blocker with deadline today |
+| P1 | High-impact issue or opportunity requiring owner follow-up within 24-48h | integration blocker, active POC blocker, high-value deal milestone, repeated unresolved customer complaint |
+| P2 | Important but not urgent; should be tracked or turned into FAQ/doc/product backlog | roadmap ask, access policy clarification, nonblocking performance concern |
+| P3 | Informational progress or low-risk update | launch notice, healthy delivery progress, FYI |
+
+Every `P0` / `P1` item must include `owner`, `deadline`, `source channel`, and
+`background`. If the source does not name an owner or deadline, write `TBD` and
+include the item in `Owner / Deadline Gaps`.
 
 ## Analysis Dimensions
 
-Extract along all 12 dimensions. Omit a section only if there is genuinely nothing to extract — don't force entries.
+Extract along all 12 dimensions. Omit a dimension only if there is genuinely
+nothing to extract. A message can contribute to multiple dimensions.
 
 ---
 
@@ -149,82 +186,127 @@ Capture: what they misunderstood, what the correct understanding is, whether SA 
 - Bot routine alerts unless they signal an incident
 - Off-topic small talk with no product/customer relevance
 
+## Deduplication and Canonical Issues
+
+Do not let one issue appear as multiple independent highlights just because it
+appears in multiple chats or sections.
+
+Rules:
+
+- Create one canonical issue for each `(customer/product/root cause)` tuple.
+- Merge repeated bot alerts into one canonical root cause with count and time
+  range.
+- If the same item appears in Executive Summary and a product drill-down, the
+  drill-down should add compact evidence only, not repeat the full narrative.
+- Known duplicate-prone examples: OKX delivery status, Snapdeal stale alerts,
+  ModelArk oncall clusters, Seedance performance notices.
+
+## Coverage Checks
+
+Before rendering, run these checks:
+
+- `Executive Summary` exists and has 3-7 numbered takeaways.
+- `Priority Queue` exists and includes every P0/P1 item.
+- `Owner / Deadline Gaps` exists when any P0/P1 has `TBD` owner or deadline.
+- ModelArk / MaaS items render before public-cloud and internal ops items.
+- If raw messages contain `Seedance`, `Seedream`, `ModelArk`, `Ark`, `Doubao`,
+  `xLLM`, `Viking`, `ArkClaw`, or `AgentKit`, at least one relevant item appears
+  in the digest unless all matching messages are explicitly filtered as noise.
+- Every priority item includes source channel/chat and evidence timestamp.
+
 ---
 
 ## Output Format Template
 
 ```markdown
-# IM Digest — <YESTERDAY>
+# IM Digest · <YESTERDAY>
 
-> Scanned <N> chats · <M> valid messages · <K> with content
-
----
-
-## <Customer Name / Chat Name>
-
-**Message count**: <n> · **Active period**: <HH:MM–HH:MM> · **chat_id**: <oc_xxx>
-
-### Key Points
-- <1–3 bullets>
-
-### Customer Feedback (Positive)
-- <bullet> (<sender>, <HH:MM>)
-
-### Customer Feedback (Negative)
-- <bullet> (<sender>, <HH:MM>, severity: blocking/annoying/minor)
-
-### Feature Asks
-- "<verbatim or close paraphrase>" — <who>, product: <product>
-  - Reason: <if stated>
-
-### Technical Issues & Errors
-- <error_code/description> (<sender>, <HH:MM>, blocking: yes/no)
-
-### Business Progress
-- <progress item>
-
-### Competitive Intelligence
-- Mentioned <competitor>: <context> (<sentiment: neutral/threat/comparison>)
-
-### ⚠️ Risk Signals
-- <signal> (<sender>, <HH:MM>) — follow-up recommended
-
-### Usage & Quota
-- <quota_issue>
-
-### Personnel & Org Changes
-- <change>
-
-### Product Misunderstandings
-- Misunderstanding: <what they think> → Correct: <correct understanding> — clarification needed
-
-### Decisions & Pending Items
-**Decided:**
-- <decision> (by <who>)
-
-**Pending:**
-- <open item>
+> Scanned <N> active conversations: <P> P2P threads and <G> group chats. Fetched <M> messages; <K> passed signal filter.  
+> Focus order: ModelArk / MaaS -> Public Cloud / Infra / Ops -> Other.  
+> Source: Lark IM · Skipped by local blacklist: <B>
 
 ---
 
-## Cross-Chat Insights
+## Executive Summary
+
+### Top Takeaways
+
+1. <priority> · <product line> · <offering/model> · **<customer/topic>**: <one-sentence implication + required action>.
+2. ...
+
+### Priority Queue
+
+| Pri | Product line | Offering / model | Capability | Customer / chat | Issue / highlight | Channel & background | Owner | Deadline | Status / next step | Evidence |
+|-|-|-|-|-|-|-|-|-|-|-|
+| P0 | ModelArk / MaaS | Seedance | Video generation / safety | <customer/chat> | <canonical issue> | `<channel/chat>`; <why this matters> | <owner or TBD> | <deadline or TBD> | <next action> | <sender HH:MM> |
+
+### Owner / Deadline Gaps
+
+| Pri | Customer / chat | Gap | Why it matters | Suggested owner |
+|-|-|-|-|-|
+| P1 | <customer/chat> | Owner TBD / deadline TBD | <risk> | <suggested owner> |
+
+### Highlights
+
+- <priority> **[<source channel>] <customer/topic>**: <concise highlight with owner/deadline if available>.
+
+## Product Drill-Down
+
+### ModelArk / MaaS
+
+| Pri | Offering / model | Capability | Customer / chat | Type | Summary | Owner | Deadline | Status |
+|-|-|-|-|-|-|-|-|-|
+| P1 | Seedance | Video generation / safety | <customer/chat> | Technical Issue | <summary> | <owner> | <deadline> | <status> |
+
+**Details**
+
+- <canonical issue>: <compact supporting detail, not a duplicate of the top narrative>.
+
+### Public Cloud / Infra / Ops
+
+<same table + details>
+
+### Other / Low Signal
+
+Only include if needed; keep compact.
+
+---
+
+## Cross-Chat Patterns
 
 > Only generate when the same pattern appears in 2+ chats.
 
-| Pattern | Customers Involved | Severity |
-|---|---|---|
-| <same Feature Ask> | <A>, <B> | P1 |
-| <same competitor comparison> | <C>, <D> | Competitive Threat |
-| <same technical error> | <A>, <C> | Requires Product Team |
+| Pattern | Product line | Offering / model | Customers involved | Priority | Recommended handling |
+|-|-|-|-|-|-|
+| <pattern> | ModelArk / MaaS | Seedance / Seedream | <A>, <B> | P1 | <action> |
+
+## Risks
+
+- <priority> **<risk>**: <why it matters, likely consequence, owner/deadline>.
+
+## Business / Pipeline Updates
+
+| Customer | Stage | Current status | BytePlus owner | Health |
+|-|-|-|-|-|
+| <customer> | <POC/contract/access/etc.> | <status> | <owner> | 🟢/🟡/🔴 |
 
 ---
 
+## Chat Appendix
+
+### <Customer Name / Chat Name>
+
+**Message count**: <n> · **Active period**: <HH:MM-HH:MM> · **chat_id**: <oc_xxx> · **Product line**: <line> · **Offering/model**: <offering>
+
+| Time | Sender | Signal | Pri | Product line | Offering / model | Capability | Notes |
+|-|-|-|-|-|-|-|-|
+| <HH:MM> | <sender> | <dimension/type> | <P*> | ModelArk / MaaS | Seedance | Video generation | <short evidence> |
+
 ## Chats with No Substantive Content
 
-| Chat | Message Count | Reason |
-|---|---|---|
+| Chat | Message count | Reason |
+|-|-|-|
 | <name> | <n> | All greetings / noise |
-| <name> | 0 | No messages yesterday |
 ```
 
 ---
