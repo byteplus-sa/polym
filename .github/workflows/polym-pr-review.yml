@@ -12,7 +12,7 @@ on:
 permissions:
   contents: read
   pull-requests: write
-  issues: write
+  issues: read
 
 concurrency:
   group: polym-pr-review-${{ github.event.pull_request.number || github.event.issue.number }}
