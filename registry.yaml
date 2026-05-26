@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-26T16:51:11Z
+generated_at: 2026-05-26T20:03:35Z
 
 skills:
   - name: polym-autocase-image-gen
@@ -423,6 +423,33 @@ skills:
       - "查一下客户"
       - "帮我把这条信息归档到 wiki"
       - "整理进 wiki"
+
+  - name: polym-sdr-leads-qualification
+    version: 0.2.0
+    stage: beta
+    description_for_install: |
+      SDR lead qualification engine for Trigify exports. Ingests a Trigify-style CSV,
+      normalises and enriches each lead, runs a single-call LLM scoring pass that
+      extracts evidence and computes sub-scores (segment, buyer, pain, workflow,
+      commercial fit), applies deterministic Python routing, and writes
+      qualified/review/disqualified CSVs plus per-lead JSON artifacts. Ships with
+      campaign packs for Seedance and Kling. Supports any LiteLLM-compatible provider
+      (Anthropic, OpenAI, Google Gemini, BytePlus Ark, Azure, and more) via
+      LLM_PROVIDER + LLM_MODEL + LLM_API_KEY. LiteLLM is auto-installed on first run.
+    owners: ['mittulmadaan']
+    path: skills/polym-sdr-leads-qualification
+    triggers:
+      - "score trigify leads"
+      - "qualify leads"
+      - "lead qualification"
+      - "SDR leads"
+      - "trigify csv"
+      - "process trigify"
+      - "qualify trigify"
+      - "score leads"
+      - "lead scoring"
+      - "outbound lead qualification"
+      - "enrich and score leads"
 
   - name: polym-slack-digest
     version: 1.2.0
