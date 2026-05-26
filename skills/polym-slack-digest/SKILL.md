@@ -1,6 +1,6 @@
 ---
 name: polym-slack-digest
-description: "Generate AI-synthesized daily digests of Slack channels into Feishu (Lark) docs. First-time onboarding walks the user through creating a Slack App + Lark Bot, configuring credentials, and creating a unified index doc. Each scheduled run pulls recent messages, synthesizes Highlights/TODO/Pipeline/Risks/By-Channel sections, writes a per-day Feishu doc, pins it to the top of the index, and notifies the user via Lark IM. Includes a 20-minute watchdog that verifies the doc was generated and self-retries until success. Trigger when the user asks to set up Slack monitoring, Slack daily report, Slack 情报汇总, or related daily digest workflows."
+description: "Generate Slack daily digests, highlight customer risks and action items, and publish summaries to Lark or local outputs."
 allowed-tools: "Bash, Read, Write, Edit"
 version: "1.2.0"
 ---
