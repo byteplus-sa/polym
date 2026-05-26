@@ -72,7 +72,21 @@ Style rules:
 
 
 def run(cmd: list[str], check: bool = True) -> str:
-    res = subprocess.run(cmd, capture_output=True, text=True, check=check)
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    if check and res.returncode:
+        print(f"Command failed ({res.returncode}): {' '.join(cmd)}", file=sys.stderr)
+        if res.stdout:
+            print("stdout:", file=sys.stderr)
+            print(res.stdout, file=sys.stderr)
+        if res.stderr:
+            print("stderr:", file=sys.stderr)
+            print(res.stderr, file=sys.stderr)
+        raise subprocess.CalledProcessError(
+            res.returncode,
+            res.args,
+            output=res.stdout,
+            stderr=res.stderr,
+        )
     return res.stdout
 
 
@@ -81,12 +95,34 @@ def fetch_pr_diff(repo: str, pr_number: str) -> str:
 
 
 def fetch_pr_meta(repo: str, pr_number: str) -> dict:
-    out = run([
-        "gh", "pr", "view", pr_number,
-        "--repo", repo,
-        "--json", "title,body,author,baseRefName,headRefName,additions,deletions,files",
-    ])
-    return json.loads(out)
+    pr = json.loads(run(["gh", "api", f"repos/{repo}/pulls/{pr_number}"]))
+    files: list[dict] = []
+    page = 1
+    while True:
+        page_files = json.loads(run([
+            "gh",
+            "api",
+            f"repos/{repo}/pulls/{pr_number}/files?per_page=100&page={page}",
+        ]))
+        files.extend({
+            "path": item.get("filename"),
+            "additions": item.get("additions", 0),
+            "deletions": item.get("deletions", 0),
+        } for item in page_files)
+        if len(page_files) < 100:
+            break
+        page += 1
+
+    return {
+        "title": pr.get("title"),
+        "body": pr.get("body"),
+        "author": {"login": (pr.get("user") or {}).get("login")},
+        "baseRefName": (pr.get("base") or {}).get("ref"),
+        "headRefName": (pr.get("head") or {}).get("ref"),
+        "additions": pr.get("additions", 0),
+        "deletions": pr.get("deletions", 0),
+        "files": files,
+    }
 
 
 def read_repo_rules() -> dict[str, str]:
