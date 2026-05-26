@@ -1,0 +1,41 @@
+name: polym-slack-digest
+version: 1.2.0
+stage: experimental
+owners:
+  - zhangjunkaiwill@gmail.com
+
+description_for_install: |
+  AI-synthesized daily digests of Slack channels delivered to Feishu (Lark) docs.
+  Guides onboarding (Slack App + Lark Bot), creates an index doc, schedules recurring
+  runs (11:00 & 16:00 by default), publishes per-day digest docs with Highlights /
+  TODO / Pipeline / Risks / By-Channel sections, pins entries newest-on-top in the
+  index, and notifies the user via Lark IM. Includes a 20-min watchdog with
+  self-retry until success.
+
+depends_on:
+  skills: []
+  binaries:
+    - lark-cli: ">=1.0.20"
+  env:
+    - SLACK_USER_TOKEN
+    - LARK_APP_ID
+    - LARK_APP_SECRET
+
+io_contract:
+  reads:
+    - slack/channel-history
+    - slack/users-list
+  writes:
+    - target: lark-drive/digest-docs
+      schema: core/signal-envelope.schema.json
+      signal_type: slack-daily-digest
+
+triggers:
+  - "slack daily digest"
+  - "Slack 情报汇总"
+  - "Slack daily report"
+  - "set up Slack monitoring"
+  - "slack digest"
+  - "每日Slack摘要"
+
+deprecates: []

@@ -40,9 +40,7 @@ jobs:
             pr_number="${{ github.event.issue.number }}"
             # issue_comment events ship GITHUB_SHA pointing at the default branch.
             # Resolve the PR's actual head so checkout reads the PR's files.
-            head_sha=$(gh pr view "$pr_number" \
-              --repo "${{ github.repository }}" \
-              --json headRefOid -q .headRefOid)
+            head_sha=$(gh api "repos/${{ github.repository }}/pulls/$pr_number" --jq .head.sha)
             echo "number=$pr_number" >> "$GITHUB_OUTPUT"
             echo "head_sha=$head_sha" >> "$GITHUB_OUTPUT"
           fi
