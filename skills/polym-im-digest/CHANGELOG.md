@@ -1,5 +1,88 @@
 # polym-im-digest CHANGELOG
 
+## 0.7.2 — 2026-05-26
+
+### Changed
+- Locked the Feishu visual digest layout as the default: metric cards,
+  Executive Summary callout, Priority Queue, Owner / Deadline Gaps, Highlights,
+  Action Items, Product Drill-Down, Cross-Chat Patterns, Risks, Pipeline, and
+  full Chat Appendix.
+- Replaced the ambiguous `AI Model / ModelArk / MaaS` vs `AIGC Video / Image`
+  product split with a three-field taxonomy: product line, offering/model, and
+  capability/modality.
+- Treats `ModelArk / MaaS` as the product line and `Seedance`, `Seedream`,
+  `Seed2.0`, `Seed-SC`, `Ark API`, `DeepSeek`, etc. as concrete offerings.
+  `AIGC Video / Image` is now a capability/modality tag, not a product line.
+
+## 0.7.1 — 2026-05-26
+
+### Changed
+- Removed the drafted external-source merge design. `polym-im-digest` is scoped to
+  Lark IM sources only.
+- Replaced the self-run scheduling design with Codex routine setup guidance. The
+  skill remains a single-run workflow; Codex owns recurrence.
+- Made Feishu Doc XML the default rendering path, using metric cards, callouts,
+  real tables, checkboxes, and section dividers instead of Markdown pipe tables.
+- Added a content-parity requirement so visual XML output cannot drop sections,
+  P2/P3 rows, risks, pipeline updates, or chat appendix evidence from the
+  Markdown digest.
+- Corrected the Feishu doc creation command for current `lark-cli`: use
+  `--content @<relative-file> --doc-format xml` from the digest directory, keep
+  Markdown as a fallback, and do not pass `--format` to `docs +create`.
+
+## 0.7.0 — 2026-05-26
+
+### Added
+- Reworked the digest output contract into a priority-first SA intelligence
+  report: Executive Summary, Priority Queue, Owner / Deadline Gaps, Highlights,
+  product-area drill-down, cross-chat patterns, risks, pipeline updates, and
+  compact chat appendix.
+- Added product context and focus ordering so MaaS / ModelArk / model-platform
+  signals are sorted ahead of AIGC video/image, public cloud, and low-signal
+  internal chatter.
+- Added mandatory `P0` / `P1` owner, deadline, channel/background, status,
+  next-step, and evidence fields.
+- Added canonical issue de-duplication to prevent the same issue from being
+  repeated in top summaries and lower sections.
+- Added coverage checks for Seedance / Seedream / ModelArk / Ark / Doubao /
+  xLLM / Viking / ArkClaw / AgentKit terms so active product signals are not
+  silently dropped.
+
+### Fixed
+- Updated Phase 4 doc creation command to current `lark-cli docs +create
+  --api-version v2` flags: `--title`, `--markdown`, and `--folder-token`.
+
+## 0.6.0 — 2026-05-26
+
+### Added
+- Added a local-only IM digest blacklist for long-lived group and P2P
+  exclusions.
+- Blacklist resolution prefers
+  `$LOCAL_WIKI_ROOT/config/polym-im-digest-blacklist.json` and falls back to
+  `~/.config/polym/im-digest/blacklist.json`.
+- Added management workflow for adding, removing, and listing blacklisted group
+  chats and P2P contacts.
+- Group blacklist entries are filtered before activity probes, so blacklisted
+  groups are not fetched by `+chat-messages-list`.
+- P2P blacklist entries are filtered immediately after global P2P discovery and
+  never enter confirmation, Phase 1 fetch, analysis, raw snapshots, Feishu docs,
+  or wiki writes.
+
+### Notes
+- Current `lark-cli im +messages-search --chat-type p2p` does not support
+  negative filters, so P2P blacklist filtering cannot happen before the global
+  discovery query.
+
+## 0.5.1 — 2026-05-26
+
+### Fixed
+- Replaced the full group enumeration command in Phase 0 / fetch workflow:
+  use `lark-cli im chats list --page-all --params '{"page_size":100,"sort_type":"ByActiveTimeDesc"}'`
+  instead of an empty `lark-cli im +chat-search`.
+- `+chat-search` requires `--query` or `--member-ids` in current `lark-cli`
+  versions, so it remains appropriate only for resolving user-specified group
+  names, not for listing every joined group.
+
 ## 0.5.0 — 2026-05-19
 
 ### Added

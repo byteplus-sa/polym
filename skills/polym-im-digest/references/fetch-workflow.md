@@ -18,6 +18,36 @@ Override with `--date YYYY-MM-DD` if user specifies a different date.
 
 ---
 
+## Local Blacklist
+
+Resolve the blacklist once before conversation discovery:
+
+1. If `LOCAL_WIKI_ROOT` is valid:
+   `$LOCAL_WIKI_ROOT/config/polym-im-digest-blacklist.json`
+2. Otherwise:
+   `~/.config/polym/im-digest/blacklist.json`
+3. Missing file means an empty blacklist.
+
+Blacklist schema and management commands are defined in
+[`blacklist.md`](blacklist.md).
+
+Apply the blacklist in two places:
+
+- Before probing group activity: skip any group whose `chat_id` or exact `name`
+  appears in `groups`.
+- Immediately after P2P discovery: drop any P2P thread whose `chat_id`,
+  `chat_partner.open_id`, or exact partner display name appears in `p2p`.
+
+Do not fetch Phase 1 messages, write raw snapshots, analyze, create digest
+sections, or write wiki entries for blacklisted conversations.
+
+P2P limitation: current `lark-cli im +messages-search --chat-type p2p` does not
+support negative filters. The blacklist therefore prevents blacklisted P2P
+threads from all downstream processing, but the global discovery query may still
+return them before they are discarded.
+
+---
+
 ## Conversation Discovery (message-first)
 
 > The local wiki customer list is **not** the starting point. Discover conversations from Lark activity first; cross-reference the wiki afterward for context enrichment only.
@@ -42,21 +72,33 @@ lark-cli im +messages-search \
 
 Group the returned messages by `chat_id` to reconstruct per-conversation threads. Each distinct `chat_id` in the result is a P2P thread that was active yesterday.
 
+Filter grouped P2P threads against the local blacklist before merging with group
+activity. Count discarded threads as `skipped_by_blacklist`; do not include their
+names in the user-facing scan list.
+
 ### Step 2 — Enumerate ALL joined group chats and probe for activity
 
 > Covers every group the user is in — including new customer groups not yet in the local wiki.
 
 ```bash
 # Page through all joined groups, newest-activity first
-lark-cli im +chat-search \
-  --sort-by update_time_desc \
-  --page-size 100 \
-  --format json \
-  --as user
-# Repeat with --page-token until has_more=false (cap at 500 groups)
+lark-cli im chats list \
+  --as user \
+  --page-all --page-limit 5 \
+  --params '{"page_size":100,"sort_type":"ByActiveTimeDesc"}' \
+  --format json
+# page-limit 5 caps discovery at 500 groups.
 ```
 
+Implementation note: use `im chats list` for full joined-group enumeration.
+`im +chat-search` is only for lookup by keyword or member IDs; current
+`lark-cli` rejects an empty search with `--query and --member-ids cannot both
+be empty`.
+
 For every group, batch-probe for yesterday's messages in parallel (batches of 20):
+
+Before probing, filter the enumerated group list against the local blacklist.
+This avoids calling `+chat-messages-list` for blacklisted groups.
 
 ```bash
 lark-cli im +chat-messages-list \
@@ -75,13 +117,24 @@ Error handling:
 | 0 messages | Skip silently |
 | Rate limit (`99991663`) | Wait 1 s; retry once |
 
-### Step 3 — Wiki cross-reference (enrichment only)
+### Step 3 — Present active conversations
+
+Merge non-blacklisted P2P threads and active non-blacklisted groups, then show
+the user the confirmation list. Include only an aggregate skipped count:
+
+```text
+Skipped by local blacklist: <N>
+```
+
+Do not display blacklisted names or IDs in the normal digest flow.
+
+### Step 4 — Wiki cross-reference (enrichment only)
 
 After the user confirms the scan list, cross-reference each active conversation against `$LOCAL_WIKI_ROOT/wiki/entities/customers/*.md` using the `lark_chat` field, person name (for P2P), or fuzzy chat-name match. Attach existing customer/person context for richer analysis. Conversations with no wiki match are flagged as **potential new customer or contact** in the digest.
 
-### Step 4 — User provides additional conversations
+### Step 5 — User provides additional conversations
 
-The user may add extra group chats (`oc_xxx` or name) or P2P contacts (name or `ou_xxx`) at confirmation time. Resolve names via `+chat-search --keyword` (groups) or `lark-cli contact +search` (P2P).
+The user may add extra group chats (`oc_xxx` or name) or P2P contacts (name or `ou_xxx`) at confirmation time. Resolve names via `+chat-search --keyword` (groups) or `lark-cli contact +search` (P2P). If a user-added conversation is currently blacklisted, say so and ask whether to remove it from the blacklist before including it.
 
 ---
 
@@ -98,6 +151,8 @@ lark-cli im +chat-messages-list \
   --format json \
   --as user
 ```
+
+Only fetch chats that survived blacklist filtering and user confirmation.
 
 ### Pagination
 
