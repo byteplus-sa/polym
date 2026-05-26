@@ -295,7 +295,7 @@ Content parity is mandatory:
 
 - The XML visual doc must contain every section present in the Markdown digest:
   Executive Summary, Priority Queue, Owner / Deadline Gaps, Highlights, Product
-  Area Drill-Down, Cross-Chat Patterns, Risks, Business / Pipeline Updates, and
+  Drill-Down, Cross-Chat Patterns, Risks, Business / Pipeline Updates, and
   Chat Appendix.
 - Visual rendering may reorder blocks for readability, but it must not drop
   P2/P3 items, low-signal summaries, risks, pipeline rows, or appendix evidence.
