@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-26T09:40:56Z
+generated_at: 2026-05-26T10:06:24Z
 
 skills:
   - name: polym-autocase-image-gen
@@ -414,26 +414,6 @@ skills:
       - "查一下客户"
       - "帮我把这条信息归档到 wiki"
       - "整理进 wiki"
-
-  - name: polym-slack-digest
-    version: 1.1.0
-    stage: experimental
-    description_for_install: |
-      AI-synthesized daily digests of Slack channels delivered to Feishu (Lark) docs.
-      Guides onboarding (Slack App + Lark Bot), creates an index doc, schedules recurring
-      runs (11:00 & 16:00 by default), publishes per-day digest docs with Highlights /
-      TODO / Pipeline / Risks / By-Channel sections, pins entries newest-on-top in the
-      index, and notifies the user via Lark IM. Includes a 20-min watchdog with
-      self-retry until success.
-    owners: ['zhangjunkaiwill@gmail.com']
-    path: skills/polym-slack-digest
-    triggers:
-      - "slack daily digest"
-      - "Slack 情报汇总"
-      - "Slack daily report"
-      - "set up Slack monitoring"
-      - "slack digest"
-      - "每日Slack摘要"
 
 profiles:
   - name: eval
