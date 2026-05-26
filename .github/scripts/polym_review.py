@@ -173,10 +173,23 @@ def call_llm(user_prompt: str) -> str:
 def post_comment(repo: str, pr_number: str, body: str) -> None:
     if len(body) > MAX_COMMENT_BODY:
         body = body[: MAX_COMMENT_BODY - 200] + "\n\n_[truncated for GitHub comment limit]_"
-    subprocess.run(
+    res = subprocess.run(
         ["gh", "pr", "comment", pr_number, "--repo", repo, "--body", body],
         check=True,
+        capture_output=True,
+        text=True,
     )
+    url = res.stdout.strip()
+    if url:
+        print(url)
+        comment_id = url.rstrip("/").split("issuecomment-")[-1]
+        if comment_id and comment_id != url:
+            subprocess.run(
+                ["gh", "api", f"repos/{repo}/issues/comments/{comment_id}"],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
 
 
 def main() -> None:
