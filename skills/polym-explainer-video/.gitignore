@@ -1,0 +1,21 @@
+__MACOSX/
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/
+dist/
+*.log
+
+# Project-output directories — generated content shouldn't be committed
+projects/
+
+# Local credentials / config (none should exist in this repo, but defensive)
+*.credentials.json
+*credentials*.json
+.env
+.env.local
+
+# Filled-in onboarding credential sheets — never commit. The BLANK template
+# (credentials.template.md) IS tracked; only filled-in copies are ignored.
+*credentials*.md
+!credentials.template.md

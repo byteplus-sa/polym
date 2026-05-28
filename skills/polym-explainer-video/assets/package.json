@@ -1,0 +1,11 @@
+{
+  "name": "explainer-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes hyperframes@0.4.43 preview",
+    "check": "npx --yes hyperframes@0.4.43 lint && npx --yes hyperframes@0.4.43 validate && npx --yes hyperframes@0.4.43 inspect",
+    "render": "npx --yes hyperframes@0.4.43 render",
+    "publish": "npx --yes hyperframes@0.4.43 publish"
+  }
+}
