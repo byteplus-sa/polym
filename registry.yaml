@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-26T10:06:24Z
+generated_at: 2026-05-26T20:03:35Z
 
 skills:
   - name: polym-autocase-image-gen
@@ -287,15 +287,18 @@ skills:
       - "onboarding"
 
   - name: polym-im-digest
-    version: 0.5.0
+    version: 0.7.2
     stage: beta
     description_for_install: |
-      Pulls yesterday's Lark group-chat messages via lark-cli, organises them into
-      topics and key content (customer feedback, feature asks, technical issues,
-      decisions, pending items), materialises a standalone Feishu digest doc for
-      the day, and writes the digest to both the local wiki (raw snapshot + wiki
-      entity pages) and the Lark SA Wiki (via write_queue). Runs daily to
-      compound customer knowledge over time.
+      Pulls yesterday's Lark group and P2P messages via lark-cli, filters
+      long-lived local blacklist exclusions, organises the remaining activity into
+      priority-first SA intelligence with ModelArk / MaaS product-line focus,
+      offering/model taxonomy, owner/deadline tracking, product context, and
+      Feishu-doc visual styling guidance. It
+      materialises a standalone Feishu digest doc for the day and writes the digest
+      to both the local wiki (raw snapshot + wiki entity pages) and the Lark SA Wiki
+      (via write_queue). It can also help create a Codex routine/automation for
+      recurring daily execution; recurrence is owned by Codex, not by the skill.
     owners: ['Carey8175']
     path: skills/polym-im-digest
     triggers:
@@ -306,6 +309,12 @@ skills:
       - "帮我总结一下昨天的 IM"
       - "把昨天的聊天记录整理进 wiki"
       - "IM 消息整理"
+      - "把这个群加入 IM digest 黑名单"
+      - "以后不要拉某人的 IM digest"
+      - "列出 IM digest 黑名单"
+      - "每天自动跑 IM digest"
+      - "帮我创建每天跑 IM digest 的 Codex routine"
+      - "优化 IM digest 格式"
 
   - name: polym-lark-doc-ingest
     version: 0.1.1
@@ -414,6 +423,53 @@ skills:
       - "查一下客户"
       - "帮我把这条信息归档到 wiki"
       - "整理进 wiki"
+
+  - name: polym-sdr-leads-qualification
+    version: 0.2.0
+    stage: beta
+    description_for_install: |
+      SDR lead qualification engine for Trigify exports. Ingests a Trigify-style CSV,
+      normalises and enriches each lead, runs a single-call LLM scoring pass that
+      extracts evidence and computes sub-scores (segment, buyer, pain, workflow,
+      commercial fit), applies deterministic Python routing, and writes
+      qualified/review/disqualified CSVs plus per-lead JSON artifacts. Ships with
+      campaign packs for Seedance and Kling. Supports any LiteLLM-compatible provider
+      (Anthropic, OpenAI, Google Gemini, BytePlus Ark, Azure, and more) via
+      LLM_PROVIDER + LLM_MODEL + LLM_API_KEY. LiteLLM is auto-installed on first run.
+    owners: ['mittulmadaan']
+    path: skills/polym-sdr-leads-qualification
+    triggers:
+      - "score trigify leads"
+      - "qualify leads"
+      - "lead qualification"
+      - "SDR leads"
+      - "trigify csv"
+      - "process trigify"
+      - "qualify trigify"
+      - "score leads"
+      - "lead scoring"
+      - "outbound lead qualification"
+      - "enrich and score leads"
+
+  - name: polym-slack-digest
+    version: 1.2.0
+    stage: experimental
+    description_for_install: |
+      AI-synthesized daily digests of Slack channels delivered to Feishu (Lark) docs.
+      Guides onboarding (Slack App + Lark Bot), creates an index doc, schedules recurring
+      runs (11:00 & 16:00 by default), publishes per-day digest docs with Highlights /
+      TODO / Pipeline / Risks / By-Channel sections, pins entries newest-on-top in the
+      index, and notifies the user via Lark IM. Includes a 20-min watchdog with
+      self-retry until success.
+    owners: ['zhangjunkaiwill@gmail.com']
+    path: skills/polym-slack-digest
+    triggers:
+      - "slack daily digest"
+      - "Slack 情报汇总"
+      - "Slack daily report"
+      - "set up Slack monitoring"
+      - "slack digest"
+      - "每日Slack摘要"
 
 profiles:
   - name: eval
