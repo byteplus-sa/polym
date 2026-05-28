@@ -1,5 +1,11 @@
 # CHANGELOG — explainer-video skill
 
+## 0.1.0 - 2026-05-28
+
+- Imported `encircleacity2/bobyte-explainer` as `polym-explainer-video`.
+- Added Polym governance metadata, smoke test, and CODEOWNERS mapping.
+- Preserved upstream authorship in `SKILL.md`.
+
 ## Unreleased — post-Syncore feedback batch (2026-05-28)
 
 Three structural fixes from real-world Syncore demo testing:

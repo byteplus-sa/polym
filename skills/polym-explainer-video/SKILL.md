@@ -1,6 +1,6 @@
 ---
 name: polym-explainer-video
-description: Creates a polished explainer video from docs, URLs, PDFs, screenshots, or text. Triggers on requests for product/feature announcement reels, short-form demos, or repo videos. Common phrases: "make an explainer video", "produce a Shorts video", "turn this repo into a video".
+description: Creates polished explainer videos from docs, URLs, PDFs, screenshots, or text. Use for product demos, announcement reels, repo videos, and requests like "make an explainer video" or "turn this repo into a video".
 ---
 
 # polym-explainer-video — Product explainer video pipeline
@@ -8,6 +8,8 @@ description: Creates a polished explainer video from docs, URLs, PDFs, screensho
 Upstream authorship preserved from upstream repository:
 - Bo <bojsun@Bos-Mac-mini.local>
 - bojsun <bojie.sun@bytedance.com>
+
+Polym owner: @bojie
 
 Turns product inputs into a polished explainer video at the user-chosen aspect ratio (1:1 / 9:16 / 16:9):
 - **A-roll** — an AI digital-human talking-head, generated entirely with the **Seedance 2.0** API (BytePlus ModelArk). Skipped in `pure-broll-product-demo` mode.
