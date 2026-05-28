@@ -1,0 +1,107 @@
+<!--
+  Reusable agent chip row — drop into any composition that opens with
+  "Prompt to Explainer Video" + a row of supported AI coding agents.
+
+  Usage in a composition:
+    1. Copy the <style> block (or merge with your composition's styles)
+    2. Copy the <div class="agent-row"> block into your title scene
+    3. Edit the .agent-tile entries to match agents from agent-list.md
+    4. Provide logo files in assets/ matching the data-agent key (e.g. assets/claude-code.png)
+    5. Add the GSAP stagger snippet at the bottom into your timeline
+
+  This is template HTML — not a HyperFrames sub-composition. The host scene owns
+  data-start / data-duration / data-track-index.
+-->
+
+<style>
+  /* === Agent chip row === */
+  .agent-row {
+    display: flex;
+    gap: 56px;
+    margin-top: 80px;
+    justify-content: center;
+  }
+  .agent-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;  /* GSAP animates in */
+  }
+  .agent-icon {
+    width: 96px;
+    height: 96px;
+    border-radius: 22px;
+    background: #ffffff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+      0 1px 2px rgba(11, 11, 16, 0.06),
+      0 8px 20px rgba(11, 11, 16, 0.08);
+  }
+  .agent-icon img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Logos that need padding (non-square / transparent designs) */
+  .agent-icon.contain {
+    padding: 8px;
+  }
+  .agent-icon.contain img {
+    object-fit: contain;
+  }
+  /* Optional tinted tile backgrounds for high-contrast logos */
+  .agent-icon.hermes-bg {
+    background: linear-gradient(135deg, #f4ecd6 0%, #e6d6a3 100%);
+  }
+  .agent-label {
+    font-size: 22px;
+    font-weight: 600;
+    color: #0b0b10;
+    letter-spacing: -0.012em;
+  }
+</style>
+
+<!-- ===== Markup: 4 agent tiles (edit per task) ===== -->
+<div class="agent-row" id="agent-row">
+  <div class="agent-tile" data-agent="claude">
+    <div class="agent-icon">
+      <img src="assets/claude-code.png" alt="Claude Code" />
+    </div>
+    <div class="agent-label">Claude Code</div>
+  </div>
+  <div class="agent-tile" data-agent="codex">
+    <div class="agent-icon contain">
+      <img src="assets/codex.png" alt="Codex" />
+    </div>
+    <div class="agent-label">Codex</div>
+  </div>
+  <div class="agent-tile" data-agent="openclaw">
+    <div class="agent-icon contain">
+      <img src="assets/openclaw-logo.svg" alt="OpenClaw" />
+    </div>
+    <div class="agent-label">OpenClaw</div>
+  </div>
+  <div class="agent-tile" data-agent="hermes">
+    <div class="agent-icon hermes-bg">
+      <img src="assets/hermes-icon.png" alt="Hermes" />
+    </div>
+    <div class="agent-label">Hermes</div>
+  </div>
+</div>
+
+<!--
+  ===== GSAP snippet — paste into your scene timeline =====
+  Adjust the time offset (here: 1.1s, paired with ~1.0s after the title row enters)
+
+  gsap.utils.toArray("#agent-row .agent-tile").forEach((t, i) => {
+    tl.fromTo(t,
+      { opacity: 0, y: 22, scale: 0.92 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(1.7)" },
+      1.1 + i * 0.085);
+  });
+-->

@@ -1,0 +1,139 @@
+<!--
+  macOS window chrome — reusable across compositions (PR #5).
+
+  Use cases:
+    - The meta-output beat (PR #8) where a "QuickTime window" plays the rendered video
+    - Any "showing an app window" scene in the workflow
+
+  Usage:
+    1. Copy the <style> block (or merge into your composition's styles)
+    2. Drop the .mac-window div where you want the window to appear
+    3. Replace .mac-window-content with your scene's content
+    4. Optionally toggle the .qt-transport bar (for video-player chrome)
+
+  Sizing: defaults to 1000px × 1080px for 1440×1440 canvas. Override .mac-window
+  width/height for other aspects.
+-->
+
+<style>
+  .mac-window {
+    width: 1000px;
+    height: 1080px;
+    background: #0a0a0e;
+    border-radius: 14px;
+    box-shadow:
+      0 30px 80px rgba(28, 18, 60, 0.35),
+      0 12px 32px rgba(28, 18, 60, 0.18);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .mac-window-titlebar {
+    height: 44px;
+    background: linear-gradient(180deg, #2a2a32 0%, #1c1c22 100%);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 9px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .mac-window-titlebar .filename {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #c2c2cc;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: "Inter", -apple-system, system-ui, sans-serif;
+  }
+  .mac-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  .mac-dot.red { background: #ff5f57; }
+  .mac-dot.yellow { background: #febc2e; }
+  .mac-dot.green { background: #28c840; }
+
+  .mac-window-content {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Optional: QuickTime transport bar overlay */
+  .qt-transport {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    height: 36px;
+    background: rgba(20, 20, 26, 0.78);
+    backdrop-filter: blur(20px);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+    opacity: 0.85;
+  }
+  .qt-play {
+    width: 0;
+    height: 0;
+    border-left: 12px solid #ffffff;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    margin-left: 2px;
+  }
+  .qt-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .qt-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: #ffffff;
+    border-radius: 2px;
+  }
+  .qt-time {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    min-width: 80px;
+    text-align: right;
+  }
+</style>
+
+<!-- ===== Markup template — copy and edit ===== -->
+<div class="mac-window" id="mac-window">
+  <div class="mac-window-titlebar">
+    <span class="mac-dot red"></span>
+    <span class="mac-dot yellow"></span>
+    <span class="mac-dot green"></span>
+    <span class="filename">FILENAME.mp4</span>
+  </div>
+  <div class="mac-window-content">
+    <!-- Scene content goes here. For the meta-output beat (PR #8), this is
+         where the multi-shot brand preview renders (3 sub-shots cross-faded). -->
+
+    <!-- Optional QuickTime transport bar -->
+    <div class="qt-transport">
+      <div class="qt-play"></div>
+      <div class="qt-bar"><div class="qt-bar-fill"></div></div>
+      <div class="qt-time">0:00 / 0:32</div>
+    </div>
+  </div>
+</div>
+
+<!--
+  ===== GSAP entrance snippet =====
+
+  tl.fromTo("#mac-window",
+    { scale: 0.94, opacity: 0, y: 14 },
+    { scale: 1, opacity: 1, y: 0, duration: 0.55, ease: "power3.out" },
+    SCENE_START + 0.2);
+-->

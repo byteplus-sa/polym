@@ -1,0 +1,184 @@
+{
+  "$schema": "../references/storyboard-format.md",
+  "_comment": "Canonical recipe for pure-broll-product-demo mode (PR #5). Drop this in as a starting storyboard.json, then customize.\n\nIMPORTANT (post-Syncore feedback 2026-05-27): the meta-output beat (a QuickTime window opening to show 'the rendered video playing') is INTENTIONALLY ABSENT from this default. It's an opt-in beat ONLY for: (a) video / media-creation products where showing the artifact is the value prop, or (b) recursive self-demos (e.g., a video-generation skill showing itself running). For ordinary product launches it's a distracting beat that doesn't serve the narrative. If you need it, see references/meta-output-beat.md and add the segment manually.\n\nThe time budget here puts more weight on the actual product walkthrough (Scene B/C/D in the macbook scene) so the viewer understands what the product DOES, not what its rendered MP4 looks like.",
+
+  "mode": "pure-broll-product-demo",
+  "style_preset": "openai-clean",
+  "channel": "x",
+  "aspect_ratio": "1:1",
+  "width": 1440,
+  "height": 1440,
+  "content_profile": "single-message",
+  "total_duration": 32,
+
+  "_narrative_note": "REPLACE every 'REPLACE:' placeholder below with real values for YOUR product. See references/narrative-arc.md (8 patterns). The auditor will block render if placeholders remain.",
+
+  "narrative": {
+    "protagonist": "REPLACE: who is the viewer / what role-and-situation",
+    "problem":     "REPLACE: specific friction this product solves",
+    "moment_of_magic": "REPLACE: the one beat that produces 'oh, that's clever'",
+    "memorable_line":  "REPLACE: single sentence to remember 30s later",
+    "cta":             "REPLACE: where they go after (url, app store, etc)"
+  },
+
+  "_cast_note": "Pattern 3 — named protagonist + 1-3 supporting cast. NO 'user' / 'viewer' allowed.",
+  "cast": {
+    "protagonist": {
+      "name":        "REPLACE: a real name (e.g., 'Erica')",
+      "role":        "REPLACE: their role",
+      "affiliation": "REPLACE: their company / context",
+      "motivation":  "REPLACE: 1-line why they care"
+    },
+    "supporting": [
+      { "name": "REPLACE", "role": "REPLACE", "affiliation": "REPLACE" }
+    ]
+  },
+
+  "_canon_note": "Pattern 1 — 3-5 SPECIFIC entities preserved across every frame. Proper nouns, not categories.",
+  "canon": {
+    "primary_entity":  "REPLACE: the main artifact (e.g., 'Vertex Labs sync' meeting)",
+    "other_party":     "REPLACE: who the protagonist interacts with",
+    "central_quote":   "REPLACE: an exact quoted sentence that recurs",
+    "key_doc":         "REPLACE: a specific document / file / artifact"
+  },
+
+  "_echo_note": "Pattern 2 — pick ONE canon entity that recurs across 2+ frames in the same typography.",
+  "echo": [
+    {
+      "artifact":   "central_quote",
+      "appears_in": ["device-shot", "value-recap"],
+      "treatment":  "REPLACE: e.g., 'italic serif quote, same typography'"
+    }
+  ],
+
+  "arc_map": {
+    "hook":    ["title-open"],
+    "tension": ["device-shot"],
+    "reveal":  ["device-shot"],
+    "magic":   ["device-shot", "value-recap"],
+    "promise": ["title-close", "wordmark"]
+  },
+
+  "_click_chain_note": "Pattern 7 — UI products only. List clicks that trigger scene transitions. Skip if no clear UI.",
+  "click_chain": [],
+
+  "segments": [
+    {
+      "id": "title-open",
+      "frame_name": "OPEN",
+      "start": 0,
+      "duration": 3.5,
+      "type": "title-card",
+      "tool": "hyperframes",
+      "intent": "Opening title — establishes the world-as-it-is",
+      "narration": {
+        "cue_id": "01 · OPEN",
+        "line": "REPLACE: your opening line — sets the situation, not the product"
+      },
+      "beats": [
+        { "at": 0.2, "name": "words_enter" },
+        { "at": 1.1, "name": "agent_row_enter" }
+      ],
+      "title_lines": ["REPLACE: opening line"],
+      "transition_in": "cut"
+    },
+
+    {
+      "id": "device-shot",
+      "frame_name": "REVEAL",
+      "start": 3.5,
+      "duration": 15.5,
+      "type": "device-mockup",
+      "tool": "hyperframes",
+      "intent": "First sight of the product. The MAGIC moment lives here.",
+      "narration": {
+        "cue_id": "02 · REVEAL",
+        "line": "REPLACE: the line that introduces the product as the answer"
+      },
+      "canon_used": ["primary_entity", "central_quote"],
+      "click_triggers_next": true,
+      "block": "vfx-liquid-background",
+      "block_params": { "bg_palette": "lavender" },
+      "device": "macbook",
+      "screen_content_html": "compositions/screen-script.html",
+      "camera_path": [
+        { "at": 0.0, "scale": 0.86, "x": 0, "y": 0 },
+        { "at": 8.0, "scale": 0.95 },
+        { "at": 11.0, "scale": 1.04 },
+        { "at": 14.5, "scale": 1.10 }
+      ],
+      "beats": [
+        { "at": 0.5, "name": "macbook_enter" },
+        { "at": 2.0, "name": "typing_start" },
+        { "at": 5.0, "name": "claude_responds" },
+        { "at": 8.0, "name": "storyboard_appears" },
+        { "at": 11.0, "name": "render_progress_starts" },
+        { "at": 13.0, "name": "render_progress_midway" },
+        { "at": 14.8, "name": "success" },
+        { "at": 17.0, "name": "success_hold" }
+      ],
+      "transition_in": "cross-fade"
+    },
+
+    {
+      "id": "value-recap",
+      "frame_name": "OUTCOME",
+      "narration": {
+        "cue_id": "03 · OUTCOME",
+        "line": "REPLACE: the line that names what just got accomplished"
+      },
+      "canon_used": ["central_quote"],
+      "start": 19,
+      "duration": 7,
+      "type": "device-mockup",
+      "tool": "hyperframes",
+      "intent": "Continue the product walkthrough — a second concrete UI moment showing the outcome of the first beat. The 'promise kept' moment. Same MacBook, new UI state.\n\nTo make this the meta-output beat instead (QuickTime + multi-shot preview), see references/meta-output-beat.md.",
+      "device": "macbook",
+      "screen_state": "second-moment",
+      "camera_path": [
+        { "at": 0.0, "scale": 1.05 },
+        { "at": 7.0, "scale": 1.10 }
+      ],
+      "beats": [
+        { "at": 0.4, "name": "view_swap" },
+        { "at": 2.0, "name": "moment_reveal" },
+        { "at": 4.0, "name": "outcome_visible" },
+        { "at": 6.0, "name": "hold" }
+      ],
+      "transition_in": "cross-fade"
+    },
+
+    {
+      "id": "title-close",
+      "frame_name": "PROMISE",
+      "start": 26,
+      "duration": 3,
+      "type": "title-card",
+      "tool": "hyperframes",
+      "intent": "Closing line — the world-as-it-could-be",
+      "narration": {
+        "cue_id": "04 · PROMISE",
+        "line": "REPLACE: the memorable line. Reuse narrative.memorable_line."
+      },
+      "title_lines": ["REPLACE: closing line"],
+      "transition_in": "cross-fade"
+    },
+
+    {
+      "id": "wordmark",
+      "frame_name": "END",
+      "start": 29,
+      "duration": 3,
+      "type": "wordmark",
+      "tool": "hyperframes",
+      "intent": "Brand wordmark + subline (CTA)",
+      "narration": {
+        "silent": true,
+        "reason": "let the wordmark land — no narration over a single brand mark"
+      },
+      "wordmark_text": "REPLACE: product name",
+      "wordmark_sub": "REPLACE: tagline or url",
+      "transition_in": "cross-fade"
+    }
+  ]
+}
