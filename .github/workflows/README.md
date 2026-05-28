@@ -8,6 +8,11 @@ Advisory PR reviewer. On every PR open/update — and whenever a comment mention
 `README.md`) and posts a Markdown comment with a verdict, findings, and a
 compliance checklist. **Advisory only:** it never blocks merge.
 
+The prompt includes the full GitHub PR file list and a deterministic inventory
+of required governance files for every touched skill. This keeps checks like
+`manifest.yaml` and `tests/smoke.sh` reliable even when the large diff body is
+truncated before those files appear.
+
 ### Setup (one-time)
 
 The workflow speaks OpenAI-compatible chat completions, so any OpenAI-compatible
@@ -52,5 +57,6 @@ not invent style rules of its own.
 
 ### Cost / quota
 
-One review per PR push. Diff is truncated at 80k chars; rule files at 8k each.
-Temperature 0.2. Single chat-completions call per run.
+One review per PR push. Diff is truncated at 80k chars, but the complete PR file
+list and touched-skill governance inventory are still included. Rule files are
+truncated at 8k each. Temperature 0.2. Single chat-completions call per run.

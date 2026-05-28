@@ -37,6 +37,13 @@ MAX_DIFF_CHARS = 80_000
 MAX_RULE_CHARS = 8_000
 MAX_COMMENT_BODY = 60_000  # GitHub limit is 65536
 
+REQUIRED_SKILL_FILES = [
+    "SKILL.md",
+    "manifest.yaml",
+    "CHANGELOG.md",
+    "tests/smoke.sh",
+]
+
 SYSTEM_PROMPT = """You are Polym, an advisory PR reviewer for the polym repo (byteplus-sa/polym).
 
 Your job: read the PR diff and report whether it follows the repo's own conventions, which are defined in CONTRIBUTING.md, manifest.schema.yaml and profile.schema.yaml (provided to you in the user message). Do not invent rules. Do not enforce general style preferences beyond what those files say.
@@ -135,6 +142,58 @@ def read_repo_rules() -> dict[str, str]:
     return rules
 
 
+def touched_skill_names(meta: dict) -> list[str]:
+    names: set[str] = set()
+    for item in meta.get("files") or []:
+        path = item.get("path") or ""
+        parts = path.split("/")
+        if len(parts) >= 2 and parts[0] == "skills" and parts[1] != "_template":
+            names.add(parts[1])
+    return sorted(names)
+
+
+def executable(path: Path) -> bool:
+    return path.exists() and os.access(path, os.X_OK)
+
+
+def build_skill_file_inventory(meta: dict) -> list[str]:
+    """Summarize required skill files from the checked-out PR head.
+
+    The LLM sees a truncated diff, so this inventory gives it a deterministic
+    source of truth for required governance files that may appear past the
+    truncation boundary.
+    """
+    lines: list[str] = []
+    for skill in touched_skill_names(meta):
+        skill_dir = Path("skills") / skill
+        lines.append(f"### `skills/{skill}`")
+        for rel in REQUIRED_SKILL_FILES:
+            path = skill_dir / rel
+            if rel == "tests/smoke.sh":
+                status = "present + executable" if executable(path) else (
+                    "present but not executable" if path.exists() else "missing"
+                )
+            else:
+                status = "present" if path.exists() else "missing"
+            lines.append(f"- `{path.as_posix()}`: {status}")
+        manifest = skill_dir / "manifest.yaml"
+        if manifest.exists():
+            lines.append("- `manifest.yaml` required fields:")
+            text = manifest.read_text(encoding="utf-8", errors="replace")
+            for field in ["name", "version", "stage", "owners", "description_for_install"]:
+                marker = f"{field}:"
+                lines.append(f"  - `{field}`: {'present' if marker in text else 'missing'}")
+        skill_md = skill_dir / "SKILL.md"
+        if skill_md.exists():
+            for line in skill_md.read_text(encoding="utf-8", errors="replace").splitlines():
+                if line.startswith("description: "):
+                    desc = line.removeprefix("description: ").strip().strip('"')
+                    lines.append(f"- `SKILL.md` description chars: {len(desc)}")
+                    break
+        lines.append("")
+    return lines
+
+
 def build_user_prompt(
     meta: dict,
     rules: dict[str, str],
@@ -148,6 +207,20 @@ def build_user_prompt(
     pieces.append(f"- Branch: `{meta.get('baseRefName')}` ← `{meta.get('headRefName')}`")
     pieces.append(f"- Stats: +{meta.get('additions', 0)} / -{meta.get('deletions', 0)} across {len(meta.get('files') or [])} files")
     pieces.append("")
+    pieces.append("## Changed files")
+    pieces.append(
+        "This file list comes from the GitHub PR files API and is authoritative. "
+        "If a file is listed here or marked present in the skill inventory below, "
+        "do not report it missing only because the full file content is absent from the truncated diff."
+    )
+    for item in meta.get("files") or []:
+        pieces.append(f"- `{item.get('path')}` (+{item.get('additions', 0)} / -{item.get('deletions', 0)})")
+    pieces.append("")
+    inventory = build_skill_file_inventory(meta)
+    if inventory:
+        pieces.append("## Skill governance file inventory")
+        pieces.extend(inventory)
+        pieces.append("")
     pieces.append("## PR body")
     pieces.append(meta.get("body") or "_(empty)_")
     pieces.append("")
