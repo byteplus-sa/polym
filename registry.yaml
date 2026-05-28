@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-26T20:03:35Z
+generated_at: 2026-05-28T02:19:23Z
 
 skills:
   - name: polym-autocase-image-gen
@@ -261,6 +261,23 @@ skills:
       - "Seedream GTM"
       - "Seedream 竞品"
       - "Seedream 优势"
+
+  - name: polym-explainer-video
+    version: 0.1.0
+    stage: experimental
+    description_for_install: |
+      Build a polished short-form product/demo explainer video from docs, URLs, PDFs,
+      screenshots, or free-form text via a 5-phase flow with storyboard approval,
+      verification, and optional AI presenter + music generation.
+    owners: ['@bojie']
+    path: skills/polym-explainer-video
+    triggers:
+      - "make an explainer video"
+      - "make a short-form video about"
+      - "turn this repo into a video"
+      - "produce a tiktok video"
+      - "产品介绍视频"
+      - "产品讲解视频"
 
   - name: polym-help
     version: 0.2.2
