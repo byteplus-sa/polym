@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-05-28T02:19:23Z
+generated_at: 2026-06-01T06:02:10Z
 
 skills:
   - name: polym-autocase-image-gen
@@ -107,7 +107,7 @@ skills:
       - "OpenAI image"
 
   - name: polym-eval-generate-seedance
-    version: 0.1.0
+    version: 0.2.0
     stage: beta
     description_for_install: |
       Generate videos with BytePlus Seedance models through Ark. Supports text-to-video,
@@ -120,7 +120,7 @@ skills:
       - "seedance I2V"
 
   - name: polym-eval-generate-seedream
-    version: 0.1.0
+    version: 0.2.0
     stage: beta
     description_for_install: |
       Generate or edit images with BytePlus Seedream models. Supports reference
