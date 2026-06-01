@@ -42,6 +42,42 @@ except ImportError:
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
+
+def _inject_system_truststore() -> None:
+    """Use the OS trust store when truststore is available."""
+    try:
+        import truststore
+        truststore.inject_into_ssl()
+        logger.debug("Injected system trust store for TLS verification")
+    except ImportError:
+        pass
+    except Exception as e:
+        logger.debug(f"Failed to inject system trust store: {e}")
+
+
+def _is_ssl_certificate_error(exc: BaseException) -> bool:
+    message = str(exc).lower()
+    return (
+        isinstance(exc, requests.exceptions.SSLError)
+        or "certificate_verify_failed" in message
+        or "unable to get local issuer certificate" in message
+    )
+
+
+def _log_request_error(exc: BaseException) -> None:
+    if _is_ssl_certificate_error(exc):
+        logger.error(f"TLS certificate verification failed: {exc}")
+        logger.error(
+            "Install the optional 'truststore' dependency so Python uses the OS "
+            "certificate verifier, or check that the server is sending a complete "
+            "certificate chain."
+        )
+    else:
+        logger.error(f"Request error: {exc}")
+
+
+_inject_system_truststore()
+
 # ============================================
 # .env management
 # ============================================
@@ -232,7 +268,7 @@ def _get_network_url(local_path, api_url=None):
 # Model capabilities
 # ============================================
 MODEL_CAPABILITIES = {
-    "seedance-1.5-pro": {
+    "seedance-1-5-pro": {
         "resolutions": ["480p", "720p", "1080p"],
         "ratios": ["16:9", "4:3", "1:1", "3:4", "9:16", "21:9", "adaptive"],
         "duration_range": (4, 12),
@@ -240,7 +276,7 @@ MODEL_CAPABILITIES = {
         "supports_last_frame": True,
         "supports_camerafixed": True,
     },
-    "seedance-1.0-pro": {
+    "seedance-1-0-pro-fast": {
         "resolutions": ["480p", "720p", "1080p"],
         "ratios": ["16:9", "4:3", "1:1", "3:4", "9:16", "21:9", "adaptive"],
         "duration_range": (2, 12),
@@ -250,7 +286,7 @@ MODEL_CAPABILITIES = {
         "t2v_ratio_restrictions": ["adaptive"],
         "i2v_camerafixed_not_supported": True,
     },
-    "seedance-1.0-pro-fast": {
+    "seedance-1-0-pro": {
         "resolutions": ["480p", "720p", "1080p"],
         "ratios": ["16:9", "4:3", "1:1", "3:4", "9:16", "21:9", "adaptive"],
         "duration_range": (2, 12),
@@ -260,7 +296,7 @@ MODEL_CAPABILITIES = {
         "t2v_ratio_restrictions": ["adaptive"],
         "i2v_camerafixed_not_supported": True,
     },
-    "seedance-1.0-lite": {
+    "seedance-1-0-lite": {
         "resolutions": ["480p", "720p", "1080p"],
         "ratios": ["16:9", "4:3", "1:1", "3:4", "9:16", "21:9", "adaptive"],
         "duration_range": (2, 12),
@@ -285,8 +321,9 @@ DEFAULT_CAPABILITIES = {
 
 
 def get_model_capabilities(model: str) -> dict:
+    normalized_model = model.lower().replace(".", "-")
     for key in MODEL_CAPABILITIES:
-        if key in model.lower():
+        if key in normalized_model:
             return MODEL_CAPABILITIES[key]
     logger.warning(f"Unknown model {model}, using default capabilities")
     return DEFAULT_CAPABILITIES
@@ -585,20 +622,29 @@ def main():
     if not check_env():
         sys.exit(1)
 
-    result = generate_video(
-        prompt=args.prompt,
-        first_frame=args.first_frame,
-        last_frame=args.last_frame,
-        output=args.output,
-        seconds=args.seconds,
-        size=args.size,
-        aspect_ratio=args.aspect_ratio,
-        model=args.model,
-        watermark=args.watermark,
-        camerafixed=args.camerafixed,
-        draft=args.draft,
-        seed=args.seed,
-    )
+    try:
+        result = generate_video(
+            prompt=args.prompt,
+            first_frame=args.first_frame,
+            last_frame=args.last_frame,
+            output=args.output,
+            seconds=args.seconds,
+            size=args.size,
+            aspect_ratio=args.aspect_ratio,
+            model=args.model,
+            watermark=args.watermark,
+            camerafixed=args.camerafixed,
+            draft=args.draft,
+            seed=args.seed,
+        )
+    except requests.RequestException as e:
+        _log_request_error(e)
+        sys.exit(1)
+    except Exception as e:
+        if _is_ssl_certificate_error(e):
+            _log_request_error(e)
+            sys.exit(1)
+        raise
 
     print(json.dumps(result, indent=2))
 

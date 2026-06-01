@@ -1,6 +1,7 @@
 byteplus-python-sdk-v2
 Pillow
 requests
+truststore
 tqdm
 python-dotenv
 tos  # optional, for reference image upload to TOS
