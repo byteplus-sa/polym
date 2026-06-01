@@ -41,6 +41,42 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+def _inject_system_truststore() -> None:
+    """Use the OS trust store when truststore is available."""
+    try:
+        import truststore
+        truststore.inject_into_ssl()
+        logger.debug("Injected system trust store for TLS verification")
+    except ImportError:
+        pass
+    except Exception as e:
+        logger.debug(f"Failed to inject system trust store: {e}")
+
+
+def _is_ssl_certificate_error(exc: BaseException) -> bool:
+    message = str(exc).lower()
+    return (
+        isinstance(exc, requests.exceptions.SSLError)
+        or "certificate_verify_failed" in message
+        or "unable to get local issuer certificate" in message
+    )
+
+
+def _log_request_error(exc: BaseException) -> None:
+    if _is_ssl_certificate_error(exc):
+        logger.error(f"TLS certificate verification failed: {exc}")
+        logger.error(
+            "Install the optional 'truststore' dependency so Python uses the OS "
+            "certificate verifier, or check that the server is sending a complete "
+            "certificate chain."
+        )
+    else:
+        logger.error(f"Request error: {exc}")
+
+
+_inject_system_truststore()
+
+
 # Load environment variables
 SKILL_DIR = Path(__file__).resolve().parent.parent
 
@@ -577,7 +613,7 @@ def generate_image(
         logger.error("Request timed out. Try again later.")
         return {"gen_success": False, "gen_image_path": None, "gen_url": None}
     except requests.RequestException as e:
-        logger.error(f"Request error: {e}")
+        _log_request_error(e)
         return {"gen_success": False, "gen_image_path": None, "gen_url": None}
     except json.JSONDecodeError:
         logger.error("Invalid JSON response from API")
