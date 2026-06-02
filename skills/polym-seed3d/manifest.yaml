@@ -1,0 +1,31 @@
+name: polym-seed3d
+version: 0.1.0
+stage: experimental
+owners:
+  - Carey8175
+description_for_install: |
+  Generate textured 3D models (GLB with PBR materials) from an image and/or a
+  text prompt using Volcengine Ark Seed3D (doubao-seed3d). Submits the async
+  generation task, polls to completion, and downloads + extracts the resulting
+  .glb. Domestic Volcengine Ark only (火山引擎) — not BytePlus overseas.
+depends_on:
+  skills: []
+  binaries:
+    - python3: ">=3.10"
+  env:
+    - ARK_API_KEY
+io_contract:
+  reads:
+    - local-filesystem/reference-images
+  writes:
+    - target: local-filesystem/generated-assets
+      schema: core/signal-envelope.schema.json
+      signal_type: generated-3d-model
+triggers:
+  - "Seed3D"
+  - "把图片转成3D模型"
+  - "生成一个3D模型"
+  - "image to 3D"
+  - "text to 3D"
+  - "doubao-seed3d"
+deprecates: []
