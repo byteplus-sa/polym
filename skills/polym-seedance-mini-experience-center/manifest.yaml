@@ -11,9 +11,10 @@ description_for_install: |
   onboarding, never re-prompting macOS keychain). Supports text-to-video,
   image/video reference (I2V/R2V), first/last frame, and human-portrait refs.
   All reference materials route through the 素材库 (Assets API), so faces pass
-  moderation. Requires: Chrome logged into console.byteplus.com, AK/SK for asset
-  upload (auto-reused from the seedance-2-0 skill or passed manually), and the
-  Python deps browser-cookie3 + requests.
+  moderation. Self-contained — reads no other skill's files. Requires: Chrome
+  logged into console.byteplus.com, AK/SK for asset upload (passed via --ak/--sk,
+  env ARK_AK/ARK_SK, or ~/.seedance_mini/ak_sk.json), and the Python deps
+  browser-cookie3 + requests.
 
 depends_on:
   skills: []

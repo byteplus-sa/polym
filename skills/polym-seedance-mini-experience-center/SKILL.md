@@ -1,15 +1,6 @@
 ---
 name: polym-seedance-mini-experience-center
-description: >-
-  Generate videos with Seedance 2.0 Mini (dreamina-seedance-2-0-mini-260615),
-  which has NO public OpenAPI and only runs through the BytePlus console
-  experience-center BFF. Use when the user wants to batch-generate Seedance Mini
-  videos from a script/terminal instead of clicking the web playground —
-  text-to-video, image/video/audio reference (I2V/R2V), first/last frame, or
-  human-portrait references. All reference materials (including faces) go through
-  the 素材库 (Assets API), exactly like the seedance-2-0 skill. Trigger on:
-  "seedance mini", "dreamina mini", "mini 批量生成", "用 mini 出视频",
-  "experience center 批量", or any request to drive the Mini model outside the web UI.
+description: Batch-generate Seedance 2.0 Mini videos via the BytePlus console BFF (Mini has no public API). Covers T2V, image/video reference (I2V/R2V), first/last frame, and human portraits. Triggers: "seedance mini", "dreamina mini", "用 mini 出视频".
 ---
 
 # Seedance 2.0 Mini — Experience Center
@@ -26,7 +17,7 @@ Mini (`dreamina-seedance-2-0-mini-260615`) **没有公开 OpenAPI**，只能走 
 | 凭证 | 用途 | 来源 | 是否必须 |
 |------|------|------|---------|
 | **Cookie + csrfToken** | mini BFF 提交/查询 | 本机 Chrome（已登录 console.byteplus.com） | 必须 |
-| **AK/SK** | 素材库 Assets API 上传 | 自动复用 `~/.claude/skills/seedance-2-0/ark_ak_sk.json`，或 onboard 时手动给 | 传素材才需要（纯 T2V 不需要） |
+| **AK/SK** | 素材库 Assets API 上传 | onboard 时 `--ak/--sk`，或 env `ARK_AK/ARK_SK`，或自带 `~/.seedance_mini/ak_sk.json` | 传素材才需要（纯 T2V 不需要） |
 
 **关键设计：凭证只在 onboarding 时读一次 Chrome cookie（Mac 上触发一次 keychain 授权），
 之后全部读本地缓存 `~/.seedance_mini/creds.json`，绝不重复弹 keychain。**
@@ -36,7 +27,7 @@ Mini (`dreamina-seedance-2-0-mini-260615`) **没有公开 OpenAPI**，只能走 
 ```bash
 cd <skill>/scripts
 
-# 读一次 Chrome cookie（会弹一次 macOS keychain 授权，点"始终允许"）+ 自动复用 seedance-2-0 的 AK/SK
+# 读一次 Chrome cookie（会弹一次 macOS keychain 授权，点"始终允许"）；AK/SK 从 env / 自带文件解析
 python3 creds.py onboard
 
 # 若没有 seedance-2-0 的 AK/SK，手动提供（上传素材库才需要）：
@@ -55,7 +46,7 @@ python3 creds.py refresh     # 重新读 Chrome（再授权一次 keychain），
 - Python 依赖：`pip install browser-cookie3 requests`（macOS 上 `pip3 install ... --break-system-packages`）。
 - 本机 Chrome 已登录 <https://console.byteplus.com/ark/>。
 - 首次用素材库前，需在控制台「素材库」签署数字资产承诺函（一次性）。
-- AK/SK：若已装 `seedance-2-0` skill 会自动复用其 `ark_ak_sk.json`；否则在 onboard 时用 `--ak/--sk` 手动提供（仅上传素材库需要，纯 T2V 不需要）。
+- AK/SK：onboard 时用 `--ak/--sk` 提供，或设 env `ARK_AK/ARK_SK`，或放 `~/.seedance_mini/ak_sk.json`（仅上传素材库需要，纯 T2V 不需要）。本 skill 自包含，不读取其它 skill 的文件。
 
 ## ⚠️ 安全须知
 

@@ -15,7 +15,9 @@
 
 凭证来源：
   - cookies + csrf_token : 从本机 Chrome 读取（需已登录 console.byteplus.com）
-  - ak / sk              : onboarding 参数，或自动从 seedance-2-0 skill 的 ark_ak_sk.json 复制
+  - ak / sk              : onboarding 参数 `--ak/--sk`，或环境变量 ARK_AK/ARK_SK，
+                           或可选自带文件 ~/.seedance_mini/ak_sk.json（本 skill 自包含，
+                           不读取其它 skill 的文件）
 
 CLI:
   python creds.py onboard           # 首次配置（读 Chrome cookie + AK/SK），存本地
@@ -37,8 +39,8 @@ CRED_DIR = Path.home() / ".seedance_mini"
 CRED_FILE = CRED_DIR / "creds.json"
 DEFAULT_REGION = "ap-southeast-1"
 
-# 自动复用 seedance-2-0 skill 的 AK/SK（如果存在）
-_SEEDANCE2_AKSK = Path.home() / ".claude/skills/seedance-2-0/ark_ak_sk.json"
+# 可选的自带 AK/SK 文件（本 skill 目录外、用户 home 下；不读取其它 skill 的文件）
+_AKSK_FILE = CRED_DIR / "ak_sk.json"
 
 
 # ── 读 Chrome cookie（唯一会碰 keychain 的地方）────────────────────────────────
@@ -61,12 +63,15 @@ def _read_chrome_cookies() -> tuple[list[dict], str]:
 # ── onboarding / refresh / load ───────────────────────────────────────────────
 
 def _resolve_aksk(ak: str | None, sk: str | None, region: str | None) -> tuple:
-    """AK/SK 解析：显式参数 > env > seedance-2-0 的 ark_ak_sk.json。"""
+    """AK/SK 解析：显式参数 > env(ARK_AK/SK) > 自带 ~/.seedance_mini/ak_sk.json。
+
+    自包含：只读本 skill 自己的 home 配置，不读取任何其它 skill 目录的文件。
+    """
     ak = ak or os.environ.get("ARK_AK")
     sk = sk or os.environ.get("ARK_SK")
     region = region or os.environ.get("ARK_REGION") or DEFAULT_REGION
-    if (not ak or not sk) and _SEEDANCE2_AKSK.exists():
-        d = json.loads(_SEEDANCE2_AKSK.read_text())
+    if (not ak or not sk) and _AKSK_FILE.exists():
+        d = json.loads(_AKSK_FILE.read_text())
         ak = ak or d.get("ak")
         sk = sk or d.get("sk")
         region = d.get("region") or region
