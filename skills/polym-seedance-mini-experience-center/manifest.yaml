@@ -1,0 +1,34 @@
+name: polym-seedance-mini-experience-center
+version: 0.1.0
+stage: experimental
+owners:
+  - Carey8175
+
+description_for_install: |
+  Batch-generate Seedance 2.0 Mini (dreamina-seedance-2-0-mini-260615) videos
+  from the terminal. Mini has NO public OpenAPI — this skill drives the BytePlus
+  console experience-center BFF using locally-cached Chrome cookies (read once at
+  onboarding, never re-prompting macOS keychain). Supports text-to-video,
+  image/video reference (I2V/R2V), first/last frame, and human-portrait refs.
+  All reference materials route through the 素材库 (Assets API), so faces pass
+  moderation. Requires: Chrome logged into console.byteplus.com, AK/SK for asset
+  upload (auto-reused from the seedance-2-0 skill or passed manually), and the
+  Python deps browser-cookie3 + requests.
+
+depends_on:
+  skills: []
+  binaries: []
+  env: []
+
+io_contract:
+  reads: []
+  writes: []
+
+triggers:
+  - "seedance mini"
+  - "dreamina mini"
+  - "mini 批量生成"
+  - "用 mini 出视频"
+  - "experience center 批量"
+
+deprecates: []
