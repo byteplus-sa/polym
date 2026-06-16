@@ -138,4 +138,10 @@ for r in mini.wait_for_tasks(ids):
 
 - `scripts/creds.py` — 凭证管理（onboard/refresh/status + 本地缓存 + BFF session 构建）
 - `scripts/mini.py` — Mini BFF 客户端 + 素材库上传 + 高层 `upload_asset`/`generate`/`wait_for_tasks`
-- `scripts/assets.py` — Assets API SigV4 客户端（从 seedance-2-0 复制，纯 stdlib）
+- `scripts/assets.py` — Assets API SigV4 客户端（**vendored** 自 `seedance-2-0/scripts/assets.py`，纯 stdlib，无第三方依赖）
+
+## 维护：assets.py 是 vendored 副本
+
+`scripts/assets.py` 是从 `seedance-2-0` skill 复制来的本地副本（让本 skill 自包含、可独立安装）。
+它**不会**自动跟随上游更新——若上游修了签名/接口 bug，需手动重新 vendpr：用上游
+`assets.py` 覆盖本文件，并在 `CHANGELOG.md` 记一笔。文件头有 vendored 来源与日期注释。
