@@ -117,11 +117,10 @@ for r in mini.wait_for_tasks(ids):
 ## 提示词规则（沿用 seedance-2-0）
 
 - 多参考素材用 `[image1]`/`[video1]`/`[audio1]` 标注（与 `image_assets=` 等参数顺序对应）。
-- 人像参考最好拆分（脸部特写 / 三视图 / 服装分开传多个 asset），见
-  [seedance-2-0 assets.md](../seedance-2-0/references/assets.md) 的 best practice。
-- 需要导演级提示词优化（6-component / 时长计算 / 多镜头）时，读
-  [seedance-2-0 的 prompt-guidance / duration-calculus](../seedance-2-0/references/)。
-  本 skill 只负责"Mini 的提交通道"，提示词工艺复用 seedance-2-0。
+- 人像参考最好拆分（脸部特写 / 三视图 / 服装分开传多个 asset）——这是 BytePlus 团队的
+  best practice，可降低身份漂移和风控误判。
+- 本 skill 只负责"Mini 的提交通道"；导演级提示词优化（6-component / 时长计算 / 多镜头）
+  是独立工艺，若另装了 `seedance-2-0` skill 可调用它来生成更强的 prompt。
 
 ## BFF 接口速查（modelark-api.console.byteplus.com/.../2024-01-29）
 

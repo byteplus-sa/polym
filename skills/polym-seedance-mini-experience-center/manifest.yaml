@@ -5,16 +5,13 @@ owners:
   - Carey8175
 
 description_for_install: |
-  Batch-generate Seedance 2.0 Mini (dreamina-seedance-2-0-mini-260615) videos
-  from the terminal. Mini has NO public OpenAPI — this skill drives the BytePlus
-  console experience-center BFF using locally-cached Chrome cookies (read once at
-  onboarding, never re-prompting macOS keychain). Supports text-to-video,
-  image/video reference (I2V/R2V), first/last frame, and human-portrait refs.
-  All reference materials route through the 素材库 (Assets API), so faces pass
-  moderation. Self-contained — reads no other skill's files. Requires: Chrome
-  logged into console.byteplus.com, AK/SK for asset upload (passed via --ak/--sk,
-  env ARK_AK/ARK_SK, or ~/.seedance_mini/ak_sk.json), and the Python deps
-  browser-cookie3 + requests.
+  Batch-generate Seedance 2.0 Mini videos. Mini has no public
+  OpenAPI, so this drives the BytePlus console experience-center BFF via
+  locally-cached Chrome cookies (keychain read once at onboarding). Supports T2V,
+  image/video reference (I2V/R2V), first/last frame, and human portraits (routed
+  through the 素材库 / Assets API to pass moderation). Self-contained. Requires
+  Chrome logged into console.byteplus.com, AK/SK for asset upload, and Python
+  deps browser-cookie3 + requests.
 
 depends_on:
   skills: []
