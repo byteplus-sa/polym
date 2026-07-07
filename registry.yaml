@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-06-16T08:59:07Z
+generated_at: 2026-08-07T13:35:20Z
 
 skills:
   - name: polym-autocase-image-gen
@@ -22,6 +22,25 @@ skills:
       - "ChatGPT-image-2"
       - "autocase playground"
       - "用 gpt-image-2 出图"
+
+  - name: polym-bp-cloud
+    version: 0.1.0
+    stage: experimental
+    description_for_install: |
+      Operate BytePlus/Volcengine cloud from Claude Code via the official `ve` CLI:
+      query and provision ECS, VPC, CDN, API Gateway, container registry, CI/CD (CP),
+      VKE, run commands on instances via Cloud Assistant, and TOS object storage via
+      tosutil. Read-only by default; mutating actions require confirmation. Each user
+      configures their own AK/SK profiles — no shared credentials.
+    owners: ['wong.hing.fung.ai@']
+    path: skills/polym-bp-cloud
+    triggers:
+      - "list my ECS instances"
+      - "provision a VM on BytePlus"
+      - "run a command on that instance"
+      - "check CDN domains"
+      - "ve cli"
+      - "byteplus cloud"
 
   - name: polym-customer-brief
     version: 0.1.1
