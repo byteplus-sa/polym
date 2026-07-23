@@ -1,0 +1,31 @@
+name: polym-byteplus-docs
+version: 0.1.0
+stage: experimental
+owners:
+  - ArthurReimus-ByteDance
+
+description_for_install: |
+  Research BytePlus products, APIs, SDKs, configuration, quotas, regions,
+  pricing, and troubleshooting from an offline index of official documentation,
+  then verify substantive claims against the relevant live pages.
+
+depends_on:
+  skills: []
+  binaries:
+    - python3: ">=3.10"
+  env: []
+
+io_contract:
+  reads:
+    - bundled-byteplus-documentation-index
+    - docs.byteplus.com/live-documentation
+  writes: []
+
+triggers:
+  - "BytePlus documentation"
+  - "official BytePlus docs"
+  - "BytePlus API documentation"
+  - "BytePlus SDK documentation"
+  - "BytePlus documentation links"
+
+deprecates: []

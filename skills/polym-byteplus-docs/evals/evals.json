@@ -1,0 +1,41 @@
+{
+  "skill_name": "polym-byteplus-docs",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Using official BytePlus documentation, explain how ModelArk context caching works and give me the most relevant implementation and API links. Keep the answer concise and flag anything that must be checked live.",
+      "expected_output": "A concise, source-backed explanation based on targeted ModelArk pages discovered through llms.txt, with canonical BytePlus links and current details live-verified.",
+      "files": [],
+      "expectations": [
+        "Uses llms.txt or the bundled search_docs.py helper for discovery",
+        "Works from the llms.txt bundled inside the skill directory",
+        "Cites canonical docs.byteplus.com ModelArk pages",
+        "Separates live-verified behavior from any uncertainty"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Find the BytePlus VOD docs I need to upload media from a Java backend. Search the server-side upload workflow and server SDK separately, then summarize the recommended path, prerequisites, and the exact official pages I should read next.",
+      "expected_output": "A focused VOD documentation path with relevant upload and Java SDK/API sources, without dumping unrelated VOD links.",
+      "files": [],
+      "expectations": [
+        "Uses the BytePlus VOD product section in llms.txt with separate server-side upload and server SDK queries",
+        "Selects a small relevant set of upload and Java/API pages",
+        "Cites only official BytePlus documentation for BytePlus claims",
+        "Mentions prerequisites only when supported by fetched pages"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I need to troubleshoot a BytePlus IAM custom policy that is not authorizing an API action. Locate the right official docs and give me a practical diagnostic checklist.",
+      "expected_output": "A practical, source-backed IAM troubleshooting checklist using policy and authorization documentation discovered from llms.txt.",
+      "files": [],
+      "expectations": [
+        "Finds the relevant IAM library even if the exact title wording differs",
+        "Uses targeted policy or authorization pages rather than a generic docs dump",
+        "Does not substitute AWS or Volcengine behavior for BytePlus behavior",
+        "Includes canonical official source links"
+      ]
+    }
+  ]
+}
