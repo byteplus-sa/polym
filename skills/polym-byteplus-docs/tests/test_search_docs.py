@@ -48,8 +48,8 @@ class IndexTests(unittest.TestCase):
         urls = [entry.url for entry in self.entries]
         self.assertEqual(106, len(self.sections))
         self.assertEqual(106, len(set(self.sections)))
-        self.assertEqual(21_050, len(self.entries))
-        self.assertEqual(21_050, len(set(urls)))
+        self.assertEqual(21_184, len(self.entries))
+        self.assertEqual(21_184, len(set(urls)))
         self.assertFalse(
             any(entry.section == "Uncategorized" for entry in self.entries)
         )

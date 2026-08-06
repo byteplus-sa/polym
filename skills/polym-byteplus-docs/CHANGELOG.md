@@ -5,6 +5,10 @@ Semver per `manifest.yaml`. Breaking changes must include a "Migration" note.
 
 ## [Unreleased]
 
+### Changed
+- Synced documentation index from byteplus-docs-llms (source commit: 7f352c79585c1a6968a9b90d106cfda4910991e7).
+- Updated llms.txt with refreshed BytePlus documentation links.
+
 ## [0.1.0] - 2026-07-23
 
 ### Added
