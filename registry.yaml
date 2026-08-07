@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-08-07T13:35:20Z
+generated_at: 2026-08-07T13:37:31Z
 
 skills:
   - name: polym-autocase-image-gen
@@ -41,6 +41,22 @@ skills:
       - "check CDN domains"
       - "ve cli"
       - "byteplus cloud"
+
+  - name: polym-byteplus-docs
+    version: 0.1.0
+    stage: experimental
+    description_for_install: |
+      Research BytePlus products, APIs, SDKs, configuration, quotas, regions,
+      pricing, and troubleshooting from an offline index of official documentation,
+      then verify substantive claims against the relevant live pages.
+    owners: ['ArthurReimus-ByteDance']
+    path: skills/polym-byteplus-docs
+    triggers:
+      - "BytePlus documentation"
+      - "official BytePlus docs"
+      - "BytePlus API documentation"
+      - "BytePlus SDK documentation"
+      - "BytePlus documentation links"
 
   - name: polym-customer-brief
     version: 0.1.1
