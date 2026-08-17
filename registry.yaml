@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-08-07T13:41:08Z
+generated_at: 2026-08-17T03:38:32Z
 
 skills:
   - name: polym-autocase-image-gen
@@ -43,7 +43,7 @@ skills:
       - "byteplus cloud"
 
   - name: polym-byteplus-docs
-    version: 0.1.0
+    version: 0.1.1
     stage: experimental
     description_for_install: |
       Research BytePlus products, APIs, SDKs, configuration, quotas, regions,
