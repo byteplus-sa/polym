@@ -46,10 +46,10 @@ class IndexTests(unittest.TestCase):
 
     def test_index_inventory_is_complete_and_unique(self) -> None:
         urls = [entry.url for entry in self.entries]
-        self.assertEqual(106, len(self.sections))
-        self.assertEqual(106, len(set(self.sections)))
-        self.assertEqual(21_050, len(self.entries))
-        self.assertEqual(21_050, len(set(urls)))
+        self.assertEqual(107, len(self.sections))
+        self.assertEqual(107, len(set(self.sections)))
+        self.assertEqual(21_194, len(self.entries))
+        self.assertEqual(21_194, len(set(urls)))
         self.assertFalse(
             any(entry.section == "Uncategorized" for entry in self.entries)
         )
