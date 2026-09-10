@@ -1,0 +1,1426 @@
+{
+  "schema_version": "1.0",
+  "template": {
+    "name": "BytePlus Presentation Template_FEB 2026.pptx",
+    "asset_path": "assets/BytePlus Presentation Template_FEB 2026.pptx",
+    "sha256": "9d65103b658820e8d06c39d5349f22004237f16f2cbe4c419c34ffbbf9089aa1",
+    "size_bytes": 58865382,
+    "slide_count": 20,
+    "canvas": {
+      "aspect_ratio": "16:9",
+      "width_px": 1280,
+      "height_px": 720,
+      "width_emu": 12192000,
+      "height_emu": 6858000
+    },
+    "theme": {
+      "name": "BytePlus Brand Colours",
+      "colors": {
+        "accent1": "#A569FF",
+        "accent2": "#1E37FF",
+        "accent3": "#37E1BE",
+        "accent4": "#FF7F66",
+        "accent5": "#00DCFF",
+        "accent6": "#002863",
+        "dark1": "#000000",
+        "light1": "#FFFFFF",
+        "brand_blue": "#0066FC"
+      },
+      "primary_fonts": [
+        "Byte Sans Regular",
+        "Byte Sans Medium",
+        "Byte Sans Bold"
+      ]
+    },
+    "package_parts": {
+      "media_count": 171,
+      "chart_count": 1,
+      "table_slide_count": 0
+    }
+  },
+  "catalog_generation": {
+    "date": "2026-09-08",
+    "methods": [
+      "visual inspection of rendered slide PNGs",
+      "structural reconciliation with per-slide layout JSON"
+    ],
+    "review_model": "gpt-5.6-luna",
+    "confidence_scale": "0 to 1; lower values indicate OCR or role ambiguity"
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "layout_name": "Title slide",
+      "template_role": "title_slide",
+      "title": "Presentation Template",
+      "ocr_text": [
+        "BytePlus",
+        "Master Slides",
+        "Presentation Template",
+        "Last Updated FEB 2026"
+      ],
+      "visual_description": "White title slide with a small BytePlus wordmark at upper left, blue section label above a large two-line black title on the left, a large multicolor gradient BytePlus mark on the right, and a soft purple-blue-cyan gradient along the bottom edge.",
+      "regions": {
+        "header": {
+          "bbox": [
+            45.17,
+            243.69,
+            560.23,
+            45.51
+          ],
+          "description": "Blue 'Master Slides' label above the title block at upper left."
+        },
+        "body": {
+          "bbox": [
+            45.19,
+            129.45,
+            1180.1,
+            461.73
+          ],
+          "description": "Large two-line title on the left and gradient BytePlus graphic on the right."
+        },
+        "footer": {
+          "bbox": [
+            45.19,
+            654.57,
+            286.64,
+            32.5
+          ],
+          "description": "Bold update-date text at lower left."
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#000000",
+        "#0066FC",
+        "#A569FF",
+        "#1E37FF",
+        "#00DCFF",
+        "#37E1BE",
+        "#FF7F66"
+      ],
+      "editable_elements": [
+        "text",
+        "image"
+      ],
+      "usage_guidance": "Use as the deck cover or opening title slide; replace the title, section label, date, and right-side hero artwork while preserving the generous left-right split.",
+      "confidence": {
+        "ocr": 0.99,
+        "role": 0.99
+      },
+      "notes": [
+        "The BytePlus wordmark and bottom gradient are part of the template artwork/background rather than separate text elements."
+      ]
+    },
+    {
+      "slide_number": 2,
+      "layout_name": "Section Divider",
+      "template_role": "section_divider",
+      "title": "Section Divider",
+      "ocr_text": [
+        "01",
+        "Section Divider"
+      ],
+      "visual_description": "Minimal white section-divider slide with a blue '01' followed by a bold black 'Section Divider' label across the middle-left and a soft purple-blue-cyan gradient along the bottom edge.",
+      "regions": {
+        "header": {
+          "bbox": [
+            0,
+            0,
+            1280,
+            300
+          ],
+          "description": "Open white space with no header text."
+        },
+        "body": {
+          "bbox": [
+            45.19,
+            360,
+            654.56,
+            58.97
+          ],
+          "description": "Large section number and divider label arranged horizontally near the vertical center."
+        },
+        "footer": {
+          "bbox": [
+            0,
+            590,
+            1280,
+            130
+          ],
+          "description": "No footer text; only the template's bottom gradient artwork."
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#0066FC",
+        "#000000",
+        "#A569FF",
+        "#1E37FF",
+        "#00DCFF",
+        "#37E1BE"
+      ],
+      "editable_elements": [
+        "text"
+      ],
+      "usage_guidance": "Use to introduce a new major section; update the number and label while retaining the sparse transition treatment.",
+      "confidence": {
+        "ocr": 0.99,
+        "role": 0.99
+      },
+      "notes": []
+    },
+    {
+      "slide_number": 3,
+      "layout_name": "Left-Aligned_Content",
+      "template_role": "agenda",
+      "title": "In today’s agenda",
+      "ocr_text": [
+        "In today’s agenda",
+        "1",
+        "Title",
+        "2",
+        "Title",
+        "3",
+        "Title",
+        "4",
+        "Title",
+        "5",
+        "Title",
+        "6",
+        "Title",
+        "7",
+        "Title",
+        "8",
+        "Title",
+        "BytePlus",
+        "3"
+      ],
+      "visual_description": "Agenda slide with a bold upper-left heading and two columns of four agenda rows. Each row has a purple-to-blue numbered circle followed by a black 'Title' placeholder; the BytePlus logo and slide number sit in the footer.",
+      "regions": {
+        "header": {
+          "bbox": [
+            52.24,
+            57.09,
+            560.23,
+            68.35
+          ],
+          "description": "Bold black agenda heading at upper left."
+        },
+        "body": {
+          "bbox": [
+            76.56,
+            196.01,
+            1101.04,
+            345.9
+          ],
+          "description": "Two agenda columns with four numbered rows each; left column starts at x=76.56 and right column at x=641.04."
+        },
+        "footer": {
+          "bbox": [
+            43.91,
+            673.86,
+            1208,
+            25.61
+          ],
+          "description": "BytePlus logo at lower left and slide number 3 at lower right."
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#000000",
+        "#A569FF",
+        "#1E37FF",
+        "#0066FC",
+        "#00DCFF",
+        "#37E1BE"
+      ],
+      "editable_elements": [
+        "text",
+        "shape"
+      ],
+      "usage_guidance": "Use at the start of a presentation to preview up to eight agenda items; replace each 'Title' while keeping the two-column numbered rhythm.",
+      "confidence": {
+        "ocr": 0.99,
+        "role": 0.99
+      },
+      "notes": [
+        "The BytePlus footer logo is visible in the rendered background artwork; the slide number is a separate editable placeholder."
+      ]
+    },
+    {
+      "slide_number": 4,
+      "layout_name": "Blank slide",
+      "template_role": "statement_slide",
+      "title": "Value Proposition",
+      "ocr_text": [
+        "Value Proposition",
+        "BytePlus",
+        "4"
+      ],
+      "visual_description": "Sparse statement slide with a single oversized bold black 'Value Proposition' centered horizontally and vertically over a white canvas with the standard bottom gradient; BytePlus logo and slide number are in the footer.",
+      "regions": {
+        "header": {
+          "bbox": [
+            0,
+            0,
+            1280,
+            280
+          ],
+          "description": "Open white space with no separate header."
+        },
+        "body": {
+          "bbox": [
+            54.34,
+            310.72,
+            1171.31,
+            98.55
+          ],
+          "description": "Large centered statement title."
+        },
+        "footer": {
+          "bbox": [
+            43.91,
+            673.86,
+            1208,
+            25.61
+          ],
+          "description": "BytePlus logo at lower left and slide number 4 at lower right."
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#000000",
+        "#A569FF",
+        "#1E37FF",
+        "#00DCFF",
+        "#37E1BE"
+      ],
+      "editable_elements": [
+        "text"
+      ],
+      "usage_guidance": "Use as a high-impact transition or value-proposition opener; replace the statement with one concise message and avoid adding competing content.",
+      "confidence": {
+        "ocr": 0.99,
+        "role": 0.98
+      },
+      "notes": [
+        "The layout is named 'Blank slide' even though it contains an editable title and footer placeholders."
+      ]
+    },
+    {
+      "slide_number": 5,
+      "layout_name": "Centered_Content",
+      "template_role": "three_column_cards",
+      "title": "Header",
+      "ocr_text": [
+        "Header",
+        "1",
+        "Title",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+        "2",
+        "Title",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+        "3",
+        "Title",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+        "BytePlus",
+        "5"
+      ],
+      "visual_description": "Centered three-card layout with a bold centered header, three pale rounded rectangles, purple-blue numbered circles above each card, centered title placeholders, and centered multiline description placeholders.",
+      "regions": {
+        "header": {
+          "bbox": [
+            30.72,
+            57.09,
+            1221.18,
+            68.35
+          ],
+          "description": "Bold centered header across the top."
+        },
+        "body": {
+          "bbox": [
+            94.75,
+            168.73,
+            1089.83,
+            411.99
+          ],
+          "description": "Three equal rounded cards at x=94.75, 472.35, and 849.95, each with a number, title, and description."
+        },
+        "footer": {
+          "bbox": [
+            43.91,
+            673.86,
+            1208,
+            25.61
+          ],
+          "description": "BytePlus logo at lower left and slide number 5 at lower right."
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#FCFEFF",
+        "#000000",
+        "#A569FF",
+        "#1E37FF",
+        "#00DCFF",
+        "#37E1BE"
+      ],
+      "editable_elements": [
+        "text",
+        "shape"
+      ],
+      "usage_guidance": "Use to compare three pillars, benefits, workstreams, or proof points; keep card copy parallel and concise for visual balance.",
+      "confidence": {
+        "ocr": 0.99,
+        "role": 0.99
+      },
+      "notes": [
+        "Card fills are structurally available as #FCFEFF; the purple-blue circle treatment is visually apparent but not emitted as a direct fillColor in the layout JSON."
+      ]
+    },
+    {
+      "slide_number": 6,
+      "layout_name": "Centered_Content",
+      "template_role": "four_column_cards",
+      "title": "Header",
+      "ocr_text": [
+        "Header",
+        "1",
+        "Title",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+        "2",
+        "Title",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+        "3",
+        "Title",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+        "4",
+        "Title",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+        "BytePlus",
+        "6"
+      ],
+      "visual_description": "Centered four-card layout with a bold centered header, four pale rounded rectangles, purple-blue numbered circles above each card, centered title placeholders, and centered multiline description placeholders.",
+      "regions": {
+        "header": {
+          "bbox": [
+            30.72,
+            57.09,
+            1221.18,
+            68.35
+          ],
+          "description": "Bold centered header across the top."
+        },
+        "body": {
+          "bbox": [
+            33.28,
+            157.71,
+            1216.86,
+            441.89
+          ],
+          "description": "Four equal rounded cards at x=33.28, 343.48, 653.68, and 963.88, each with a number, title, and description."
+        },
+        "footer": {
+          "bbox": [
+            43.91,
+            673.86,
+            1208,
+            25.61
+          ],
+          "description": "BytePlus logo at lower left and slide number 6 at lower right."
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#FCFEFF",
+        "#000000",
+        "#A569FF",
+        "#1E37FF",
+        "#00DCFF",
+        "#37E1BE"
+      ],
+      "editable_elements": [
+        "text",
+        "shape"
+      ],
+      "usage_guidance": "Use to present four related capabilities, stages, principles, or metrics; keep each card's title and description short enough to preserve the compact grid.",
+      "confidence": {
+        "ocr": 0.99,
+        "role": 0.99
+      },
+      "notes": [
+        "Card fills are structurally available as #FCFEFF; the purple-blue circle treatment is visually apparent but not emitted as a direct fillColor in the layout JSON."
+      ]
+    },
+    {
+      "slide_number": 7,
+      "layout_name": "Left-Aligned_Content",
+      "template_role": "text_image_split",
+      "title": "Header",
+      "ocr_text": [
+        "Header",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas non consectetur est, et mattis libero. Mauris aliquam ipsum nisl, eget mattis nulla placerat in.\n\nVivamus a ex at mauris aliquet sollicitudin non eget ex. Mauris sapien mauris, sollicitudin non turpis vel, fermentum gravida leo. Fusce aliquam nunc in urna faucibus, in vulputate tortor dignissim. Duis rutrum dictum aliquam. Nullam laoreet et lorem sed pharetra.",
+        "Generic image (Replaceable)",
+        "BytePlus",
+        "7"
+      ],
+      "visual_description": "Left-aligned text-and-image split slide with a bold upper-left header, two paragraphs of black body text on the left, and a full-height saturated cyan, red, orange, and yellow close-up portrait image on the right. White overlay text labels the image as replaceable.",
+      "regions": {
+        "header": {
+          "bbox": [
+            52.24,
+            57.09,
+            560.23,
+            68.35
+          ],
+          "description": "Bold black header at upper left."
+        },
+        "body": {
+          "bbox": [
+            52.24,
+            145.37,
+            1228.95,
+            456.13
+          ],
+          "description": "Two-paragraph text block on the left and a 640px-wide full-height image panel on the right; white replaceable-image label is centered over the image."
+        },
+        "footer": {
+          "bbox": [
+            43.91,
+            673.86,
+            1208,
+            25.61
+          ],
+          "description": "BytePlus logo at lower left and slide number 7 at lower right."
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#000000",
+        "#00DCFF",
+        "#FF7F66",
+        "#A569FF",
+        "#1E37FF",
+        "#37E1BE"
+      ],
+      "editable_elements": [
+        "text",
+        "image"
+      ],
+      "usage_guidance": "Use for a narrative explanation paired with a hero visual; replace both the body copy and right-side image while retaining the fixed split and readable left-column width.",
+      "confidence": {
+        "ocr": 0.98,
+        "role": 0.99
+      },
+      "notes": [
+        "The portrait is a replaceable image placeholder; the BytePlus footer logo is visible in the template background artwork."
+      ]
+    },
+    {
+      "slide_number": 8,
+      "layout_name": "Left-Aligned_Content",
+      "template_role": "two_image_content",
+      "title": "Header",
+      "ocr_text": [
+        "Header",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas non consectetur est, et mattis libero. Mauris aliquam ipsum nisl, eget mattis nulla placerat in.",
+        "Vivamus a ex at mauris aliquet sollicitudin non eget ex. Mauris sapien mauris, sollicitudin non turpis vel, fermentum gravida leo. Fusce aliquam nunc in urna faucibus, in vulputate tortor dignissim. Duis rutrum dictum aliquam. Nullam laoreet et lorem sed pharetra.",
+        "Generic image (Replaceable)",
+        "Generic image (Replaceable)",
+        "BytePlus",
+        "8"
+      ],
+      "visual_description": "White slide with a large left-aligned header and two stacked paragraphs on the left; two equal-sized replaceable technology images are stacked on the right. A soft blue, purple, and cyan gradient runs along the bottom, with BytePlus branding at lower left and the slide number at lower right.",
+      "regions": {
+        "header": {
+          "bbox": [
+            52.24,
+            57.09,
+            560.23,
+            68.35
+          ],
+          "description": "Large left-aligned title in the upper-left."
+        },
+        "body": {
+          "bbox": [
+            52.24,
+            145.37,
+            1205.73,
+            503.32
+          ],
+          "description": "Two text blocks occupy the left column; two stacked image placeholders occupy the right column."
+        },
+        "footer": {
+          "bbox": [
+            0,
+            650,
+            1280,
+            70
+          ],
+          "description": "Bottom gradient band with BytePlus wordmark at left and slide number 8 at right."
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#000000",
+        "#0066FC",
+        "#A569FF",
+        "#37E1BE"
+      ],
+      "editable_elements": [
+        "text",
+        "shape",
+        "image"
+      ],
+      "usage_guidance": "Use for a left-led narrative supported by two replaceable visual examples or product screenshots on the right.",
+      "confidence": {
+        "ocr": 0.99,
+        "role": 0.98
+      },
+      "notes": [
+        "The layout JSON contains an additional hidden Generic image (Replaceable) text element; only two such labels are visibly rendered in the supplied PNG."
+      ]
+    },
+    {
+      "slide_number": 9,
+      "layout_name": "Centered_Content",
+      "template_role": "bar_line_chart",
+      "title": "Header",
+      "ocr_text": [
+        "Header",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada fames.",
+        "Annotation",
+        "Annotation",
+        "144%",
+        "131%",
+        "104%",
+        "104%",
+        "104%",
+        "104%",
+        "104%",
+        "104%",
+        "104%",
+        "Title Text",
+        "Title Text",
+        "Title Text",
+        "Title Text",
+        "Title Text",
+        "Title Text",
+        "Title Text",
+        "Title Text",
+        "Title Text",
+        "Title Text",
+        "BytePlus",
+        "9"
+      ],
+      "visual_description": "Centered header above a large rounded light panel. The panel contains a blue descending bar series, a purple line with circular markers and percentage labels, two legend swatches labeled Annotation, and ten repeated Title Text category labels along the baseline.",
+      "regions": {
+        "header": {
+          "bbox": [
+            30.72,
+            49.16,
+            1221.18,
+            68.35
+          ],
+          "description": "Centered title above the chart panel."
+        },
+        "body": {
+          "bbox": [
+            30.14,
+            132.94,
+            1217.53,
+            502.86
+          ],
+          "description": "Rounded chart panel with description at upper left, legend at upper right, and combined bars and line chart across the lower area."
+        },
+        "footer": {
+          "bbox": [
+            0,
+            650,
+            1280,
+            70
+          ],
+          "description": "Bottom gradient band with BytePlus wordmark at left and slide number 9 at right."
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#FCFEFF",
+        "#008CFF",
+        "#7861FF",
+        "#939393",
+        "#000000"
+      ],
+      "editable_elements": [
+        "text",
+        "shape"
+      ],
+      "usage_guidance": "Use for a trend or performance slide requiring a descending bar series overlaid with a purple line and point labels.",
+      "confidence": {
+        "ocr": 0.99,
+        "role": 0.99
+      },
+      "notes": []
+    },
+    {
+      "slide_number": 10,
+      "layout_name": "Centered_Content",
+      "template_role": "three_metric_bars",
+      "title": "Header",
+      "ocr_text": [
+        "Header",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada fames.",
+        "1200+",
+        "316%",
+        "5000+",
+        "BytePlus",
+        "10"
+      ],
+      "visual_description": "Centered header above a large rounded light panel containing three blue vertical bars of increasing height. The bars are labeled 1200+, 316%, and 5000+, with a curved blue gradient arrow pointing upward toward the tallest bar.",
+      "regions": {
+        "header": {
+          "bbox": [
+            30.72,
+            49.16,
+            1221.18,
+            68.35
+          ],
+          "description": "Centered title above the content panel."
+        },
+        "body": {
+          "bbox": [
+            182.56,
+            132.94,
+            923.8,
+            502.86
+          ],
+          "description": "Rounded panel with centered description at top and three bars, labels, baseline, and upward arrow in the lower area."
+        },
+        "footer": {
+          "bbox": [
+            0,
+            650,
+            1280,
+            70
+          ],
+          "description": "Bottom gradient band with BytePlus wordmark at left and slide number 10 at right."
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#FCFEFF",
+        "#006AFF",
+        "#939393",
+        "#000000"
+      ],
+      "editable_elements": [
+        "text",
+        "shape"
+      ],
+      "usage_guidance": "Use for three headline metrics where the visual emphasis should move from a smaller baseline to a larger outcome.",
+      "confidence": {
+        "ocr": 0.99,
+        "role": 0.99
+      },
+      "notes": []
+    },
+    {
+      "slide_number": 11,
+      "layout_name": "Centered_Content",
+      "template_role": "three_step_timeline",
+      "title": "Header",
+      "ocr_text": [
+        "Header",
+        "01",
+        "02",
+        "03",
+        "Subheader",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada",
+        "Subheader",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada",
+        "Subheader",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada",
+        "BytePlus",
+        "11"
+      ],
+      "visual_description": "Centered header over a horizontal blue timeline with three circular milestones. Large pale-blue numbers 01, 02, and 03 sit above three rounded light cards, each containing a bold Subheader and centered descriptive text.",
+      "regions": {
+        "header": {
+          "bbox": [
+            30.72,
+            49.16,
+            1221.18,
+            68.35
+          ],
+          "description": "Centered title at the top."
+        },
+        "body": {
+          "bbox": [
+            66.48,
+            113.34,
+            1147.64,
+            488.26
+          ],
+          "description": "Three numbered milestones above a continuous horizontal line and three evenly spaced rounded cards below."
+        },
+        "footer": {
+          "bbox": [
+            0,
+            650,
+            1280,
+            70
+          ],
+          "description": "Bottom gradient band with BytePlus wordmark at left and slide number 11 at right."
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#FCFEFF",
+        "#008CFF",
+        "#B9DFFF",
+        "#000000"
+      ],
+      "editable_elements": [
+        "text",
+        "shape"
+      ],
+      "usage_guidance": "Use for a three-stage process, roadmap, implementation sequence, or phased customer journey.",
+      "confidence": {
+        "ocr": 0.99,
+        "role": 0.99
+      },
+      "notes": []
+    },
+    {
+      "slide_number": 12,
+      "layout_name": "Centered_Content",
+      "template_role": "four_part_cycle",
+      "title": "Header",
+      "ocr_text": [
+        "Header",
+        "Subheader",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada",
+        "Subheader",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada",
+        "Subheader",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada",
+        "Subheader",
+        "Text description: Pellentesque habitant morbi tristique senectus et netus et malesuada",
+        "1",
+        "2",
+        "3",
+        "4",
+        "Title",
+        "Text",
+        "BytePlus",
+        "12"
+      ],
+      "visual_description": "Centered header above a four-part purple circular ring with a white center reading Title Text. Four numbered white circles sit around the ring, and four rounded light text cards occupy the upper-left, lower-left, upper-right, and lower-right corners.",
+      "regions": {
+        "header": {
+          "bbox": [
+            30.72,
+            49.16,
+            1221.18,
+            68.35
+          ],
+          "description": "Centered title at the top."
+        },
+        "body": {
+          "bbox": [
+            34.75,
+            113.68,
+            1204.84,
+            526.92
+          ],
+          "description": "Four corner cards surround a central donut-style cycle with four numbered callouts and a two-line center label."
+        },
+        "footer": {
+          "bbox": [
+            0,
+            650,
+            1280,
+            70
+          ],
+          "description": "Bottom gradient band with BytePlus wordmark at left and slide number 12 at right."
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#FCFEFF",
+        "#A569FF",
+        "#0066FC",
+        "#000000"
+      ],
+      "editable_elements": [
+        "text",
+        "shape",
+        "chart"
+      ],
+      "usage_guidance": "Use for a four-part operating model, cycle, framework, or mutually reinforcing set of workstreams.",
+      "confidence": {
+        "ocr": 0.99,
+        "role": 0.99
+      },
+      "notes": [
+        "The central ring is represented as a native 2D pie chart with an overlaid white center circle."
+      ]
+    },
+    {
+      "slide_number": 13,
+      "layout_name": "Blank slide",
+      "template_role": "case_study_summary",
+      "title": "Title",
+      "ocr_text": [
+        "Insert logo",
+        "Case Study (Which BytePlus Product)",
+        "Title",
+        "Challenge",
+        "Content",
+        "Solution",
+        "#1 Point",
+        "Content",
+        "#2 Point",
+        "Content",
+        "#3 Point",
+        "Result",
+        "XX%",
+        "Description",
+        "Generic image (Replaceable)",
+        "BytePlus",
+        "13"
+      ],
+      "visual_description": "Blank-layout case study slide with a left column for logo placeholder, case-study label, title, and a rounded replaceable image; the right column contains separate rounded panels for Challenge, Solution with three points, and Result with a large XX% metric and description.",
+      "regions": {
+        "header": {
+          "bbox": [
+            29.63,
+            50.03,
+            483.93,
+            249.0
+          ],
+          "description": "Left-side logo placeholder, case-study label, and large title; the right-side top panel begins with the Challenge heading."
+        },
+        "body": {
+          "bbox": [
+            36.16,
+            50.03,
+            1211.54,
+            530.36
+          ],
+          "description": "Left image card plus right stacked Challenge, Solution, and Result panels."
+        },
+        "footer": {
+          "bbox": [
+            0,
+            650,
+            1280,
+            70
+          ],
+          "description": "Bottom gradient band with BytePlus wordmark at left and slide number 13 at right."
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#FCFEFF",
+        "#0066FC",
+        "#002863",
+        "#000000"
+      ],
+      "editable_elements": [
+        "text",
+        "shape",
+        "image"
+      ],
+      "usage_guidance": "Use for a customer case study that frames the challenge, maps the solution to three points, and closes with a quantified result.",
+      "confidence": {
+        "ocr": 0.99,
+        "role": 0.99
+      },
+      "notes": [
+        "The visible generic image contains a dark blue technology illustration with a white upward arrow and overlaid replaceable-image label."
+      ]
+    },
+    {
+      "slide_number": 14,
+      "layout_name": "Centered_Content",
+      "template_role": "product_icon_grid",
+      "title": "Product Icons",
+      "ocr_text": [
+        "Product Icons",
+        "BytePlus",
+        "14"
+      ],
+      "visual_description": "Centered Product Icons title above a three-row grid of 21 rounded-square icon tiles. The first row mixes purple, gradient, and blue-green product marks; the second and third rows use blue product marks. BytePlus branding and the slide number sit on the bottom gradient band.",
+      "regions": {
+        "header": {
+          "bbox": [
+            30.72,
+            49.16,
+            1221.18,
+            68.35
+          ],
+          "description": "Large centered title."
+        },
+        "body": {
+          "bbox": [
+            51.68,
+            145.9,
+            1184.34,
+            488.32
+          ],
+          "description": "Three-row icon grid with 21 equal rounded-square image tiles, arranged 9, 9, and 3 from top to bottom."
+        },
+        "footer": {
+          "bbox": [
+            0,
+            650,
+            1280,
+            70
+          ],
+          "description": "Bottom gradient band with BytePlus wordmark at left and slide number 14 at right."
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#0066FC",
+        "#1E37FF",
+        "#A569FF",
+        "#37E1BE"
+      ],
+      "editable_elements": [
+        "text",
+        "image",
+        "icon"
+      ],
+      "usage_guidance": "Use as a product-family or capability overview when each product is represented primarily by an icon rather than explanatory copy.",
+      "confidence": {
+        "ocr": 0.99,
+        "role": 0.98
+      },
+      "notes": [
+        "The icon tiles have no visible text labels, so the individual product identities cannot be inferred from the supplied slide alone."
+      ]
+    },
+    {
+      "slide_number": 15,
+      "layout_name": "Centered_Content",
+      "template_role": "icon_library_blue_set_a",
+      "title": "Icon Library",
+      "ocr_text": [
+        "Icon Library",
+        "WWW",
+        "BytePlus",
+        "15"
+      ],
+      "visual_description": "A centered Icon Library title sits above a four-row grid of 34 blue cloud, security, network, data, analytics, and device icons. The slide uses a white field with a soft purple-to-cyan gradient along the bottom, a BytePlus wordmark at lower left, and the slide number at lower right.",
+      "regions": {
+        "header": {
+          "placement": "centered near the top",
+          "bbox_px": [
+            30.72,
+            49.16,
+            1221.18,
+            68.35
+          ]
+        },
+        "body": {
+          "placement": "34 evenly spaced icon images in four rows across the central canvas",
+          "bbox_px": [
+            42.65,
+            151.51,
+            1206.66,
+            428.8
+          ]
+        },
+        "footer": {
+          "placement": "BytePlus wordmark at lower left; slide number at lower right",
+          "wordmark_bbox_px": [
+            120.45,
+            675.92,
+            560.23,
+            25.61
+          ],
+          "slide_number_bbox_px": [
+            1203.7,
+            673.86,
+            48.2,
+            25.61
+          ]
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#000000",
+        "#1E37FF",
+        "#A569FF",
+        "#37E1BE",
+        "#00DCFF"
+      ],
+      "editable_elements": [
+        "text",
+        "image",
+        "icon"
+      ],
+      "usage_guidance": "Use as a technical icon reference or asset-index slide; select individual blue icons for architecture, security, infrastructure, or analytics slides.",
+      "confidence": {
+        "ocr": 0.97,
+        "role": 0.99
+      },
+      "notes": [
+        "Most icons are unlabeled artwork; the legible embedded WWW glyph is included in ocr_text."
+      ]
+    },
+    {
+      "slide_number": 16,
+      "layout_name": "Centered_Content",
+      "template_role": "icon_library_blue_set_b",
+      "title": "Icon Library",
+      "ocr_text": [
+        "Icon Library",
+        "CPU",
+        "VPN",
+        "BytePlus",
+        "16"
+      ],
+      "visual_description": "A centered Icon Library title sits above a dense four-row grid of 36 blue security, compute, storage, network, operations, and developer icons. The slide has the shared white background and soft purple-to-cyan bottom gradient, with BytePlus at lower left and the slide number at lower right.",
+      "regions": {
+        "header": {
+          "placement": "centered near the top",
+          "bbox_px": [
+            30.72,
+            49.16,
+            1221.18,
+            68.35
+          ]
+        },
+        "body": {
+          "placement": "36 evenly spaced icon images in four rows across the central canvas",
+          "bbox_px": [
+            40.05,
+            155.4,
+            1208.85,
+            430.37
+          ]
+        },
+        "footer": {
+          "placement": "BytePlus wordmark at lower left; slide number at lower right",
+          "wordmark_bbox_px": [
+            120.45,
+            675.92,
+            560.23,
+            25.61
+          ],
+          "slide_number_bbox_px": [
+            1203.7,
+            673.86,
+            48.2,
+            25.61
+          ]
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#000000",
+        "#1E37FF",
+        "#A569FF",
+        "#37E1BE",
+        "#00DCFF"
+      ],
+      "editable_elements": [
+        "text",
+        "image",
+        "icon"
+      ],
+      "usage_guidance": "Use as a technical icon reference or asset-index slide for compute, networking, security, storage, and developer-workflow concepts.",
+      "confidence": {
+        "ocr": 0.97,
+        "role": 0.99
+      },
+      "notes": [
+        "Most icons are unlabeled artwork; the legible embedded CPU and VPN labels are included in ocr_text."
+      ]
+    },
+    {
+      "slide_number": 17,
+      "layout_name": "Centered_Content",
+      "template_role": "icon_library_blue_set_c",
+      "title": "Icon Library",
+      "ocr_text": [
+        "Icon Library",
+        "f(x)",
+        "IOT",
+        "DNS",
+        ".COM",
+        "BytePlus",
+        "17"
+      ],
+      "visual_description": "A centered Icon Library title sits above a four-row grid of 36 blue icons spanning cloud, storage, security, data, IoT, web, and operations themes. The shared white background fades to a purple-to-cyan gradient at the bottom, with BytePlus at lower left and the slide number at lower right.",
+      "regions": {
+        "header": {
+          "placement": "centered near the top",
+          "bbox_px": [
+            30.72,
+            49.16,
+            1221.18,
+            68.35
+          ]
+        },
+        "body": {
+          "placement": "36 evenly spaced icon images in four rows across the central canvas",
+          "bbox_px": [
+            38.97,
+            150.14,
+            1212.42,
+            436.6
+          ]
+        },
+        "footer": {
+          "placement": "BytePlus wordmark at lower left; slide number at lower right",
+          "wordmark_bbox_px": [
+            120.45,
+            675.92,
+            560.23,
+            25.61
+          ],
+          "slide_number_bbox_px": [
+            1203.7,
+            673.86,
+            48.2,
+            25.61
+          ]
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#000000",
+        "#1E37FF",
+        "#A569FF",
+        "#37E1BE",
+        "#00DCFF"
+      ],
+      "editable_elements": [
+        "text",
+        "image",
+        "icon"
+      ],
+      "usage_guidance": "Use as an icon reference or asset-index slide for web, IoT, data, security, and cloud architecture concepts.",
+      "confidence": {
+        "ocr": 0.96,
+        "role": 0.99
+      },
+      "notes": [
+        "Most icons are unlabeled artwork; the legible embedded f(x), IOT, DNS, and .COM labels are included in ocr_text."
+      ]
+    },
+    {
+      "slide_number": 18,
+      "layout_name": "Centered_Content",
+      "template_role": "icon_library_blue_set_d",
+      "title": "Icon Library",
+      "ocr_text": [
+        "Icon Library",
+        "AI",
+        "IP",
+        "BytePlus",
+        "18"
+      ],
+      "visual_description": "A centered Icon Library title sits above a compact three-row arrangement of 19 blue icons covering AI, analytics, cloud, network, translation, globe, satellite, data, and identity motifs. The shared white background fades to a purple-to-cyan gradient at the bottom, with BytePlus at lower left and the slide number at lower right.",
+      "regions": {
+        "header": {
+          "placement": "centered near the top",
+          "bbox_px": [
+            30.72,
+            49.16,
+            1221.18,
+            68.35
+          ]
+        },
+        "body": {
+          "placement": "19 icon images arranged in three rows with open whitespace around the grid",
+          "bbox_px": [
+            184.24,
+            150.14,
+            924.84,
+            317.56
+          ]
+        },
+        "footer": {
+          "placement": "BytePlus wordmark at lower left; slide number at lower right",
+          "wordmark_bbox_px": [
+            120.45,
+            675.92,
+            560.23,
+            25.61
+          ],
+          "slide_number_bbox_px": [
+            1203.7,
+            673.86,
+            48.2,
+            25.61
+          ]
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#000000",
+        "#1E37FF",
+        "#A569FF",
+        "#37E1BE",
+        "#00DCFF"
+      ],
+      "editable_elements": [
+        "text",
+        "image",
+        "icon"
+      ],
+      "usage_guidance": "Use as a lighter icon reference slide when a presentation needs AI, analytics, identity, or connectivity symbols with more whitespace.",
+      "confidence": {
+        "ocr": 0.97,
+        "role": 0.99
+      },
+      "notes": [
+        "Most icons are unlabeled artwork; the clearly legible embedded AI and IP labels are included in ocr_text."
+      ]
+    },
+    {
+      "slide_number": 19,
+      "layout_name": "Centered_Content",
+      "template_role": "illustration_library",
+      "title": "Illustration",
+      "ocr_text": [
+        "Illustration",
+        "BytePlus",
+        "19"
+      ],
+      "visual_description": "A centered Illustration title sits above 15 blue-and-black line illustrations arranged in three rows of five. The scenes depict people using laptops and dashboards, cloud and data infrastructure, AI, coding, analytics, automation, and finance motifs, over the shared white background and soft purple-to-cyan bottom gradient.",
+      "regions": {
+        "header": {
+          "placement": "centered near the top",
+          "bbox_px": [
+            30.72,
+            49.16,
+            1221.18,
+            68.35
+          ]
+        },
+        "body": {
+          "placement": "15 illustration images in three rows of five across nearly the full slide width",
+          "bbox_px": [
+            9.08,
+            135.21,
+            1261.84,
+            500.27
+          ]
+        },
+        "footer": {
+          "placement": "BytePlus wordmark at lower left; slide number at lower right",
+          "wordmark_bbox_px": [
+            120.45,
+            675.92,
+            560.23,
+            25.61
+          ],
+          "slide_number_bbox_px": [
+            1203.7,
+            673.86,
+            48.2,
+            25.61
+          ]
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#000000",
+        "#1E37FF",
+        "#A569FF",
+        "#37E1BE",
+        "#00DCFF"
+      ],
+      "editable_elements": [
+        "text",
+        "image",
+        "illustration"
+      ],
+      "usage_guidance": "Use as an illustration asset library for solution overviews, AI and cloud workflows, customer stories, technical explainers, or closing pages.",
+      "confidence": {
+        "ocr": 0.99,
+        "role": 0.99
+      },
+      "notes": [
+        "The illustrations contain no additional readable text beyond the title and shared footer wordmark."
+      ]
+    },
+    {
+      "slide_number": 20,
+      "layout_name": "Blank slide",
+      "template_role": "thank_you_qr_closing",
+      "title": "Thank you!",
+      "ocr_text": [
+        "Thank you!",
+        "Visit our website for more details",
+        "Copyright © 2026 BytePlus All rights reserved."
+      ],
+      "visual_description": "A closing slide places a large bold Thank you! message on the left and a large QR code with a blue BytePlus mark on the right. A centered website prompt sits below the QR code, and the copyright line runs along the lower left on the shared white background with a soft purple-to-cyan bottom gradient.",
+      "regions": {
+        "header": {
+          "placement": "no separate header; the large Thank you! message acts as the left-side title",
+          "title_bbox_px": [
+            77.84,
+            296.99,
+            536.39,
+            126.02
+          ]
+        },
+        "body": {
+          "placement": "large QR image on the right with website prompt directly below",
+          "qr_bbox_px": [
+            777.84,
+            177.13,
+            365.75,
+            365.75
+          ],
+          "website_prompt_bbox_px": [
+            830.95,
+            548.16,
+            259.53,
+            61.39
+          ]
+        },
+        "footer": {
+          "placement": "copyright line along the lower left",
+          "copyright_bbox_px": [
+            120.45,
+            675.92,
+            560.23,
+            25.61
+          ]
+        }
+      },
+      "primary_colors": [
+        "#FFFFFF",
+        "#000000",
+        "#0066FC",
+        "#1E37FF",
+        "#A569FF",
+        "#37E1BE",
+        "#00DCFF"
+      ],
+      "editable_elements": [
+        "text",
+        "shape",
+        "image",
+        "qr_code"
+      ],
+      "usage_guidance": "Use as a final call-to-action or contact slide; replace the QR asset only when the destination URL is verified, while retaining the large closing message and website prompt.",
+      "confidence": {
+        "ocr": 0.99,
+        "role": 0.99
+      },
+      "notes": [
+        "The QR payload is not recoverable from the rendered inspection image or layout JSON; no URL is invented."
+      ]
+    }
+  ]
+}

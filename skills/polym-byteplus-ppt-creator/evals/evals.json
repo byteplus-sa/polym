@@ -1,0 +1,23 @@
+{
+  "skill_name": "polym-byteplus-ppt-creator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a 10-slide BytePlus customer proposal for a retail client evaluating live commerce. Use the BytePlus brand template, keep all charts and the solution architecture editable, and cite every external claim in speaker notes.",
+      "expected_output": "An editable 10-slide BytePlus PPTX that uses mapped source layouts, includes notes-based citations, and passes structural and visual validation.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Turn the supplied workshop outline into a polished 16:9 BytePlus enablement deck. Include a minimal cover, agenda, section dividers, two process slides, a case study, and a closing slide. Do not invent metrics.",
+      "expected_output": "A coherent BytePlus workshop deck that selects appropriate template roles and contains no unresolved placeholders or unsupported facts.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Redesign this existing product pitch in BytePlus branding while preserving the slide count and all evidence. Replace the visual hierarchy, keep the tables editable, and document third-party image provenance.",
+      "expected_output": "A slide-count-preserving editable redesign that retains evidence, follows BytePlus styling, records visual provenance, and passes validation.",
+      "files": []
+    }
+  ]
+}
