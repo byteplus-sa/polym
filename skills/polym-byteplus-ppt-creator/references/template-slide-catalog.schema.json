@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/byteplus-ppt/template-slide-catalog.schema.json",
+  "title": "BytePlus PowerPoint Template Slide Catalog",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "template",
+    "catalog_generation",
+    "slides"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "template": {
+      "type": "object",
+      "required": [
+        "name",
+        "asset_path",
+        "sha256",
+        "size_bytes",
+        "slide_count",
+        "canvas",
+        "theme",
+        "package_parts"
+      ]
+    },
+    "catalog_generation": {
+      "type": "object",
+      "required": [
+        "date",
+        "methods",
+        "review_model",
+        "confidence_scale"
+      ]
+    },
+    "slides": {
+      "type": "array",
+      "minItems": 20,
+      "maxItems": 20,
+      "items": {
+        "$ref": "#/$defs/slide"
+      }
+    }
+  },
+  "$defs": {
+    "slide": {
+      "type": "object",
+      "required": [
+        "slide_number",
+        "layout_name",
+        "template_role",
+        "title",
+        "ocr_text",
+        "visual_description",
+        "regions",
+        "primary_colors",
+        "editable_elements",
+        "usage_guidance",
+        "confidence",
+        "notes"
+      ],
+      "properties": {
+        "slide_number": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "layout_name": {
+          "type": "string"
+        },
+        "template_role": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ocr_text": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "visual_description": {
+          "type": "string"
+        },
+        "regions": {
+          "type": "object"
+        },
+        "primary_colors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "editable_elements": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "text",
+              "shape",
+              "image",
+              "chart",
+              "table",
+              "icon",
+              "illustration",
+              "qr_code"
+            ]
+          }
+        },
+        "usage_guidance": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "object",
+          "required": [
+            "ocr",
+            "role"
+          ],
+          "properties": {
+            "ocr": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "role": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

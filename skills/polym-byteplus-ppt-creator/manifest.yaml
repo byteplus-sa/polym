@@ -1,0 +1,36 @@
+name: polym-byteplus-ppt-creator
+version: 0.1.0
+stage: experimental
+owners:
+  - ArthurReimus-ByteDance
+
+description_for_install: |
+  Create, redesign, extend, or polish editable BytePlus-branded PowerPoint decks
+  using a bundled 20-slide presentation template with a mapped slide catalog,
+  starter deck script, and PPTX structural validator.
+
+depends_on:
+  skills: []
+  binaries:
+    - node: ">=22"
+    - python3: ">=3.10"
+  env:
+    - RUNTIME_NODE_MODULES
+
+io_contract:
+  reads:
+    - bundled-byteplus-presentation-template
+  writes:
+    - target: local-filesystem/generated-pptx
+      schema: core/signal-envelope.schema.json
+      signal_type: presentation
+
+triggers:
+  - "BytePlus presentation"
+  - "BytePlus PPT"
+  - "BytePlus PPTX"
+  - "BytePlus deck"
+  - "BytePlus PowerPoint"
+  - "create a BytePlus presentation"
+
+deprecates: []
