@@ -3,7 +3,7 @@
 #
 # Source of truth per skill: skills/<name>/manifest.yaml
 #
-generated_at: 2026-08-17T03:38:32Z
+generated_at: 2026-09-10T05:23:57Z
 
 skills:
   - name: polym-autocase-image-gen
@@ -57,6 +57,23 @@ skills:
       - "BytePlus API documentation"
       - "BytePlus SDK documentation"
       - "BytePlus documentation links"
+
+  - name: polym-byteplus-ppt-creator
+    version: 0.1.0
+    stage: experimental
+    description_for_install: |
+      Create, redesign, extend, or polish editable BytePlus-branded PowerPoint decks
+      using a bundled 20-slide presentation template with a mapped slide catalog,
+      starter deck script, and PPTX structural validator.
+    owners: ['ArthurReimus-ByteDance']
+    path: skills/polym-byteplus-ppt-creator
+    triggers:
+      - "BytePlus presentation"
+      - "BytePlus PPT"
+      - "BytePlus PPTX"
+      - "BytePlus deck"
+      - "BytePlus PowerPoint"
+      - "create a BytePlus presentation"
 
   - name: polym-customer-brief
     version: 0.1.1
